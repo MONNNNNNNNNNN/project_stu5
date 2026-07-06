@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GrowTH</title>
+    <style>
+        /* ===== ROOT ===== */
+        :root {
+            --primary: #3fb6dd;
+            --primary-dark: #12475a;
+            --accent: #f2b84b;
+            --bg: #0f1417;
+            --card: #182027;
+            --card-alt: #1e2830;
+            --text: #e7eef1;
+            --muted: #93a5ad;
+            --border: #2a343b;
+            --danger: #ff7b72;
+            --success: #5fd38d;
+            --ux: #6fa8dc;
+            --fe: #7ed957;
+            --be: #ffb454;
+            --ai: #c792ea;
+            --vid: #ff7aa8;
+            --qa: #4dd0e1;
+            --pm: #f2b84b;
+            --support: #a8a8a8;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0b1f27, #154a5d);
+            color: #eaf6fa;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        header .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        header p {
+            margin: 4px 0 0;
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+        .badge {
+            background: var(--accent);
+            color: #3a2600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge.light {
+            background: #eaf6fa;
+            color: #12475a;
+        }
+        .print-btn {
+            background: #eaf6fa;
+            color: #12475a;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .print-btn:hover {
+            background: #fff;
+        }
+
+        .team-strip {
+            background: #0b1317;
+            border-bottom: 1px solid var(--border);
+            padding: 8px 20px;
+            font-size: 0.78rem;
+            color: var(--muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .team-strip .chip {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            background: #0b1f27;
+            padding: 0 10px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border);
+        }
+        nav button {
+            background: transparent;
+            border: none;
+            color: #c7dbe1;
+            padding: 12px 14px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            transition: 0.15s;
+        }
+        nav button:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        nav button.active {
+            color: #fff;
+            border-bottom: 3px solid var(--accent);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px 16px 60px;
+        }
+        .panel {
+            display: none;
+            animation: fade 0.25s ease;
+        }
+        .panel.active {
+            display: block;
+        }
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+            margin-top: 0;
+        }
+        h3 {
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+        h4 {
+            color: var(--text);
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+        }
+        .grid {
+            display: grid;
+            gap: 14px;
+        }
+        .grid.cols-2 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+        .grid.cols-3 {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .grid.cols-4 {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: var(--primary-dark);
+            color: #eaf6fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) td {
+            background: var(--card-alt);
+        }
+        td {
+            color: var(--text);
+        }
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #0f1417;
+        }
+        .tag.ux {
+            background: var(--ux);
+        }
+        .tag.fe {
+            background: var(--fe);
+        }
+        .tag.be {
+            background: var(--be);
+        }
+        .tag.ai {
+            background: var(--ai);
+        }
+        .tag.vid {
+            background: var(--vid);
+        }
+        .tag.pm {
+            background: var(--pm);
+        }
+        .tag.qa {
+            background: var(--qa);
+        }
+        .tag.support {
+            background: var(--support);
+        }
+
+        .person-chip {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin: 1px;
+            display: inline-block;
+        }
+
+        .quote {
+            background: #16262d;
+            border-left: 4px solid var(--primary);
+            padding: 10px 14px;
+            font-style: italic;
+            color: #cfe8ef;
+            margin: 10px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .note {
+            background: #2c2410;
+            border: 1px solid #6b5a22;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin: 10px 0;
+            color: #f3e2b0;
+        }
+        .note.danger {
+            background: #2c1414;
+            border-color: #7a2f2a;
+            color: #ffd6d2;
+        }
+        .note.info {
+            background: #0f2733;
+            border-color: #1f5068;
+            color: #cfeaf5;
+        }
+        .note.success {
+            background: #0f2a1a;
+            border-color: #2a7a4a;
+            color: #b5e6c8;
+        }
+
+        .role-jump {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 12px 0 20px;
+            padding: 12px;
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+        .role-jump a {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.15s;
+        }
+        .role-jump a:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ===== PERSONA CARDS ===== */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .persona-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            border-top: 5px solid var(--primary);
+        }
+        .persona-card.p2 {
+            border-top-color: var(--ai);
+        }
+        .persona-card.p3 {
+            border-top-color: var(--vid);
+        }
+        .persona-card.p4 {
+            border-top-color: var(--muted);
+        }
+        .persona-card .persona-header {
+            padding: 14px 18px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+        .persona-card .persona-header .avatar {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+        .persona-card .persona-header .name-title h4 {
+            margin: 0;
+            font-size: 1.05rem;
+            color: var(--text);
+        }
+        .persona-card .persona-header .name-title .sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .persona-card .persona-body {
+            padding: 12px 18px 16px;
+        }
+        .persona-card .goal-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: #3a2600;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .persona-card .goal-statement {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text);
+            margin: 4px 0 8px;
+            padding: 8px 12px;
+            background: var(--card-alt);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent);
+        }
+        .persona-card .pain-points {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin: 6px 0;
+        }
+        .persona-card .pain-points strong {
+            color: var(--text);
+        }
+        .persona-card .fr-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        .persona-card .fr-tags .fr-tag {
+            background: var(--primary-dark);
+            color: #cfe8ef;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .persona-card .quote-mini {
+            font-style: italic;
+            color: #cfe8ef;
+            font-size: 0.82rem;
+            padding: 8px 12px;
+            background: #16262d;
+            border-radius: 6px;
+            margin: 8px 0 0;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* ===== SITEMAP (FIXED) ===== */
+        .sitemap-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            gap: 2px;
+        }
+        .sitemap-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 14px;
+        }
+        .sitemap-row .sm-node {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+            min-width: 80px;
+        }
+        .sitemap-row .sm-node.primary {
+            border-color: var(--primary);
+            background: #0f2a33;
+        }
+        .sitemap-row .sm-node.auth {
+            border-color: var(--pm);
+            background: #2a2410;
+        }
+        .sitemap-row .sm-node.dash {
+            border-color: var(--accent);
+            background: #2c2410;
+        }
+        .sitemap-row .sm-node.feature {
+            border-color: var(--fe);
+            background: #0f2a1a;
+        }
+        .sitemap-row .sm-node.ai-node {
+            border-color: var(--ai);
+            background: #1f1633;
+        }
+        .sitemap-row .sm-node.screen {
+            border-color: var(--vid);
+            background: #2a1a2a;
+        }
+        .sitemap-row .sm-node.know {
+            border-color: var(--ux);
+            background: #0f2333;
+        }
+        .sitemap-arrow {
+            color: var(--muted);
+            font-size: 1.2rem;
+            padding: 2px 0;
+            font-weight: 300;
+        }
+        .sitemap-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            text-align: center;
+            padding: 2px 0;
+        }
+        .sm-badge {
+            display: block;
+            font-weight: 400;
+            font-size: 0.6rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ===== UI INFOGRAPHIC ===== */
+        .ui-infographic {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .ui-infographic .ui-card {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 12px;
+            text-align: center;
+            transition: 0.15s;
+        }
+        .ui-infographic .ui-card .ui-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .ui-infographic .ui-card .ui-label {
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--text);
+        }
+        .ui-infographic .ui-card .ui-desc {
+            font-size: 0.68rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .ui-infographic .ui-card .ui-badge {
+            display: inline-block;
+            background: var(--primary-dark);
+            color: #cfe8ef;
+            padding: 1px 10px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .ui-infographic .ui-card.color-ux {
+            border-top: 3px solid var(--ux);
+        }
+        .ui-infographic .ui-card.color-fe {
+            border-top: 3px solid var(--fe);
+        }
+        .ui-infographic .ui-card.color-be {
+            border-top: 3px solid var(--be);
+        }
+        .ui-infographic .ui-card.color-ai {
+            border-top: 3px solid var(--ai);
+        }
+        .ui-infographic .ui-card.color-vid {
+            border-top: 3px solid var(--vid);
+        }
+        .ui-infographic .ui-card.color-accent {
+            border-top: 3px solid var(--accent);
+        }
+
+        /* ===== FLOW INFOGRAPHIC ===== */
+        .flow-infographic {
+            background: var(--card-alt);
+            border-radius: 14px;
+            padding: 24px 20px 20px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .flow-infographic .flow-title {
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .flow-infographic .flow-title span {
+            background: var(--card);
+            padding: 4px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .flow-row-infographic {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px 12px;
+            padding: 6px 0;
+        }
+        .flow-node {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            min-width: 100px;
+            max-width: 160px;
+            text-align: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .flow-node .node-icon {
+            font-size: 1.4rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .flow-node .node-label {
+            font-weight: 700;
+            font-size: 0.78rem;
+            color: var(--text);
+        }
+        .flow-node .node-desc {
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .flow-node.layer-fe {
+            border-color: var(--fe);
+            background: #0f2a1a;
+        }
+        .flow-node.layer-be {
+            border-color: var(--be);
+            background: #2a1f0f;
+        }
+        .flow-node.layer-ai {
+            border-color: var(--ai);
+            background: #1f1633;
+        }
+        .flow-node.layer-db {
+            border-color: var(--ux);
+            background: #0f2333;
+        }
+        .flow-node.layer-user {
+            border-color: var(--accent);
+            background: #2c2410;
+        }
+        .flow-node.layer-result {
+            border-color: var(--success);
+            background: #0f2a1a;
+        }
+        .flow-arrow-infographic {
+            color: var(--muted);
+            font-size: 1.2rem;
+            font-weight: 300;
+            flex-shrink: 0;
+            padding: 0 2px;
+        }
+        .flow-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 24px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .flow-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+        .flow-legend .legend-item .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .flow-legend .legend-item .dot.fe {
+            background: var(--fe);
+        }
+        .flow-legend .legend-item .dot.be {
+            background: var(--be);
+        }
+        .flow-legend .legend-item .dot.ai {
+            background: var(--ai);
+        }
+        .flow-legend .legend-item .dot.db {
+            background: var(--ux);
+        }
+        .flow-legend .legend-item .dot.user {
+            background: var(--accent);
+        }
+        .flow-legend .legend-item .dot.result {
+            background: var(--success);
+        }
+        .flow-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .flow-details .step-card {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 10px 12px;
+            border-left: 3px solid var(--primary);
+            font-size: 0.75rem;
+        }
+        .flow-details .step-card .step-num {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+        .flow-details .step-card .step-title {
+            font-weight: 600;
+            color: var(--text);
+            margin: 2px 0;
+        }
+        .flow-details .step-card .step-desc {
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+        .flow-details .step-card.step-fe {
+            border-left-color: var(--fe);
+        }
+        .flow-details .step-card.step-be {
+            border-left-color: var(--be);
+        }
+        .flow-details .step-card.step-ai {
+            border-left-color: var(--ai);
+        }
+        .flow-details .step-card.step-db {
+            border-left-color: var(--ux);
+        }
+        .flow-details .step-card.step-user {
+            border-left-color: var(--accent);
+        }
+        .flow-details .step-card.step-result {
+            border-left-color: var(--success);
+        }
+
+        @media (max-width: 800px) {
+            .flow-row-infographic {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+            .flow-node {
+                max-width: 100%;
+                width: 100%;
+            }
+            .flow-arrow-infographic {
+                transform: rotate(90deg);
+                text-align: center;
+                padding: 2px 0;
+            }
+            .flow-details {
+                grid-template-columns: 1fr;
+            }
+            .sitemap-row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .sitemap-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .gantt-wrap {
+            overflow-x: auto;
+        }
+        .gantt-table {
+            min-width: 900px;
+        }
+        .gantt-table td.cell {
+            width: 38px;
+            height: 26px;
+            padding: 0;
+            border: 1px solid #232d34;
+        }
+        .gantt-table td.label {
+            white-space: nowrap;
+            font-weight: 600;
+            background: var(--card);
+            min-width: 140px;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+        .gantt-table th.wk {
+            font-size: 0.65rem;
+            text-align: center;
+            padding: 4px 2px;
+        }
+        .test-col {
+            outline: 3px solid var(--danger);
+            outline-offset: -2px;
+        }
+        .milestone-row td {
+            border: none;
+            position: relative;
+            height: 24px;
+            background: transparent;
+        }
+        .flag {
+            font-size: 0.9rem;
+            cursor: default;
+        }
+
+        .timeline {
+            position: relative;
+            margin-left: 16px;
+            padding-left: 24px;
+            border-left: 3px solid var(--border);
+        }
+        .t-item {
+            position: relative;
+            margin-bottom: 22px;
+        }
+        .t-item::before {
+            content: "";
+            position: absolute;
+            left: -31px;
+            top: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        .t-item.key::before {
+            background: var(--danger);
+            box-shadow: 0 0 0 2px var(--danger);
+        }
+        .t-item.launch::before {
+            background: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        .t-date {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+        .t-item.key .t-date,
+        .t-item.key h4 {
+            color: var(--danger);
+        }
+        .t-item.launch .t-date,
+        .t-item.launch h4 {
+            color: var(--accent);
+        }
+
+        .ds-swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .ds-swatches .swatch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .ds-swatches .swatch .color {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .ds-swatches .swatch .name {
+            font-size: 0.65rem;
+            color: var(--muted);
+        }
+
+        .role-card {
+            scroll-margin-top: 64px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card);
+            margin-bottom: 22px;
+            overflow: hidden;
+        }
+        .role-card .role-head {
+            padding: 14px 18px;
+            background: var(--card-alt);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .role-card .role-head h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 1.05rem;
+        }
+        .role-card .role-body {
+            padding: 16px 18px;
+        }
+        .role-section {
+            margin-bottom: 14px;
+        }
+        .role-section .role-section-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .role-section.goal .role-section-title {
+            color: var(--accent);
+        }
+        .role-section.reqs .role-section-title {
+            color: var(--success);
+        }
+        .role-section.approach .role-section-title {
+            color: var(--primary);
+        }
+        .role-section ul {
+            margin: 4px 0;
+            padding-left: 20px;
+        }
+        .role-section ul li {
+            margin-bottom: 3px;
+        }
+        .border-pm {
+            border-left: 5px solid var(--pm);
+        }
+        .border-ux {
+            border-left: 5px solid var(--ux);
+        }
+        .border-fe {
+            border-left: 5px solid var(--fe);
+        }
+        .border-be {
+            border-left: 5px solid var(--be);
+        }
+        .border-ai {
+            border-left: 5px solid var(--ai);
+        }
+        .border-vid {
+            border-left: 5px solid var(--vid);
+        }
+        .border-qa {
+            border-left: 5px solid var(--qa);
+        }
+        .border-support {
+            border-left: 5px solid var(--support);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend i {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .scenario-grid .scenario-card {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            border-left: 4px solid var(--accent);
+        }
+        .scenario-grid .scenario-card .scenario-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+        .scenario-grid .scenario-card .scenario-persona {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+        .scenario-grid .scenario-card .scenario-fr {
+            font-size: 0.65rem;
+            color: var(--primary);
+        }
+        .scenario-grid .scenario-card .scenario-desc {
+            font-size: 0.78rem;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .tech-stack-grid .tech-item {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .tech-stack-grid .tech-item .label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+        .tech-stack-grid .tech-item .value {
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        select.status {
+            padding: 4px 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.78rem;
+            background: var(--card-alt);
+            color: var(--text);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+        }
+
+        @media print {
+            nav,
+            .print-btn,
+            .team-strip,
+            .role-jump {
+                display: none !important;
+            }
+            .panel {
+                display: block !important;
+                page-break-after: always;
+            }
+            body {
+                background: #fff !important;
+                color: #000 !important;
+            }
+            header {
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .card,
+            .persona-card,
+            .flow-infographic {
+                background: #fff !important;
+                color: #000 !important;
+                border-color: #999 !important;
+                box-shadow: none !important;
+            }
+            table,
+            th,
+            td {
+                background: #fff !important;
+                color: #000 !important;
+                border-color: #999 !important;
+            }
+            th {
+                background: #e0e0e0 !important;
+                color: #000 !important;
+            }
+            .quote,
+            .note {
+                background: #f5f5f5 !important;
+                color: #000 !important;
+            }
+            .person-chip {
+                background: #eee !important;
+                color: #000 !important;
+                border-color: #999 !important;
+            }
+            .flow-node {
+                background: #f5f5f5 !important;
+                border-color: #999 !important;
+            }
+            .flow-node.layer-fe {
+                background: #e6f5e6 !important;
+                border-color: #4a8a4a !important;
+            }
+            .flow-node.layer-be {
+                background: #f5ede6 !important;
+                border-color: #b88a4a !important;
+            }
+            .flow-node.layer-ai {
+                background: #ede6f5 !important;
+                border-color: #8a4ab8 !important;
+            }
+            .flow-node.layer-db {
+                background: #e6edf5 !important;
+                border-color: #4a7ab8 !important;
+            }
+            .flow-node.layer-user {
+                background: #f5f0e6 !important;
+                border-color: #b8a04a !important;
+            }
+            .flow-node.layer-result {
+                background: #e6f5e6 !important;
+                border-color: #4a8a4a !important;
+            }
+            .flow-details .step-card {
+                background: #f5f5f5 !important;
+            }
+            .flow-legend .legend-item .dot {
+                border-color: #999 !important;
+            }
+            .persona-card .goal-statement {
+                background: #f0f0f0 !important;
+            }
+            .persona-card .quote-mini {
+                background: #f0f0f0 !important;
+            }
+            .sitemap-row .sm-node {
+                background: #f0f0f0 !important;
+                border-color: #999 !important;
+            }
+            .sitemap-row .sm-node.primary {
+                background: #d0e8f0 !important;
+            }
+            .sitemap-row .sm-node.auth {
+                background: #f0e8d0 !important;
+            }
+            .sitemap-row .sm-node.dash {
+                background: #f0e8d0 !important;
+            }
+            .sitemap-row .sm-node.feature {
+                background: #d0f0d0 !important;
+            }
+            .sitemap-row .sm-node.ai-node {
+                background: #e8d0f0 !important;
+            }
+            .sitemap-row .sm-node.screen {
+                background: #f0d0e0 !important;
+            }
+            .sitemap-row .sm-node.know {
+                background: #d0e0f0 !important;
+            }
+            .ui-infographic .ui-card {
+                background: #f5f5f5 !important;
+                border-color: #999 !important;
+            }
+            .ds-swatches .swatch .color {
+                border-color: #999 !important;
+            }
+            .gantt-table td.cell {
+                border-color: #999 !important;
+            }
+            .gantt-table td.label {
+                background: #f5f5f5 !important;
+            }
+        }
+        @media (max-width: 640px) {
+            header h1 {
+                font-size: 1.2rem;
+            }
+            nav button {
+                padding: 10px 10px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header>
+        <div class="top">
+            <div>
+                <h1>🌱 GrowTH — Project Management Dashboard</h1>
+                <p>Child Growth Tracking · Puberty Screening · AI Bone Age Assessment | Project Beta — DME, Khon Kaen University</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <span class="badge">Internal Test Deadline: Sep 19</span>
+                <span class="badge light">Launch: Nov 2</span>
+                <button class="print-btn" id="printBtn">🖨️ Print / Present</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== TEAM STRIP ===== -->
+    <div class="team-strip">
+        <span>👥 Team (<span id="teamCount">0</span> members):</span>
+        <span id="teamChips"></span>
+    </div>
+
+    <!-- ===== NAV ===== -->
+    <nav id="tabNav">
+        <button data-tab="overview" class="active">1. Overview</button>
+        <button data-tab="persona">2. Persona &amp; Scenario</button>
+        <button data-tab="design">3. Design (UX/UI)</button>
+        <button data-tab="frontend">4. Frontend</button>
+        <button data-tab="backend">5. Backend</button>
+        <button data-tab="ai">6. AI Model</button>
+        <button data-tab="deliverables">7. Deliverables</button>
+        <button data-tab="timeline">8. Timeline</button>
+    </nav>
+
+    <!-- ===== MAIN ===== -->
+    <main>
+
+        <!-- ============================================================ -->
+        <!-- 1. OVERVIEW -->
+        <!-- ============================================================ -->
+        <section class="panel active" id="overview">
+            <h2>1. System Overview — Architecture &amp; Data Flow</h2>
+
+            <div class="grid cols-2">
+                <div class="card">
+                    <h3>🎯 What is GrowTH?</h3>
+                    <p>A responsive web application that helps parents track child growth, screen for puberty development concerns, and get AI-assisted bone age estimates from hand/wrist X-rays — all in plain, parent-friendly language.</p>
+                    <ul>
+                        <li><b>Growth Tracking:</b> Height/weight with percentile &amp; SDS charts</li>
+                        <li><b>Puberty Screening:</b> Guided questionnaire with plain-language results</li>
+                        <li><b>AI Bone Age:</b> Upload X-ray → get estimated bone age + margin of error</li>
+                        <li><b>Knowledge Hub:</b> Articles about growth &amp; puberty</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📌 Key Facts</h3>
+                    <ul>
+                        <li><b>Launch Date:</b> November 2 (fixed, no extensions)</li>
+                        <li><b>Internal PM Deadline:</b> September 19 — full system test complete</li>
+                        <li><b>Budget:</b> $0 — free/open-source tools only</li>
+                        <li><b>Target Users:</b> Parents (primary), educators (secondary)</li>
+                        <li><b>Data:</b> RSNA Bone Age dataset (~12,611 train / 1,425 validation)</li>
+                        <li><b>Compliance:</b> PDPA-aligned privacy (data minimization, account-scoped access)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Flow Infographic -->
+            <div class="card" style="padding:0;background:transparent;border:none;box-shadow:none;">
+                <div class="flow-infographic">
+                    <div class="flow-title"><span>🔁 End-to-End System Flow</span></div>
+                    <div class="flow-row-infographic">
+                        <div class="flow-node layer-user">
+                            <span class="node-icon">👩‍👧</span>
+                            <div class="node-label">Parent / Caregiver</div>
+                            <div class="node-desc">Logs in · Selects child</div>
+                        </div>
+                        <span class="flow-arrow-infographic">➜</span>
+                        <div class="flow-node layer-fe">
+                            <span class="node-icon">🖥️</span>
+                            <div class="node-label">Frontend (React)</div>
+                            <div class="node-desc">Forms · Charts · Upload</div>
+                        </div>
+                        <span class="flow-arrow-infographic">➜</span>
+                        <div class="flow-node layer-be">
+                            <span class="node-icon">⚙️</span>
+                            <div class="node-label">Backend API</div>
+                            <div class="node-desc">Auth · Validation · Logic</div>
+                        </div>
+                        <span class="flow-arrow-infographic">➜</span>
+                        <div class="flow-node layer-db">
+                            <span class="node-icon">🗄️</span>
+                            <div class="node-label">PostgreSQL</div>
+                            <div class="node-desc">Users · Growth · Screening</div>
+                        </div>
+                        <span class="flow-arrow-infographic" style="color:var(--ai);">⬇</span>
+                        <div class="flow-node layer-ai">
+                            <span class="node-icon">🧠</span>
+                            <div class="node-label">AI Inference</div>
+                            <div class="node-desc">PyTorch · EfficientNet</div>
+                        </div>
+                        <span class="flow-arrow-infographic">➜</span>
+                        <div class="flow-node layer-result">
+                            <span class="node-icon">✅</span>
+                            <div class="node-label">Plain-Language Result</div>
+                            <div class="node-desc">Percentile · Screening · Bone Age</div>
+                        </div>
+                    </div>
+                    <div class="flow-legend">
+                        <span class="legend-item"><span class="dot user"></span> User Layer</span>
+                        <span class="legend-item"><span class="dot fe"></span> Frontend</span>
+                        <span class="legend-item"><span class="dot be"></span> Backend</span>
+                        <span class="legend-item"><span class="dot db"></span> Database</span>
+                        <span class="legend-item"><span class="dot ai"></span> AI Service</span>
+                        <span class="legend-item"><span class="dot result"></span> Result</span>
+                    </div>
+                    <div class="flow-details">
+                        <div class="step-card step-user"><div class="step-num">❶</div><div class="step-title">Parent logs in</div><div class="step-desc">Authenticates via JWT, selects a child profile.</div></div>
+                        <div class="step-card step-fe"><div class="step-num">❷</div><div class="step-title">Frontend captures input</div><div class="step-desc">Growth data, screening answers, or X-ray image.</div></div>
+                        <div class="step-card step-be"><div class="step-num">❸</div><div class="step-title">Backend processes</div><div class="step-desc">Validates, runs percentile/SDS logic, enforces access.</div></div>
+                        <div class="step-card step-db"><div class="step-num">❹</div><div class="step-title">Database stores</div><div class="step-desc">Persists all records with foreign-key relationships.</div></div>
+                        <div class="step-card step-ai"><div class="step-num">❺</div><div class="step-title">AI predicts bone age</div><div class="step-desc">Returns estimated bone age + confidence margin.</div></div>
+                        <div class="step-card step-result"><div class="step-num">❻</div><div class="step-title">Plain-language result</div><div class="step-desc">Parent sees easy-to-understand summary (FR-23).</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid cols-3">
+                <div class="card"><h3>🧩 Module → FR Mapping</h3><ul><li><b>Account/Profile:</b> FR-1 to FR-5</li><li><b>Growth:</b> FR-6 to FR-11</li><li><b>Screening:</b> FR-12 to FR-14</li><li><b>AI Bone Age:</b> FR-15 to FR-19</li><li><b>Knowledge:</b> FR-20 to FR-21</li><li><b>General:</b> FR-22 to FR-24</li></ul></div>
+                <div class="card"><h3>🛠️ Technology Stack</h3><ul><li><b>Frontend:</b> React + Chart.js</li><li><b>Backend:</b> FastAPI / Node.js</li><li><b>Database:</b> PostgreSQL</li><li><b>AI:</b> PyTorch + EfficientNet-B0</li><li><b>Hosting:</b> Vercel + Render</li><li><b>Design:</b> Figma</li></ul></div>
+                <div class="card"><h3>📊 Performance Targets</h3><ul><li><b>AI MAE:</b> ≤ 8–10 months</li><li><b>Upload:</b> JPEG/PNG, max 10 MB</li><li><b>Inference:</b> 5–30 seconds</li><li><b>Responsive:</b> Desktop + mobile</li></ul></div>
+            </div>
+
+            <div class="note info">
+                <b>💡 FR-23 (Plain Language):</b> All clinical results must be shown in parent-friendly language by default, with an option to reveal underlying numbers. This applies to every result page across all modules.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 2. PERSONA & SCENARIO -->
+        <!-- ============================================================ -->
+        <section class="panel" id="persona">
+            <h2>2. Persona &amp; Scenario — User Understanding</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Prepared by: <span class="person-chip">Cell</span><span class="person-chip">Four</span> — UX Research Team</p>
+
+            <!-- Persona Cards -->
+            <div class="persona-grid">
+                <div class="persona-card">
+                    <div class="persona-header">
+                        <span class="avatar">👩</span>
+                        <div class="name-title">
+                            <h4>Nan</h4>
+                            <div class="sub">Age 32 · Office Employee · 1 child (age 2)</div>
+                        </div>
+                    </div>
+                    <div class="persona-body">
+                        <div class="goal-badge">🎯 Primary Goal</div>
+                        <div class="goal-statement">"I want to know if my child is growing normally — without having to interpret a complex chart myself."</div>
+                        <div class="pain-points"><strong>Pain points:</strong> Can't read growth charts · Forgets the health record book · Doesn't trust online BMI/percentile tools</div>
+                        <div class="quote-mini">"I just want to know if my daughter is on track, before the next doctor visit."</div>
+                        <div class="fr-tags"><span class="fr-tag">FR-1,2,3,4</span><span class="fr-tag">FR-6,7,9,10,11</span><span class="fr-tag">FR-22</span></div>
+                    </div>
+                </div>
+
+                <div class="persona-card p2">
+                    <div class="persona-header">
+                        <span class="avatar">👨</span>
+                        <div class="name-title">
+                            <h4>Somchai</h4>
+                            <div class="sub">Age 40 · Small Business Owner · Daughter 9, Son 5</div>
+                        </div>
+                    </div>
+                    <div class="persona-body">
+                        <div class="goal-badge">🎯 Primary Goal</div>
+                        <div class="goal-statement">"I want to know whether I should see a doctor now, or wait and observe a bit longer."</div>
+                        <div class="pain-points"><strong>Pain points:</strong> Conflicting online info · Doesn't know who to ask · Inconvenient to track two children with paper records</div>
+                        <div class="quote-mini">"I just need a reliable first step before committing time to a doctor's appointment."</div>
+                        <div class="fr-tags"><span class="fr-tag">FR-3,5,6,7,8</span><span class="fr-tag">FR-12,13,14</span><span class="fr-tag">FR-20,21</span></div>
+                    </div>
+                </div>
+
+                <div class="persona-card p3">
+                    <div class="persona-header">
+                        <span class="avatar">👩‍⚕️</span>
+                        <div class="name-title">
+                            <h4>Mol</h4>
+                            <div class="sub">Age 38 · Shift Nurse · Son (age 13)</div>
+                        </div>
+                    </div>
+                    <div class="persona-body">
+                        <div class="goal-badge">🎯 Primary Goal</div>
+                        <div class="goal-statement">"I want concrete bone age data to make the most of limited specialist consultation time."</div>
+                        <div class="pain-points"><strong>Pain points:</strong> Specialist time is short · Concerned about X-ray privacy · Wants credible numbers to discuss</div>
+                        <div class="quote-mini">"If I have credible numbers to discuss with the doctor, I'll feel the limited appointment time was used to its fullest."</div>
+                        <div class="fr-tags"><span class="fr-tag">FR-3,15,16,17,18,19</span><span class="fr-tag">FR-24</span></div>
+                    </div>
+                </div>
+
+                <div class="persona-card p4">
+                    <div class="persona-header">
+                        <span class="avatar">👩‍🏫</span>
+                        <div class="name-title">
+                            <h4>Teacher Oi</h4>
+                            <div class="sub">Age 45 · Elementary/Middle School Teacher</div>
+                        </div>
+                    </div>
+                    <div class="persona-body">
+                        <div class="goal-badge">🎯 Secondary Goal</div>
+                        <div class="goal-statement">"I want to recommend trustworthy resources to parents when I see a student who might need help."</div>
+                        <div class="pain-points"><strong>Role:</strong> Not a direct app user · Sees promotional content · Recommends the app to parents</div>
+                        <div class="quote-mini">"I want to be able to recommend something trustworthy to parents when I see a student who might need help."</div>
+                        <div class="fr-tags"><span class="fr-tag">— Uses promo videos &amp; knowledge content —</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona → Module Map -->
+            <div class="card">
+                <h3>🗺️ Persona → Feature Usage Map</h3>
+                <div class="table-wrap">
+                    <table>
+                        <tr><th>Persona</th><th>Growth Tracking</th><th>Puberty Screening</th><th>Bone Age AI</th><th>Knowledge</th></tr>
+                        <tr><td><b>Nan</b> (young child)</td><td>⭐ Primary</td><td>—</td><td>—</td><td>Occasional</td></tr>
+                        <tr><td><b>Somchai</b> (pre-teen)</td><td>Occasional</td><td>⭐ Primary</td><td>Follow-up</td><td>⭐ Heavy</td></tr>
+                        <tr><td><b>Mol</b> (teenager)</td><td>Occasional</td><td>Occasional</td><td>⭐ Primary</td><td>Prep for doctor</td></tr>
+                        <tr><td><b>Teacher Oi</b> (secondary)</td><td colspan="4" style="text-align:center;">— Uses promo videos &amp; knowledge content to recommend the app —</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Scenarios -->
+            <div class="card">
+                <h3>🎬 Scenarios (A–F) — How Personas Use the App</h3>
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <div class="scenario-title">A — Sign-up + Add Child</div>
+                        <div class="scenario-persona">👩 Nan</div>
+                        <div class="scenario-fr">FR-1,2,3,4</div>
+                        <div class="scenario-desc">Registers account → accepts terms → adds child profile → sees empty dashboard.</div>
+                    </div>
+                    <div class="scenario-card">
+                        <div class="scenario-title">B — Record Growth + View Chart</div>
+                        <div class="scenario-persona">👩 Nan</div>
+                        <div class="scenario-fr">FR-6,7,9,10,11</div>
+                        <div class="scenario-desc">Enters height/weight → sees percentile/SDS + plain-language summary → views trend chart.</div>
+                    </div>
+                    <div class="scenario-card">
+                        <div class="scenario-title">C — Puberty Screening</div>
+                        <div class="scenario-persona">👨 Somchai</div>
+                        <div class="scenario-fr">FR-12,13,14</div>
+                        <div class="scenario-desc">Answers guided questions → gets plain-language result + next-step guidance → checks history.</div>
+                    </div>
+                    <div class="scenario-card">
+                        <div class="scenario-title">D — X-ray Upload + Bone Age</div>
+                        <div class="scenario-persona">👩‍⚕️ Mol</div>
+                        <div class="scenario-fr">FR-15,16,17,18,19</div>
+                        <div class="scenario-desc">Uploads X-ray → validation → progress → result with margin of error + disclaimer.</div>
+                    </div>
+                    <div class="scenario-card">
+                        <div class="scenario-title">E — Multiple Child Profiles</div>
+                        <div class="scenario-persona">👨 Somchai</div>
+                        <div class="scenario-fr">FR-5,6,7,8</div>
+                        <div class="scenario-desc">Switches between daughter and son profiles → enters growth data for son → each has separate data.</div>
+                    </div>
+                    <div class="scenario-card">
+                        <div class="scenario-title">F — Knowledge / Read More</div>
+                        <div class="scenario-persona">👨 Somchai</div>
+                        <div class="scenario-fr">FR-20,21</div>
+                        <div class="scenario-desc">Taps "Read more" → browses/search topics → reads plain-language article.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note info">
+                <b>💡 How this helps:</b> Each persona has a clear, readable goal statement. The feature usage map shows which app functions each persona cares about most, guiding UX/UI prioritization.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 3. DESIGN (UX/UI) -->
+        <!-- ============================================================ -->
+        <section class="panel" id="design">
+            <h2>3. Design — UX &amp; UI (Deliverable D1)</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Lead: <span class="person-chip">Yok</span> · Support: <span class="person-chip">Cell</span><span class="person-chip">Four</span><span class="person-chip">Pow</span><span class="person-chip">Guts</span></p>
+
+            <!-- ===== 3.1 UX ===== -->
+            <div class="card" style="border-left:4px solid var(--ux);">
+                <h3 style="color:var(--ux);">3.1 UX — Information Architecture &amp; Sitemap</h3>
+                <p style="font-size:0.85rem;color:var(--muted);">Translating persona needs into a clear, logical site structure that's easy for users to navigate.</p>
+
+                <!-- UX Insight Box -->
+                <div style="background:var(--card-alt);border-radius:8px;padding:12px 16px;margin:10px 0;border-left:3px solid var(--accent);">
+                    <div style="font-weight:600;font-size:0.8rem;color:var(--accent);">🧠 UX Insight from Personas</div>
+                    <div style="font-size:0.82rem;color:var(--text);margin-top:4px;">
+                        <b>Nan</b> needs quick access to growth charts without confusion → <em>Dashboard with visual growth summary</em><br>
+                        <b>Somchai</b> needs guided screening and clear next-step advice → <em>Structured questionnaire flow with plain-language results</em><br>
+                        <b>Mol</b> needs a secure, straightforward X-ray upload with credible results → <em>Simple upload with progress + clear disclaimer</em>
+                    </div>
+                </div>
+
+                <!-- ===== SITEMAP — FIXED HIERARCHY ===== -->
+                <div style="font-weight:600;font-size:0.85rem;color:var(--text);margin:12px 0 8px;">📍 Sitemap — User Navigation Flow (TOR-aligned)</div>
+                <div class="sitemap-wrapper">
+                    <!-- Level 1: Auth -->
+                    <div class="sitemap-row">
+                        <div class="sm-node auth">🔐 Sign up / Login <span class="sm-badge">FR-1,2,3</span></div>
+                    </div>
+                    <div class="sitemap-arrow">⬇</div>
+                    <!-- Level 2: Dashboard -->
+                    <div class="sitemap-row">
+                        <div class="sm-node dash">🏠 Dashboard <span class="sm-badge">FR-4,5 · Child list · Quick stats</span></div>
+                    </div>
+                    <div class="sitemap-arrow">⬇</div>
+                    <!-- Level 3: Five Core Modules -->
+                    <div class="sitemap-row">
+                        <div class="sm-node feature">👤 Profile <span class="sm-badge">FR-4,5 · Add / Edit / Switch</span></div>
+                        <div class="sm-node feature">📊 Growth <span class="sm-badge">FR-6–11 · Entry · Charts · History</span></div>
+                        <div class="sm-node screen">🔍 Screening <span class="sm-badge">FR-12–14 · Q&A · Result · History</span></div>
+                        <div class="sm-node ai-node">🦴 Bone Age <span class="sm-badge">FR-15–19 · Upload · Result · History</span></div>
+                        <div class="sm-node know">📚 Knowledge <span class="sm-badge">FR-20–21 · Articles · Search</span></div>
+                    </div>
+                    <div class="sitemap-label">All pages are responsive — mobile-first design · FR-22</div>
+                </div>
+
+                <div style="margin-top:12px;font-size:0.8rem;color:var(--muted);">
+                    <b>📌 Key UX Decisions:</b>
+                    <ul style="margin:4px 0;padding-left:18px;">
+                        <li>Dashboard shows the active child's recent growth at a glance — reduces clicks for Nan</li>
+                        <li>Screening flow is step-by-step with progress indicator — reduces anxiety for Somchai</li>
+                        <li>Bone age upload has clear validation and progress feedback — builds trust for Mol</li>
+                        <li>All results use plain language by default (FR-23) with a "Show technical details" toggle</li>
+                        <li>Profile, Growth, Screening, Bone Age, and Knowledge are all first-class modules accessible from the dashboard</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ===== 3.2 UI ===== -->
+            <div class="card" style="border-left:4px solid var(--fe);">
+                <h3 style="color:var(--fe);">3.2 UI — Visual Design System &amp; Screen Showcase</h3>
+                <p style="font-size:0.85rem;color:var(--muted);">Our design language — consistent, trustworthy, and parent-friendly.</p>
+
+                <!-- Design System -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:10px 0;">
+                    <div style="background:var(--card-alt);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+                        <div style="font-weight:600;font-size:0.78rem;color:var(--text);">🎨 Color Palette</div>
+                        <div class="ds-swatches">
+                            <div class="swatch"><div class="color" style="background:#3fb6dd;"></div><div class="name">Primary</div></div>
+                            <div class="swatch"><div class="color" style="background:#12475a;"></div><div class="name">Dark</div></div>
+                            <div class="swatch"><div class="color" style="background:#f2b84b;"></div><div class="name">Accent</div></div>
+                            <div class="swatch"><div class="color" style="background:#0f1417;border-color:#555;"></div><div class="name">Bg</div></div>
+                            <div class="swatch"><div class="color" style="background:#e7eef1;border-color:#555;"></div><div class="name">Text</div></div>
+                        </div>
+                    </div>
+                    <div style="background:var(--card-alt);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+                        <div style="font-weight:600;font-size:0.78rem;color:var(--text);">🔤 Typography</div>
+                        <div style="font-size:1.2rem;font-weight:700;color:var(--text);">Segoe UI</div>
+                        <div style="font-size:0.85rem;color:var(--muted);">Headings: 700 · Body: 400 · Small: 0.75rem</div>
+                        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">System sans-serif fallback · Readable on all devices</div>
+                    </div>
+                    <div style="background:var(--card-alt);border-radius:8px;padding:12px 14px;border:1px solid var(--border);">
+                        <div style="font-weight:600;font-size:0.78rem;color:var(--text);">📐 Spacing &amp; Grid</div>
+                        <div style="font-size:0.8rem;color:var(--muted);">8px grid system</div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;">
+                            <span style="background:var(--border);padding:2px 8px;border-radius:4px;font-size:0.6rem;">4px</span>
+                            <span style="background:var(--border);padding:2px 8px;border-radius:4px;font-size:0.6rem;">8px</span>
+                            <span style="background:var(--border);padding:2px 8px;border-radius:4px;font-size:0.6rem;">16px</span>
+                            <span style="background:var(--border);padding:2px 8px;border-radius:4px;font-size:0.6rem;">24px</span>
+                            <span style="background:var(--border);padding:2px 8px;border-radius:4px;font-size:0.6rem;">32px</span>
+                        </div>
+                        <div style="font-size:0.7rem;color:var(--muted);">Card padding: 16-18px · Consistent margins</div>
+                    </div>
+                </div>
+
+                <!-- Screen Showcase -->
+                <div style="font-weight:600;font-size:0.85rem;color:var(--text);margin:14px 0 8px;">🖼️ Key Screens — Visual Showcase</div>
+                <div class="ui-infographic">
+                    <div class="ui-card color-ux">
+                        <span class="ui-icon">🏠</span>
+                        <div class="ui-label">Dashboard</div>
+                        <div class="ui-desc">Child list · Quick stats · Active child</div>
+                        <span class="ui-badge">FR-4,5</span>
+                    </div>
+                    <div class="ui-card color-be">
+                        <span class="ui-icon">👤</span>
+                        <div class="ui-label">Profile</div>
+                        <div class="ui-desc">Add/edit child · Switch profiles</div>
+                        <span class="ui-badge">FR-4,5,24</span>
+                    </div>
+                    <div class="ui-card color-fe">
+                        <span class="ui-icon">📈</span>
+                        <div class="ui-label">Growth Charts</div>
+                        <div class="ui-desc">Percentile curves · SDS · BMI-for-age</div>
+                        <span class="ui-badge">FR-7,8,9</span>
+                    </div>
+                    <div class="ui-card color-accent">
+                        <span class="ui-icon">📋</span>
+                        <div class="ui-label">Screening</div>
+                        <div class="ui-desc">Guided Q&A · Plain result · History</div>
+                        <span class="ui-badge">FR-12,13,14</span>
+                    </div>
+                    <div class="ui-card color-ai">
+                        <span class="ui-icon">🦴</span>
+                        <div class="ui-label">Bone Age Upload</div>
+                        <div class="ui-desc">Drag &amp; drop · Progress · Result</div>
+                        <span class="ui-badge">FR-15,16,17</span>
+                    </div>
+                    <div class="ui-card color-vid">
+                        <span class="ui-icon">📚</span>
+                        <div class="ui-label">Knowledge Hub</div>
+                        <div class="ui-desc">Articles · Search · Categories</div>
+                        <span class="ui-badge">FR-20,21</span>
+                    </div>
+                </div>
+
+                <!-- Responsive & Accessibility -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px;">
+                    <div style="background:var(--card-alt);border-radius:6px;padding:10px 12px;border:1px solid var(--border);text-align:center;">
+                        <div style="font-size:1.2rem;">📱</div>
+                        <div style="font-weight:600;font-size:0.78rem;">Mobile-first</div>
+                        <div style="font-size:0.65rem;color:var(--muted);">Stacked layout · Bottom nav</div>
+                    </div>
+                    <div style="background:var(--card-alt);border-radius:6px;padding:10px 12px;border:1px solid var(--border);text-align:center;">
+                        <div style="font-size:1.2rem;">🖥️</div>
+                        <div style="font-weight:600;font-size:0.78rem;">Desktop</div>
+                        <div style="font-size:0.65rem;color:var(--muted);">Side nav · Multi-column grid</div>
+                    </div>
+                    <div style="background:var(--card-alt);border-radius:6px;padding:10px 12px;border:1px solid var(--border);text-align:center;">
+                        <div style="font-size:1.2rem;">♿</div>
+                        <div style="font-weight:600;font-size:0.78rem;">Accessibility</div>
+                        <div style="font-size:0.65rem;color:var(--muted);">WCAG AA · High contrast</div>
+                    </div>
+                    <div style="background:var(--card-alt);border-radius:6px;padding:10px 12px;border:1px solid var(--border);text-align:center;">
+                        <div style="font-size:1.2rem;">🌙</div>
+                        <div style="font-weight:600;font-size:0.78rem;">Dark Mode</div>
+                        <div style="font-size:0.65rem;color:var(--muted);">Default · Reduced eye strain</div>
+                    </div>
+                </div>
+
+                <div class="note info" style="margin-top:12px;">
+                    <b>📌 Milestone M1:</b> UX/UI Design Review — scheduled ~Jul 24 (Week 4). All wireframes, hi-fi mockups, and prototype must be ready for client sign-off before Frontend begins.
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 4. FRONTEND -->
+        <!-- ============================================================ -->
+        <section class="panel" id="frontend">
+            <h2>4. Frontend Development (Deliverable D2)</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Lead: <span class="person-chip">Pow</span><span class="person-chip">Yuyu</span></p>
+
+            <div class="grid cols-2">
+                <div class="card">
+                    <h3>🛠️ Tech Stack</h3>
+                    <ul>
+                        <li><b>Framework:</b> React (Vite)</li>
+                        <li><b>Styling:</b> TailwindCSS or CSS Modules</li>
+                        <li><b>Charts:</b> Chart.js + react-chartjs-2 / Recharts</li>
+                        <li><b>HTTP:</b> fetch / axios</li>
+                        <li><b>State:</b> React Context + useReducer / Zustand</li>
+                        <li><b>Hosting:</b> Vercel (auto-deploy from GitHub)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📁 Component Structure</h3>
+                    <pre style="background:var(--card-alt);padding:10px;border-radius:6px;font-size:0.75rem;color:var(--muted);overflow-x:auto;">
+                        src/
+                        ├── components/
+                        │   ├── Auth/         LoginForm, RegisterForm
+                        │   ├── ChildProfile/ ProfileList, ProfileForm
+                        │   ├── Growth/       EntryForm, Chart, History, Guidance
+                        │   ├── Screening/    Questionnaire, Result, History
+                        │   ├── BoneAge/      UploadForm, Result, History
+                        │   └── Knowledge/    ArticleList, ArticleDetail
+                        ├── pages/
+                        │   ├── LoginPage, DashboardPage
+                        │   ├── ProfilePage, GrowthPage
+                        │   ├── ScreeningPage, BoneAgePage
+                        │   └── KnowledgePage
+                        └── App.jsx
+                    </pre>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✅ Frontend Responsibilities (FRs)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <tr><th>FR</th><th>Requirement</th><th>Component</th></tr>
+                        <tr><td>FR-1</td><td>User registration</td><td>RegisterForm</td></tr>
+                        <tr><td>FR-3</td><td>Login / Logout</td><td>LoginForm, Nav</td></tr>
+                        <tr><td>FR-4,5</td><td>Child profile CRUD + switch</td><td>ProfileList, ProfileForm</td></tr>
+                        <tr><td>FR-6</td><td>Growth entry form</td><td>GrowthEntryForm</td></tr>
+                        <tr><td>FR-7,8</td><td>Percentile/SDS + BMI display</td><td>GrowthChart, ResultCard</td></tr>
+                        <tr><td>FR-9</td><td>Line charts vs percentile curves</td><td>GrowthChart</td></tr>
+                        <tr><td>FR-10</td><td>Plain-language guidance</td><td>GuidanceMessage</td></tr>
+                        <tr><td>FR-11</td><td>Growth history list</td><td>GrowthHistoryList</td></tr>
+                        <tr><td>FR-12</td><td>Screening questionnaire</td><td>PubertyQuestionnaire</td></tr>
+                        <tr><td>FR-13</td><td>Screening result (plain language)</td><td>ScreeningResult</td></tr>
+                        <tr><td>FR-14</td><td>Screening history</td><td>ScreeningHistoryList</td></tr>
+                        <tr><td>FR-15,16</td><td>X-ray upload + validation</td><td>XrayUploadForm</td></tr>
+                        <tr><td>FR-17,18</td><td>Bone age result + disclaimer</td><td>BoneAgeResult</td></tr>
+                        <tr><td>FR-19</td><td>Bone age history</td><td>BoneAgeHistoryList</td></tr>
+                        <tr><td>FR-20,21</td><td>Knowledge articles + search</td><td>ArticleList, ArticleDetail</td></tr>
+                        <tr><td>FR-22</td><td>Responsive design</td><td>All components</td></tr>
+                        <tr><td>FR-23</td><td>Plain language + detail toggle</td><td>ResultCard (toggle)</td></tr>
+                        <tr><td>FR-24</td><td>Account-scoped access</td><td>API integration</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="note info">
+                <b>📌 Milestone M2 (Beta 1):</b> ~Aug 14 (Week 7) — initial working build with core data flows (auth, growth entry, screening).<br>
+                <b>📌 Milestone M5 (Beta 2):</b> ~Sep 12 (Week 11) — feature-complete with all FRs implemented.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 5. BACKEND -->
+        <!-- ============================================================ -->
+        <section class="panel" id="backend">
+            <h2>5. Backend Development (Deliverable D3)</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Lead: <span class="person-chip">Captan</span><span class="person-chip">Guts</span></p>
+
+            <div class="grid cols-2">
+                <div class="card">
+                    <h3>🛠️ Tech Stack</h3>
+                    <ul>
+                        <li><b>Framework:</b> FastAPI (Python) or Express (Node.js)</li>
+                        <li><b>Database:</b> PostgreSQL (Neon / Supabase / Railway)</li>
+                        <li><b>Auth:</b> JWT + bcrypt (password hashing)</li>
+                        <li><b>File Storage:</b> Supabase Storage / AWS S3 (or local disk for dev)</li>
+                        <li><b>Hosting:</b> Render / Railway / Vercel (serverless)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 Database Schema</h3>
+                    <ul>
+                        <li><b>users:</b> id, full_name, email, password_hash, phone, terms_accepted, created_at</li>
+                        <li><b>children:</b> id, user_id (FK), name, sex, dob, relationship</li>
+                        <li><b>growth_records:</b> id, child_id (FK), date, height_cm, weight_kg, percentile, sds, bmi, guidance</li>
+                        <li><b>puberty_screenings:</b> id, child_id (FK), date, responses (JSON), result_summary, action</li>
+                        <li><b>bone_age_predictions:</b> id, child_id (FK), date, image_path, predicted_months, margin_error, model_version</li>
+                        <li><b>articles:</b> id, title, topic, content, attribution</li>
+                        <li><b>growth_reference:</b> sex, age_months, L, M, S (for LMS method)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔐 API Endpoints (REST)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+                        <tr><td>POST</td><td>/api/auth/register</td><td>Create account</td><td>—</td></tr>
+                        <tr><td>POST</td><td>/api/auth/login</td><td>Login → JWT</td><td>—</td></tr>
+                        <tr><td>POST</td><td>/api/auth/logout</td><td>Logout</td><td>✅</td></tr>
+                        <tr><td>GET</td><td>/api/children</td><td>List all children for user</td><td>✅</td></tr>
+                        <tr><td>POST</td><td>/api/children</td><td>Add child profile</td><td>✅</td></tr>
+                        <tr><td>PUT</td><td>/api/children/{id}</td><td>Update child</td><td>✅</td></tr>
+                        <tr><td>POST</td><td>/api/growth</td><td>Add growth entry</td><td>✅</td></tr>
+                        <tr><td>GET</td><td>/api/growth/{child_id}</td><td>Get growth history</td><td>✅</td></tr>
+                        <tr><td>POST</td><td>/api/screening</td><td>Submit screening answers</td><td>✅</td></tr>
+                        <tr><td>GET</td><td>/api/screening/{child_id}</td><td>Get screening history</td><td>✅</td></tr>
+                        <tr><td>POST</td><td>/api/boneage/predict</td><td>Upload X-ray → predict</td><td>✅</td></tr>
+                        <tr><td>GET</td><td>/api/boneage/{child_id}</td><td>Get bone age history</td><td>✅</td></tr>
+                        <tr><td>GET</td><td>/api/articles</td><td>List articles (search/filter)</td><td>—</td></tr>
+                        <tr><td>GET</td><td>/api/articles/{id}</td><td>Get article detail</td><td>—</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔒 Security &amp; Privacy (PDPA-aligned)</h3>
+                <ul>
+                    <li><b>Data Minimization:</b> Only collect what's needed (name, email, child data)</li>
+                    <li><b>Password Hashing:</b> bcrypt (never store plain text)</li>
+                    <li><b>JWT Sessions:</b> Short-lived tokens with refresh</li>
+                    <li><b>Account Scoping:</b> All child_id queries filtered by user_id (FR-24)</li>
+                    <li><b>X-ray Storage:</b> Encrypted at rest, accessible only to owner</li>
+                    <li><b>Privacy Notice:</b> Shown before registration (FR-2)</li>
+                    <li><b>Data Deletion:</b> Document what to delete on user request</li>
+                </ul>
+            </div>
+
+            <div class="note info">
+                <b>📌 Milestone M3 (AI Model Review):</b> ~Aug 23 (Week 8) — review MAE results and integrated prediction flow.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 6. AI MODEL -->
+        <!-- ============================================================ -->
+        <section class="panel" id="ai">
+            <h2>6. AI Bone Age Prediction Model (Deliverable D4)</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Lead: <span class="person-chip">Captan</span><span class="person-chip">Guts</span></p>
+
+            <div class="grid cols-2">
+                <div class="card">
+                    <h3>🧠 Model Architecture</h3>
+                    <ul>
+                        <li><b>Backbone:</b> EfficientNet-B0 (pretrained on ImageNet)</li>
+                        <li><b>Input:</b> 224×224×3 (hand/wrist X-ray)</li>
+                        <li><b>Auxiliary Input:</b> Sex (0/1) — concatenated after GAP</li>
+                        <li><b>Regression Head:</b> 1280+1 → 256 → 128 → 1 (bone age in months)</li>
+                        <li><b>Framework:</b> PyTorch</li>
+                        <li><b>Transfer Learning:</b> Fine-tune last layers</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>📊 Dataset: RSNA Pediatric Bone Age</h3>
+                    <ul>
+                        <li><b>Training:</b> 12,611 images</li>
+                        <li><b>Validation:</b> 1,425 images</li>
+                        <li><b>Labels:</b> Bone age (months) + sex</li>
+                        <li><b>Age Range:</b> 1 – 228 months (~0–19 years)</li>
+                        <li><b>Mean Age:</b> ~127 months (~10y 7m)</li>
+                        <li><b>Sex Balance:</b> Slight male majority (~1,000 more)</li>
+                        <li><b>Image Sizes:</b> Varying → resized to 224×224</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Performance &amp; Evaluation</h3>
+                <div class="grid cols-3">
+                    <div><b>Primary Metric:</b> MAE (Mean Absolute Error) in months</div>
+                    <div><b>Target:</b> ≤ 8–10 months (comparable to RSNA challenge)</div>
+                    <div><b>Secondary:</b> MSE, R², accuracy within ±12 months</div>
+                </div>
+                <p style="margin-top:10px;"><b>Preprocessing:</b> Resize 224×224, normalize with ImageNet mean/std, augment (rotation, flip, contrast).</p>
+                <p><b>Inference:</b> model.eval() + torch.no_grad() → returns predicted months + confidence.</p>
+            </div>
+
+            <div class="card">
+                <h3>🔗 Integration with Backend</h3>
+                <div style="background:var(--card-alt);border-radius:10px;padding:16px 20px;border:1px solid var(--border);">
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">1. Upload</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Frontend sends multipart/form-data with image + child_id</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">2. Validate</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Backend checks file type (JPEG/PNG) + size (≤10MB)</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">3. Store</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Save image to object storage with unique key</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">4. Predict</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Backend calls AI service → model predicts</span>
+                        <span style="background:var(--card);border:1px solid var(--ai);border-radius:6px;padding:4px 12px;font-size:0.78rem;">PyTorch</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">5. Save</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Store prediction in DB with child_id, image_path, result, margin</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+                        <span style="font-weight:600;min-width:100px;color:var(--primary);">6. Respond</span>
+                        <span style="color:var(--muted);font-size:0.85rem;">Return JSON with bone age, margin, disclaimer, confidence</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚠️ Model Limitations (Must be shown to user)</h3>
+                <ul>
+                    <li>This is a <b>screening aid</b>, not a clinical diagnosis (FR-18)</li>
+                    <li>Margin of error: typically ±6–10 months</li>
+                    <li>Performance may vary by age group and sex</li>
+                    <li>Image quality affects accuracy (blurry/rotated X-rays may reduce confidence)</li>
+                    <li>Always consult a physician for clinical decisions</li>
+                </ul>
+            </div>
+
+            <div class="note info">
+                <b>📌 Milestone M3:</b> AI Model Review — ~Aug 23 (Week 8). Present MAE results and demonstrate the integrated prediction flow from upload to result.
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 7. DELIVERABLES -->
+        <!-- ============================================================ -->
+        <section class="panel" id="deliverables">
+            <h2>7. All Deliverables — D1 to D11</h2>
+            <p>Referenced from TOR §5 and Annex B, with primary owners assigned.</p>
+            <div class="table-wrap">
+                <table>
+                    <tr><th>No.</th><th>Deliverable</th><th>Description</th><th>Primary Owner(s)</th><th>Status</th></tr>
+                    <tr><td>D1</td><td>UX/UI Design Package</td><td>Figma file, hi-fi screens, prototype, design system</td>
+                        <td><span class="person-chip">Yok</span><span class="person-chip">Cell</span><span class="person-chip">Four</span><span class="person-chip">Pow</span><span class="person-chip">Guts</span></td>
+                        <td><select class="status"><option>Not Started</option><option selected>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D2</td><td>Web Application (Front-End)</td><td>Deployed React app + source code</td>
+                        <td><span class="person-chip">Pow</span><span class="person-chip">Yuyu</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D3</td><td>Backend, API, Database</td><td>Deployed backend, API spec, DB schema</td>
+                        <td><span class="person-chip">Captan</span><span class="person-chip">Guts</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D4</td><td>AI Bone Age Model</td><td>Trained model, eval report (MAE), inference service</td>
+                        <td><span class="person-chip">Captan</span><span class="person-chip">Guts</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D5</td><td>Doctor Interview Video</td><td>Final edited video + subtitles</td>
+                        <td><span class="person-chip">Orange</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D6</td><td>2D Motion Graphic Video</td><td>Animated narrative + script + storyboard</td>
+                        <td><span class="person-chip">Nene</span><span class="person-chip">Mo</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D7</td><td>Application Promo Video</td><td>General-purpose promotional video</td>
+                        <td><span class="person-chip">Orange</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D8</td><td>Application Demo Video</td><td>Step-by-step walkthrough</td>
+                        <td><span class="person-chip">Orange</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D9</td><td>Short-Form Video Clips</td><td>Vertical/square clips for social media</td>
+                        <td><span class="person-chip">Nene</span><span class="person-chip">Mo</span></td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D10</td><td>Project Documentation Set</td><td>System overview, user manual, final report</td>
+                        <td><span class="person-chip">Mon</span> (+team)</td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                    <tr><td>D11</td><td>Source Files &amp; Handover</td><td>Figma, video project files, model code, app source</td>
+                        <td><span class="person-chip">Mon</span> (+all)</td>
+                        <td><select class="status"><option selected>Not Started</option><option>In Progress</option><option>Submitted</option><option>Approved</option></select></td></tr>
+                </table>
+            </div>
+            <p style="font-size:0.8rem;color:var(--muted);">* Status selections are display-only for this session.</p>
+
+            <div class="card">
+                <h3>✅ Acceptance Criteria Summary (TOR §12)</h3>
+                <div class="grid cols-3">
+                    <div><h4>Application</h4><ul><li>All FRs (1–24) implemented</li><li>Matches Figma design</li><li>AI model integrated end-to-end</li><li>Works on ≥2 browsers + mobile</li></ul></div>
+                    <div><h4>Video Campaign</h4><ul><li>All 5 types completed</li><li>Matches approved script/storyboard</li><li>Content accurate and sensitive</li></ul></div>
+                    <div><h4>Documentation</h4><ul><li>D10/D11 complete and usable</li><li>MAE clearly documented</li></ul></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================ -->
+        <!-- 8. TIMELINE & MILESTONES -->
+        <!-- ============================================================ -->
+        <section class="panel" id="timeline">
+            <h2>8. Timeline &amp; Milestones</h2>
+            <p style="font-size:0.82rem;color:var(--muted);">📌 Countdown from Launch: Nov 2 — Internal Full-System Test must be complete by Sep 19.</p>
+
+            <div class="card">
+                <h3>📅 Gantt Chart Overview</h3>
+                <div class="legend">
+                    <span><i style="background:var(--ux);"></i>UX/UI</span>
+                    <span><i style="background:var(--fe);"></i>Front-End</span>
+                    <span><i style="background:var(--be);"></i>Back-End/AI</span>
+                    <span><i style="background:var(--vid);"></i>Video/Motion</span>
+                    <span><i style="background:#2a343b;"></i>No work</span>
+                    <span>🚩 Milestone</span>
+                    <span style="outline:3px solid var(--danger);outline-offset:-2px;padding:0 4px;">Test Week</span>
+                </div>
+                <div class="gantt-wrap" id="ganttContainer"></div>
+            </div>
+
+            <h3>🚩 Milestone Timeline</h3>
+            <div class="timeline">
+                <div class="t-item">
+                    <div class="t-date">~Jul 24 (Week 4)</div>
+                    <h4>M1 — UX/UI Design Review</h4>
+                    <p>Review wireframes + hi-fi design + prototype (Cell, Four, Pow, Guts, Yok)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">~Jul 26 (Week 4)</div>
+                    <h4>M4 — Script/Storyboard Review</h4>
+                    <p>Approve script/storyboard for all 5 video types (Orange, Nene, Mo)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">~Aug 14 (Week 7)</div>
+                    <h4>M2 — Application Beta 1 Review</h4>
+                    <p>Initial working build (Pow, Yuyu, Captan, Guts)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">~Aug 23 (Week 8)</div>
+                    <h4>M3 — AI Model Review</h4>
+                    <p>Review MAE results and integrated prediction flow (Captan, Guts)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">~Sep 12 (Week 11)</div>
+                    <h4>M5 — Application Beta 2 (Feature-complete)</h4>
+                    <p>All features complete with UAT (Cell leads Test Case)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">~Sep 12 (Week 11)</div>
+                    <h4>M6 — Video Rough-Cut Review</h4>
+                    <p>Rough-cut of all video files (Orange, Nene, Mo)</p>
+                </div>
+                <div class="t-item key">
+                    <div class="t-date">⭐ Sep 19 (Week 12)</div>
+                    <h4>Internal Full-System Test Complete (PM Deadline)</h4>
+                    <p>All teams test the system together, led by Cell &amp; Mon (Test Case)</p>
+                </div>
+                <div class="t-item">
+                    <div class="t-date">Week 18 (Oct 26–Nov 1)</div>
+                    <h4>M7 — Final Acceptance Review</h4>
+                    <p>Final review of all deliverables + Annex B sign-off</p>
+                </div>
+                <div class="t-item launch">
+                    <div class="t-date">🚀 Nov 2</div>
+                    <h4>LAUNCH</h4>
+                    <p>GrowTH launches publicly with the complete video campaign</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📋 Weekly Table (Summary)</h3>
+                <div class="table-wrap">
+                    <table>
+                        <tr><th>Week</th><th>Dates</th><th>UX/UI</th><th>Front-End</th><th>Back-End/AI</th><th>Video/Motion</th><th>Milestone</th></tr>
+                        <tr><td>1</td><td>Jul 1–5</td><td>Research, personas</td><td>Setup, await design</td><td>Confirm stack, load RSNA</td><td>Script drafts, casting</td><td>Kickoff</td></tr>
+                        <tr><td>2</td><td>Jul 6–12</td><td>Sitemap, low-fi</td><td>Await design</td><td>Schema, preprocessing</td><td>Revise script</td><td>—</td></tr>
+                        <tr><td>3</td><td>Jul 13–19</td><td>Mockup (Stitch)</td><td>Await design</td><td>Auth module, training start</td><td>Script review</td><td>—</td></tr>
+                        <tr><td>4</td><td>Jul 20–26</td><td>Figma UI complete</td><td>Start components</td><td>Auth + core API</td><td>Storyboard revision</td><td><b>M1, M4</b></td></tr>
+                        <tr><td>5</td><td>Jul 27–Aug 2</td><td>Handoff package</td><td>Account/Profile screens</td><td>Growth calc logic</td><td>Begin filming</td><td>—</td></tr>
+                        <tr><td>6</td><td>Aug 3–9</td><td>Support FE</td><td>Growth entry + chart</td><td>Screening compile</td><td>Filming doctor</td><td>—</td></tr>
+                        <tr><td>7</td><td>Aug 10–16</td><td>—</td><td>Screening UI</td><td>Connect AI endpoint</td><td>Editing doctor</td><td><b>M2</b></td></tr>
+                        <tr><td>8</td><td>Aug 17–23</td><td>—</td><td>Bone-age upload UI</td><td>Integration + evaluation</td><td>2D animation starts</td><td><b>M3</b></td></tr>
+                        <tr><td>9</td><td>Aug 24–30</td><td>—</td><td>Knowledge + responsive</td><td>Deploy backend</td><td>Animation continues</td><td>—</td></tr>
+                        <tr><td>10</td><td>Aug 31–Sep 6</td><td>—</td><td>Integration testing</td><td>Bug fixing round 1</td><td>Editing promo</td><td>—</td></tr>
+                        <tr><td>11</td><td>Sep 7–13</td><td>—</td><td>Feature-complete polish</td><td>Final model check</td><td>Rough-cuts complete</td><td><b>M5, M6</b></td></tr>
+                        <tr style="background:#2c1414;border-color:var(--danger);"><td><b>12</b></td><td><b>Sep 14–19</b></td><td>—</td><td><b>Full system test</b></td><td><b>Full system test</b></td><td><b>Rough-cut review</b></td><td>⭐ <b>Test Complete</b></td></tr>
+                        <tr><td>13</td><td>Sep 21–27</td><td>Revision (if any)</td><td>Bug fix round 1</td><td>Bug fix round 1</td><td>Video revision 1</td><td>—</td></tr>
+                        <tr><td>14</td><td>Sep 28–Oct 4</td><td>—</td><td>Bug fix cont.</td><td>Bug fix cont.</td><td>Final editing</td><td>—</td></tr>
+                        <tr><td>15</td><td>Oct 5–11</td><td>Revision 2 (if any)</td><td>Bug fix round 2</td><td>Bug fix round 2</td><td>Revision 2</td><td>D10/D11 begin</td></tr>
+                        <tr><td>16</td><td>Oct 12–18</td><td>—</td><td>Final QA cross-browser</td><td>Final QA</td><td>Final export</td><td>D10/D11 cont.</td></tr>
+                        <tr><td>17</td><td>Oct 19–25</td><td>—</td><td>Freeze + polish</td><td>Freeze</td><td>Freeze</td><td>Prep Final Acceptance</td></tr>
+                        <tr><td>18</td><td>Oct 26–Nov 1</td><td>—</td><td>Demo/handover prep</td><td>Demo/handover prep</td><td>Demo/handover prep</td><td><b>M7 Final Acceptance</b></td></tr>
+                        <tr style="background:var(--primary-dark);"><td>—</td><td><b>Nov 2</b></td><td colspan="4" style="text-align:center;">🚀 <b>LAUNCH</b></td><td>🚀 <b>LAUNCH</b></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="note success">
+                <b>✅ Buffer Strategy:</b> The Sep 19 internal test deadline gives ~6 weeks of buffer for bug fixes, QA, and final polishing before the Nov 2 launch — allowing for 2 full revision rounds per deliverable.
+            </div>
+        </section>
+
+    </main>
+
+    <footer>GrowTH PM Dashboard (TOR-aligned) — Prepared for internal project management | Referenced from TOR: Development of the "GrowTH" Web Application</footer>
+
+    <script>
+        (function() {
+            "use strict";
+
+            /* ===== SINGLE SOURCE OF TRUTH: Role Assignments ===== */
+            const roleAssignments = [
+                { role: "Project Manager (PM)", people: ["Mon"], deliverable: "D10 Overview, Meeting/Risk log", tag: "pm" },
+                { role: "UX Research (Persona & Scenario)", people: ["Cell", "Four"], deliverable: "D1 — persona/scenario",
+                    tag: "ux" },
+                { role: "UX (Sitemap, Low-fi Wireframe)", people: ["Pow", "Guts"], deliverable: "D1 — sitemap/wireframe",
+                    tag: "ux" },
+                { role: "Mockup (Google Stitch)", people: ["Guts"], deliverable: "D1 — mockup draft", tag: "ux" },
+                { role: "UI Design (Figma)", people: ["Yok"], deliverable: "D1 — hi-fi UI, design system", tag: "ux" },
+                { role: "Front-End Developer", people: ["Pow", "Yuyu"], deliverable: "D2 — Web Application", tag: "fe" },
+                { role: "QA / Test Case", people: ["Cell", "Mon"], deliverable: "Test plan, test case, bug report",
+                    tag: "qa" },
+                { role: "Back-End & ML Engineer", people: ["Captan", "Guts"], deliverable: "D3 Backend/API/DB + D4 AI Model",
+                    tag: "be" },
+                { role: "Video Producer & Editor", people: ["Orange"], deliverable: "D5, D7, D8 — core videos",
+                    tag: "vid" },
+                { role: "Motion Designer/Animator", people: ["Nene", "Mo"], deliverable: "D6, D9 — motion & short-form",
+                    tag: "vid" },
+                { role: "Support Team (assists any department)", people: ["Four", "Yok", "Cell", "Mo", "Nene"],
+                    deliverable: "Support during heavy workload", tag: "support" }
+            ];
+
+            const workloadMap = {};
+            roleAssignments.forEach(r => {
+                r.people.forEach(p => {
+                    if (!workloadMap[p]) workloadMap[p] = [];
+                    workloadMap[p].push(r.role.replace(/&amp;/g, '&'));
+                });
+            });
+            const sortedPeople = Object.keys(workloadMap).sort((a, b) => workloadMap[b].length - workloadMap[a].length);
+
+            const teamCountEl = document.getElementById('teamCount');
+            const teamChipsEl = document.getElementById('teamChips');
+            if (teamCountEl && teamChipsEl) {
+                teamCountEl.textContent = sortedPeople.length;
+                teamChipsEl.innerHTML = sortedPeople.map(p => `<span class="chip">${p}</span>`).join('');
+            }
+
+            /* ===== Tab Navigation ===== */
+            const navButtons = document.querySelectorAll('#tabNav button');
+            const panels = document.querySelectorAll('.panel');
+
+            function activateTab(tabId) {
+                panels.forEach(p => p.classList.toggle('active', p.id === tabId));
+                navButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+            }
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+            });
+
+            /* ===== Print ===== */
+            document.getElementById('printBtn').addEventListener('click', function() {
+                panels.forEach(p => p.classList.add('active'));
+                window.print();
+                setTimeout(() => {
+                    const activeBtn = document.querySelector('#tabNav button.active') || navButtons[0];
+                    if (activeBtn) activateTab(activeBtn.dataset.tab);
+                }, 300);
+            });
+
+            /* ===== Gantt Chart ===== */
+            const weeks = [
+                "Jul 1-5", "Jul 6-12", "Jul 13-19", "Jul 20-26", "Jul 27-Aug 2", "Aug 3-9", "Aug 10-16", "Aug 17-23",
+                "Aug 24-30", "Aug 31-Sep 6", "Sep 7-13", "Sep 14-19", "Sep 21-27", "Sep 28-Oct 4", "Oct 5-11",
+                "Oct 12-18", "Oct 19-25", "Oct 26-Nov 1"
+            ];
+
+            const departments = [
+                { name: "UX/UI", color: "var(--ux)", active: [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0] },
+                { name: "Front-End", color: "var(--fe)", active: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] },
+                { name: "Back-End/AI", color: "var(--be)", active: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1] },
+                { name: "Video/Motion", color: "var(--vid)", active: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] }
+            ];
+
+            const milestones = [
+                { w: 3, label: "M1 Design Review (~Jul 24)" },
+                { w: 3, label: "M4 Script/Storyboard (~Jul 26)" },
+                { w: 6, label: "M2 Beta 1 (~Aug 14)" },
+                { w: 7, label: "M3 AI Model (~Aug 23)" },
+                { w: 10, label: "M5 Beta 2 (~Sep 12)" },
+                { w: 10, label: "M6 Video Rough-Cut (~Sep 12)" },
+                { w: 11, label: "⭐ Internal Test = Sep 19" },
+                { w: 17, label: "M7 Final Acceptance" }
+            ];
+            const TEST_WEEK_INDEX = 11;
+
+            function buildGantt() {
+                const container = document.getElementById('ganttContainer');
+                if (!container) return;
+
+                let html =
+                    '<table class="gantt-table"><thead><tr><th class="wk" style="min-width:140px;">Dept / Week</th>';
+                weeks.forEach((d, i) => {
+                    html +=
+                        `<th class="wk${i===TEST_WEEK_INDEX?' test-col':''}">${i+1}<br><span style="font-weight:400;font-size:0.6rem;">${d}</span></th>`;
+                });
+                html += '</tr><tr class="milestone-row"><td></td>';
+                weeks.forEach((d, i) => {
+                    const found = milestones.filter(m => m.w === i);
+                    const title = found.map(m => m.label).join(' | ');
+                    html += `<td>${found.length ? `<span class="flag" title="${title}">🚩</span>` : ''}</td>`;
+                });
+                html += '</tr></thead><tbody>';
+
+                departments.forEach(dep => {
+                    html += `<tr><td class="label">${dep.name}</td>`;
+                    dep.active.forEach((isActive, i) => {
+                        const bg = isActive ? dep.color : '#2a343b';
+                        const testClass = i === TEST_WEEK_INDEX ? ' test-col' : '';
+                        html += `<td class="cell${testClass}" style="background:${bg};"></td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            }
+
+            document.addEventListener('DOMContentLoaded', buildGantt);
+            if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                buildGantt();
+            }
+
+            /* ===== Status select visual ===== */
+            document.querySelectorAll('.status').forEach(sel => {
+                sel.addEventListener('change', function() {});
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
