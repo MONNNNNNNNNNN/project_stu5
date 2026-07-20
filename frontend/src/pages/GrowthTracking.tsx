@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import type { GrowthChartPoint, GrowthRecord } from '../types';
@@ -27,6 +31,16 @@ export default function GrowthTracking() {
     enabled: !!selectedChildId,
   });
 
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editHeight, setEditHeight] = useState('');
+  const [editWeight, setEditWeight] = useState('');
+
+  async function invalidateAll() {
+    await queryClient.invalidateQueries({ queryKey: ['growth-chart', selectedChildId] });
+    await queryClient.invalidateQueries({ queryKey: ['growth-history', selectedChildId] });
+    await queryClient.invalidateQueries({ queryKey: ['growth-statistics', selectedChildId] });
+  }
+
   const mutation = useMutation({
     mutationFn: async () =>
       (
@@ -40,11 +54,34 @@ export default function GrowthTracking() {
     onSuccess: async () => {
       setHeightCm('');
       setWeightKg('');
-      await queryClient.invalidateQueries({ queryKey: ['growth-chart', selectedChildId] });
-      await queryClient.invalidateQueries({ queryKey: ['growth-history', selectedChildId] });
-      await queryClient.invalidateQueries({ queryKey: ['growth-statistics', selectedChildId] });
+      await invalidateAll();
     },
   });
+
+  const updateMutation = useMutation({
+    mutationFn: async (id: string) =>
+      (
+        await api.patch(`/growth/${id}`, {
+          heightCm: editHeight ? Number(editHeight) : undefined,
+          weightKg: editWeight ? Number(editWeight) : undefined,
+        })
+      ).data,
+    onSuccess: async () => {
+      setEditingId(null);
+      await invalidateAll();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => (await api.delete(`/growth/${id}`)).data,
+    onSuccess: invalidateAll,
+  });
+
+  function startEdit(record: GrowthRecord) {
+    setEditingId(record.id);
+    setEditHeight(record.heightCm ?? '');
+    setEditWeight(record.weightKg ?? '');
+  }
 
   if (!selectedChildId) {
     return <p className="text-gray-500">Select or add a child first.</p>;
@@ -97,14 +134,60 @@ export default function GrowthTracking() {
       <div className="bg-white rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">History</h2>
         <div className="flex flex-col divide-y divide-gray-100">
-          {(history ?? []).map((record) => (
-            <div key={record.id} className="py-2 flex items-center justify-between text-sm">
-              <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
-              <span>{record.heightCm ? `${record.heightCm} cm` : '—'}</span>
-              <span>{record.weightKg ? `${record.weightKg} kg` : '—'}</span>
-              <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
-            </div>
-          ))}
+          {(history ?? []).map((record) =>
+            editingId === record.id ? (
+              <div key={record.id} className="py-2 flex items-center gap-2 text-sm">
+                <span className="text-gray-500 w-24 shrink-0">{new Date(record.measuredAt).toLocaleDateString()}</span>
+                <TextField
+                  size="small"
+                  label="Height (cm)"
+                  type="number"
+                  value={editHeight}
+                  onChange={(e) => setEditHeight(e.target.value)}
+                  sx={{ width: 110 }}
+                />
+                <TextField
+                  size="small"
+                  label="Weight (kg)"
+                  type="number"
+                  value={editWeight}
+                  onChange={(e) => setEditWeight(e.target.value)}
+                  sx={{ width: 110 }}
+                />
+                <IconButton
+                  size="small"
+                  color="primary"
+                  disabled={updateMutation.isPending}
+                  onClick={() => updateMutation.mutate(record.id)}
+                >
+                  <CheckIcon fontSize="small" />
+                </IconButton>
+                <IconButton size="small" onClick={() => setEditingId(null)}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </div>
+            ) : (
+              <div key={record.id} className="py-2 flex items-center justify-between text-sm gap-2">
+                <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
+                <span>{record.heightCm ? `${record.heightCm} cm` : '—'}</span>
+                <span>{record.weightKg ? `${record.weightKg} kg` : '—'}</span>
+                <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
+                <span className="flex items-center gap-1">
+                  <IconButton size="small" onClick={() => startEdit(record)}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      if (confirm('Delete this measurement?')) deleteMutation.mutate(record.id);
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </div>
+            ),
+          )}
           {(history ?? []).length === 0 && <p className="text-sm text-gray-500 py-4">No measurements yet.</p>}
         </div>
       </div>

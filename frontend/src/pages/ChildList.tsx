@@ -1,5 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Avatar, Button } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Avatar, Button, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/EditOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 
 function age(dateOfBirth: string) {
@@ -11,8 +16,14 @@ function age(dateOfBirth: string) {
 }
 
 export default function ChildList() {
-  const { children, isLoading, selectChild } = useChildren();
+  const { children, isLoading, selectedChildId, selectChild } = useChildren();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => (await api.delete(`/children/${id}`)).data,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['children'] }),
+  });
 
   return (
     <div className="max-w-lg mx-auto">
@@ -25,22 +36,42 @@ export default function ChildList() {
       {isLoading && <p className="text-sm text-gray-500">Loading…</p>}
       <div className="flex flex-col gap-3">
         {children.map((child) => (
-          <button
+          <div
             key={child.id}
-            onClick={() => {
-              selectChild(child.id);
-              navigate('/dashboard');
-            }}
-            className="flex items-center gap-4 bg-white rounded-2xl shadow-sm p-4 text-left hover:ring-2 hover:ring-brand-200"
+            className="flex items-center gap-4 bg-white rounded-2xl shadow-sm p-4 hover:ring-2 hover:ring-brand-200"
           >
-            <Avatar sx={{ bgcolor: '#87a480', width: 48, height: 48 }}>
-              {child.fullName[0]?.toUpperCase()}
-            </Avatar>
-            <div>
-              <p className="font-medium text-ink">{child.nickname || child.fullName}</p>
-              <p className="text-sm text-gray-500">{age(child.dateOfBirth)} old</p>
-            </div>
-          </button>
+            <button
+              onClick={() => {
+                selectChild(child.id);
+                navigate('/dashboard');
+              }}
+              className="flex items-center gap-4 flex-1 text-left"
+            >
+              <Avatar sx={{ bgcolor: '#87a480', width: 48, height: 48 }}>
+                {child.fullName[0]?.toUpperCase()}
+              </Avatar>
+              <div>
+                <p className="font-medium text-ink flex items-center gap-1">
+                  {child.nickname || child.fullName}
+                  {child.id === selectedChildId && (
+                    <CheckCircleIcon fontSize="inherit" className="text-brand-500" />
+                  )}
+                </p>
+                <p className="text-sm text-gray-500">{age(child.dateOfBirth)} old</p>
+              </div>
+            </button>
+            <IconButton size="small" component={Link} to={`/children/${child.id}/edit`}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() => {
+                if (confirm(`Remove ${child.nickname || child.fullName}?`)) deleteMutation.mutate(child.id);
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </div>
         ))}
       </div>
       {!isLoading && children.length === 0 && (

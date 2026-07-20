@@ -1,10 +1,14 @@
-import { NavLink, Outlet } from 'react-router-dom';
-import { Badge, IconButton, Avatar } from '@mui/material';
+import { useState } from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Badge, IconButton, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FlagIcon from '@mui/icons-material/FlagOutlined';
 import HealthIcon from '@mui/icons-material/MonitorHeartOutlined';
 import ResourcesIcon from '@mui/icons-material/MenuBookOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
@@ -16,6 +20,7 @@ const desktopNavItems = [
   { to: '/puberty', label: 'Puberty Screening' },
   { to: '/bone-age', label: 'Bone Age AI' },
   { to: '/learn', label: 'Learn' },
+  { to: '/children', label: 'Children' },
 ];
 
 const mobileNavItems = [
@@ -25,8 +30,62 @@ const mobileNavItems = [
   { to: '/learn', label: 'Resources', icon: ResourcesIcon },
 ];
 
+function AccountMenu({ size }: { size: number }) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  async function handleLogout() {
+    setAnchorEl(null);
+    await logout();
+    navigate('/login');
+  }
+
+  return (
+    <>
+      <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
+        <Avatar sx={{ width: size, height: size, bgcolor: '#87a480', fontSize: size * 0.45 }}>
+          {user?.fullName?.[0]?.toUpperCase()}
+        </Avatar>
+      </IconButton>
+      <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            navigate('/profile');
+          }}
+        >
+          <ListItemIcon>
+            <PersonOutlineIcon fontSize="small" />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            navigate('/children');
+          }}
+        >
+          <ListItemIcon>
+            <GroupOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          Children
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutIcon fontSize="small" />
+          </ListItemIcon>
+          Log out
+        </MenuItem>
+      </Menu>
+    </>
+  );
+}
+
 export function AppShell() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: notifications } = useQuery({
     queryKey: ['notifications'],
     queryFn: async () => (await api.get<Notification[]>('/notifications')).data,
@@ -58,14 +117,12 @@ export function AppShell() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => navigate('/notifications')}>
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon />
             </Badge>
           </IconButton>
-          <Avatar sx={{ width: 32, height: 32, bgcolor: '#87a480' }}>
-            {user?.fullName?.[0]?.toUpperCase()}
-          </Avatar>
+          <AccountMenu size={32} />
         </div>
       </header>
 
@@ -79,14 +136,12 @@ export function AppShell() {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => navigate('/notifications')}>
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon fontSize="small" />
             </Badge>
           </IconButton>
-          <Avatar sx={{ width: 28, height: 28, bgcolor: '#87a480' }}>
-            {user?.fullName?.[0]?.toUpperCase()}
-          </Avatar>
+          <AccountMenu size={28} />
         </div>
       </header>
 

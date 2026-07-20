@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Alert, LinearProgress } from '@mui/material';
+import { Button, Alert, LinearProgress, IconButton } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFileOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { api, API_BASE_URL } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import type { BoneAgePrediction } from '../types';
@@ -32,6 +33,11 @@ export default function BoneAgeUpload() {
         'Image uploaded. AI bone age prediction is not connected yet — the model is being trained separately and will be wired in soon.',
       );
     },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => (await api.delete(`/bone-age/${id}`)).data,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['bone-age-history', selectedChildId] }),
   });
 
   function handleFile(file: File | undefined) {
@@ -99,6 +105,14 @@ export default function BoneAgeUpload() {
                     : 'Awaiting AI model integration'}
                 </p>
               </div>
+              <IconButton
+                size="small"
+                onClick={() => {
+                  if (confirm('Delete this upload?')) deleteMutation.mutate(p.id);
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
             </div>
           ))}
           {(history ?? []).length === 0 && <p className="text-sm text-gray-500">No uploads yet.</p>}

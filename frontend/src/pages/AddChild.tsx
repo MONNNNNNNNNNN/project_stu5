@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, TextField, ToggleButton, ToggleButtonGroup, Alert } from '@mui/material';
 import { api } from '../lib/api';
@@ -7,28 +7,45 @@ import { useChildren } from '../context/ChildContext';
 
 export default function AddChild() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const isEdit = !!id;
   const queryClient = useQueryClient();
-  const { selectChild } = useChildren();
+  const { selectChild, children } = useChildren();
   const [fullName, setFullName] = useState('');
   const [nickname, setNickname] = useState('');
   const [sex, setSex] = useState<'MALE' | 'FEMALE'>('FEMALE');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!isEdit) return;
+    const existing = children.find((c) => c.id === id);
+    if (existing) {
+      setFullName(existing.fullName);
+      setNickname(existing.nickname ?? '');
+      setSex(existing.sex);
+      setDateOfBirth(existing.dateOfBirth.slice(0, 10));
+    }
+  }, [isEdit, id, children]);
+
   const mutation = useMutation({
-    mutationFn: async () =>
-      (await api.post('/children', { fullName, nickname: nickname || undefined, sex, dateOfBirth })).data,
+    mutationFn: async () => {
+      const payload = { fullName, nickname: nickname || undefined, sex, dateOfBirth };
+      return isEdit
+        ? (await api.patch(`/children/${id}`, payload)).data
+        : (await api.post('/children', payload)).data;
+    },
     onSuccess: async (child) => {
       await queryClient.invalidateQueries({ queryKey: ['children'] });
       selectChild(child.id);
-      navigate('/dashboard');
+      navigate(isEdit ? '/children' : '/dashboard');
     },
-    onError: () => setError('Could not add child. Check the form and try again.'),
+    onError: () => setError('Could not save child. Check the form and try again.'),
   });
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-sm p-8 mt-6">
-      <h1 className="text-xl font-semibold text-brand-700 mb-1">Add your child</h1>
+      <h1 className="text-xl font-semibold text-brand-700 mb-1">{isEdit ? 'Edit child' : 'Add your child'}</h1>
       <p className="text-sm text-gray-500 mb-6">
         We'll use this to personalize growth tracking and charts.
       </p>
@@ -63,7 +80,7 @@ export default function AddChild() {
           <ToggleButton value="MALE">Boy</ToggleButton>
         </ToggleButtonGroup>
         <Button type="submit" variant="contained" disabled={mutation.isPending} sx={{ py: 1.2 }}>
-          {mutation.isPending ? 'Saving…' : 'Save and continue'}
+          {mutation.isPending ? 'Saving…' : isEdit ? 'Save changes' : 'Save and continue'}
         </Button>
       </form>
     </div>
