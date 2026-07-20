@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-50: #eef5f4;
   --color-brand-100: #d7e9e6;
@@ -22,8 +24,17 @@
 
   --color-cream: #faf9f6;
   --color-ink: #16211d;
+  --color-surface: #ffffff;
 
   --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dark {
+  --color-cream: #14181a;
+  --color-ink: #edf1ee;
+  --color-surface: #1f2528;
+  --color-brand-50: #1c2b28;
+  --color-brand-100: #24443d;
 }
 
 body {
@@ -32,6 +43,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 #root {

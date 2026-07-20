@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, TextField, Alert } from '@mui/material';
+import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { api } from '../lib/api';
 
 export default function ResetPassword() {
@@ -28,7 +29,8 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8">
+      <div className="fixed top-4 right-4"><ThemeToggleButton size="medium" /></div>
+      <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <h1 className="text-xl font-semibold text-brand-700 mb-1">Set a new password</h1>
         {done ? (
           <div className="flex flex-col gap-4 mt-4">

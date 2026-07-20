@@ -44,7 +44,7 @@ export default function AddChild() {
   });
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-sm p-8 mt-6">
+    <div className="max-w-md mx-auto bg-surface rounded-2xl shadow-sm p-8 mt-6">
       <h1 className="text-xl font-semibold text-brand-700 mb-1">{isEdit ? 'Edit child' : 'Add your child'}</h1>
       <p className="text-sm text-gray-500 mb-6">
         We'll use this to personalize growth tracking and charts.

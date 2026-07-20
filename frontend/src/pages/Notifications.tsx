@@ -31,7 +31,7 @@ export default function Notifications() {
             key={n.id}
             onClick={() => !n.isRead && markReadMutation.mutate(n.id)}
             className={`flex items-start justify-between gap-3 rounded-2xl p-4 shadow-sm cursor-pointer ${
-              n.isRead ? 'bg-white' : 'bg-brand-50'
+              n.isRead ? 'bg-surface' : 'bg-brand-50'
             }`}
           >
             <div>

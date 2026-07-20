@@ -20,7 +20,7 @@ export default function ArticleDetail() {
       <span className="text-[10px] font-semibold uppercase text-brand-600">{article.tag}</span>
       <h1 className="text-2xl font-semibold text-ink">{article.title}</h1>
       <p className="text-gray-500">{article.summary}</p>
-      <div className="bg-white rounded-2xl shadow-sm p-6 whitespace-pre-wrap text-sm text-ink leading-relaxed">
+      <div className="bg-surface rounded-2xl shadow-sm p-6 whitespace-pre-wrap text-sm text-ink leading-relaxed">
         {article.contentMd}
       </div>
     </div>

@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { Notification } from '../types';
+import { ThemeToggleButton } from './ThemeToggleButton';
 
 const desktopNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -96,10 +97,10 @@ export function AppShell() {
   return (
     <div className="min-h-screen bg-cream">
       {/* Desktop top nav */}
-      <header className="hidden md:flex items-center justify-between px-8 py-4 border-b border-brand-100 bg-white sticky top-0 z-20">
+      <header className="hidden md:flex items-center justify-between px-8 py-4 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
           <div className="flex items-center gap-2">
-            <img src="/logo.jpeg" alt="GrowTH" className="h-9 w-9 rounded-full object-cover" />
+            <img src="/logo.png" alt="GrowTH" className="h-9 w-9 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
             <span className="font-semibold text-lg text-brand-700">GrowTH</span>
           </div>
           <nav className="flex items-center gap-6">
@@ -116,7 +117,8 @@ export function AppShell() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <ThemeToggleButton />
           <IconButton size="small" onClick={() => navigate('/notifications')}>
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon />
@@ -127,15 +129,16 @@ export function AppShell() {
       </header>
 
       {/* Mobile top bar */}
-      <header className="flex md:hidden items-center justify-between px-4 py-3 bg-white border-b border-brand-100 sticky top-0 z-20">
+      <header className="flex md:hidden items-center justify-between px-4 py-3 bg-surface border-b border-brand-100 sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <img src="/logo.jpeg" alt="GrowTH" className="h-8 w-8 rounded-full object-cover" />
+          <img src="/logo.png" alt="GrowTH" className="h-8 w-8 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
           <div>
             <p className="font-semibold text-sm leading-tight text-brand-700">GrowTH</p>
             <p className="text-xs text-gray-500 leading-tight">Welcome back, {user?.fullName}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <ThemeToggleButton />
           <IconButton size="small" onClick={() => navigate('/notifications')}>
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon fontSize="small" />
@@ -150,7 +153,7 @@ export function AppShell() {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 inset-x-0 md:hidden bg-white border-t border-brand-100 flex items-center justify-around py-2 z-20">
+      <nav className="fixed bottom-0 inset-x-0 md:hidden bg-surface border-t border-brand-100 flex items-center justify-around py-2 z-20">
         {mobileNavItems.map((item) => (
           <NavLink
             key={item.to}

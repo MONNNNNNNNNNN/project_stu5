@@ -38,7 +38,7 @@ export default function ChildList() {
         {children.map((child) => (
           <div
             key={child.id}
-            className="flex items-center gap-4 bg-white rounded-2xl shadow-sm p-4 hover:ring-2 hover:ring-brand-200"
+            className="flex items-center gap-4 bg-surface rounded-2xl shadow-sm p-4 hover:ring-2 hover:ring-brand-200"
           >
             <button
               onClick={() => {

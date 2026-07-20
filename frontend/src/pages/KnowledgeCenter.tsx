@@ -62,7 +62,7 @@ export default function KnowledgeCenter() {
           <Link
             key={article.id}
             to={`/learn/${article.id}`}
-            className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+            className="bg-surface rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="h-28 bg-sage-100" />
             <div className="p-4">

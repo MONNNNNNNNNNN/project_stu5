@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, TextField, Alert } from '@mui/material';
+import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { useAuth } from '../context/AuthContext';
 
 const schema = z.object({
@@ -35,9 +36,10 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-4">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-8">
+      <div className="fixed top-4 right-4"><ThemeToggleButton size="medium" /></div>
+      <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <div className="flex flex-col items-center mb-6">
-          <img src="/logo.jpeg" alt="GrowTH" className="h-16 w-16 rounded-full object-cover mb-3" />
+          <img src="/logo.png" alt="GrowTH" className="h-16 w-16 rounded-full object-contain bg-white p-2 ring-1 ring-brand-100 mb-3" />
           <h1 className="text-xl font-semibold text-brand-700">Create your account</h1>
           <p className="text-sm text-gray-500">Start tracking your child's growth journey</p>
         </div>

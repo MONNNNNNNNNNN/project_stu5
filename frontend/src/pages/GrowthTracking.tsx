@@ -91,7 +91,7 @@ export default function GrowthTracking() {
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-semibold text-brand-700">Growth Tracking</h1>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">Log a new measurement</h2>
         <form
           onSubmit={(e) => {
@@ -115,7 +115,7 @@ export default function GrowthTracking() {
         </form>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">Height &amp; Weight over time</h2>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={chart ?? []}>
@@ -131,7 +131,7 @@ export default function GrowthTracking() {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">History</h2>
         <div className="flex flex-col divide-y divide-gray-100">
           {(history ?? []).map((record) =>

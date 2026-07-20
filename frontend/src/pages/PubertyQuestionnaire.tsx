@@ -65,7 +65,7 @@ export default function PubertyQuestionnaire() {
         </Alert>
       )}
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">Which description best matches right now?</h2>
         <div className="flex flex-col gap-2">
           {STAGES.map((s) => (
@@ -109,7 +109,7 @@ export default function PubertyQuestionnaire() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-3">History</h2>
         <div className="flex flex-col divide-y divide-gray-100">
           {(history ?? []).map((h) => (

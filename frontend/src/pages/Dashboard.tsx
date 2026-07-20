@@ -83,7 +83,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 bg-white rounded-2xl shadow-sm p-5">
+        <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-ink">Growth Trajectory</h2>
             <Link to="/growth" className="text-sm text-brand-600">Details →</Link>
@@ -99,7 +99,7 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-5">
+        <div className="bg-surface rounded-2xl shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-ink">Puberty Screening</h2>
           </div>
@@ -114,7 +114,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <div className="flex items-center gap-2 mb-2">
           <UploadFileIcon fontSize="small" className="text-brand-600" />
           <h2 className="font-semibold text-ink">AI Bone Age Analysis</h2>
@@ -138,7 +138,7 @@ export default function Dashboard() {
             <Link
               key={article.id}
               to={`/learn/${article.id}`}
-              className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-surface rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow"
             >
               <div className="h-24 bg-sage-100" />
               <div className="p-4">
@@ -156,7 +156,7 @@ export default function Dashboard() {
 
 function StatCard({ label, value, delta }: { label: string; value: string; delta: string | null }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-4 border-l-4 border-brand-400">
+    <div className="bg-surface rounded-2xl shadow-sm p-4 border-l-4 border-brand-400">
       <p className="text-[10px] font-semibold text-gray-400 tracking-wide">{label}</p>
       <p className="text-2xl font-semibold text-ink">{value}</p>
       {delta && <p className="text-xs text-brand-600 mt-1">↑ {delta} since last</p>}

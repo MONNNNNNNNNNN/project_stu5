@@ -62,7 +62,7 @@ export default function BoneAgeUpload() {
       {uploadMutation.isPending && <LinearProgress />}
 
       <div
-        className="bg-white rounded-2xl shadow-sm p-8 border-2 border-dashed border-gray-200 flex flex-col items-center text-center cursor-pointer hover:border-brand-300"
+        className="bg-surface rounded-2xl shadow-sm p-8 border-2 border-dashed border-gray-200 flex flex-col items-center text-center cursor-pointer hover:border-brand-300"
         onClick={() => inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
@@ -91,7 +91,7 @@ export default function BoneAgeUpload() {
         a pediatric endocrinologist for clinical evaluations.
       </p>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-3">History</h2>
         <div className="flex flex-col gap-3">
           {(history ?? []).map((p) => (

@@ -53,7 +53,7 @@ export default function Profile() {
 
       {saved && <Alert severity="success" onClose={() => setSaved(false)}>Profile updated.</Alert>}
 
-      <div className="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4">
+      <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-4">
         <h2 className="font-semibold text-ink">Account</h2>
         <TextField label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} fullWidth />
         <Button
@@ -65,13 +65,13 @@ export default function Profile() {
         </Button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <Button variant="outlined" fullWidth onClick={handleLogout}>
           Log out
         </Button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm p-5">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-3">Danger zone</h2>
         <Button
           variant="outlined"
