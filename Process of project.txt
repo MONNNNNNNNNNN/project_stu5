@@ -8039,3 +8039,2222 @@ The rendered document should exceed
 350 pages.
 
 END OF MASTER PROMPT
+
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 11
+
+DEVOPS & DEPLOYMENT BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY CHAPTER
+
+WRITE LIKE
+
+Principal DevOps Architect
+
+Cloud Infrastructure Architect
+
+Site Reliability Engineer (SRE)
+
+Platform Engineer
+
+Cloud Security Architect
+
+Kubernetes Specialist
+
+==========================================================
+
+ROLE
+
+You are responsible for designing the COMPLETE
+
+DevOps Architecture
+
+Infrastructure
+
+Deployment
+
+CI/CD
+
+Monitoring
+
+Operations
+
+for the GrowTH Project.
+
+This document must allow an Infrastructure Team
+to deploy the project into production
+without asking additional questions.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 11
+
+DevOps & Deployment Bible
+
+==========================================================
+
+MISSION
+
+Generate COMPLETE deployment documentation.
+
+Every infrastructure component
+must be production-ready.
+
+Generate all diagrams as text descriptions.
+
+==========================================================
+
+TARGET ENVIRONMENT
+
+Ubuntu Server 24.04 LTS
+
+Docker
+
+Docker Compose
+
+Nginx
+
+Node.js
+
+NestJS
+
+React
+
+PostgreSQL
+
+Redis
+
+AI Inference Service
+
+GitHub
+
+GitHub Actions
+
+Cloud Object Storage
+
+==========================================================
+
+ARCHITECTURE STYLE
+
+Cloud Native
+
+Container First
+
+Immutable Infrastructure
+
+Infrastructure as Code Ready
+
+Blue-Green Ready
+
+Zero Downtime Deployment Ready
+
+Disaster Recovery Ready
+
+==========================================================
+
+CHAPTER 1
+
+DEVOPS OVERVIEW
+
+Explain
+
+Purpose
+
+Architecture
+
+Benefits
+
+Deployment Lifecycle
+
+Environment Strategy
+
+Developer Workflow
+
+Release Flow
+
+==========================================================
+
+CHAPTER 2
+
+SYSTEM ARCHITECTURE
+
+Generate
+
+Complete Infrastructure
+
+Internet
+
+↓
+
+Nginx Reverse Proxy
+
+↓
+
+Frontend
+
+↓
+
+Backend API
+
+↓
+
+AI Service
+
+↓
+
+Redis
+
+↓
+
+PostgreSQL
+
+↓
+
+Object Storage
+
+Explain
+
+Network Flow
+
+Security Zones
+
+Traffic Flow
+
+==========================================================
+
+CHAPTER 3
+
+ENVIRONMENT STRATEGY
+
+Development
+
+Testing
+
+Staging
+
+Production
+
+Generate
+
+Purpose
+
+Configuration
+
+Environment Variables
+
+Secrets
+
+Database
+
+AI Endpoint
+
+==========================================================
+
+CHAPTER 4
+
+DOCKER
+
+Generate
+
+Dockerfile
+
+Frontend
+
+Backend
+
+AI
+
+Database
+
+Redis
+
+Volumes
+
+Networks
+
+Healthcheck
+
+Restart Policy
+
+==========================================================
+
+CHAPTER 5
+
+DOCKER COMPOSE
+
+Generate
+
+Frontend
+
+Backend
+
+PostgreSQL
+
+Redis
+
+AI Service
+
+Nginx
+
+Health Check
+
+Volumes
+
+Environment Variables
+
+==========================================================
+
+CHAPTER 6
+
+NGINX
+
+Generate
+
+Reverse Proxy
+
+HTTPS
+
+Compression
+
+Security Headers
+
+Static File
+
+React Routing
+
+API Proxy
+
+Upload
+
+Timeout
+
+Rate Limit
+
+==========================================================
+
+CHAPTER 7
+
+CI/CD
+
+GitHub Actions
+
+Generate
+
+Frontend Pipeline
+
+Backend Pipeline
+
+AI Pipeline
+
+Testing Pipeline
+
+Security Scan
+
+Docker Build
+
+Deployment
+
+Rollback
+
+==========================================================
+
+CHAPTER 8
+
+SECRETS MANAGEMENT
+
+Generate
+
+Environment Variables
+
+JWT Secret
+
+Database Password
+
+Redis Password
+
+SMTP
+
+Cloud Storage
+
+AI API Key
+
+Encryption
+
+Rotation
+
+==========================================================
+
+CHAPTER 9
+
+DATABASE DEPLOYMENT
+
+Generate
+
+Migration
+
+Seed
+
+Backup
+
+Restore
+
+Rollback
+
+Maintenance
+
+Monitoring
+
+==========================================================
+
+CHAPTER 10
+
+AI DEPLOYMENT
+
+Generate
+
+Inference Server
+
+Model Version
+
+GPU Support (optional)
+
+CPU Deployment
+
+Model Rollback
+
+Health Check
+
+Monitoring
+
+==========================================================
+
+CHAPTER 11
+
+MONITORING
+
+Generate
+
+Prometheus
+
+Grafana
+
+Loki
+
+Node Exporter
+
+Application Metrics
+
+Database Metrics
+
+AI Metrics
+
+Health Check
+
+==========================================================
+
+CHAPTER 12
+
+LOGGING
+
+Generate
+
+Application Log
+
+API Log
+
+Nginx Log
+
+Security Log
+
+AI Log
+
+Audit Log
+
+Rotation
+
+Retention
+
+==========================================================
+
+CHAPTER 13
+
+BACKUP
+
+Generate
+
+Database Backup
+
+Upload Backup
+
+Configuration Backup
+
+AI Model Backup
+
+Incremental
+
+Full Backup
+
+Disaster Recovery
+
+==========================================================
+
+CHAPTER 14
+
+RECOVERY
+
+Generate
+
+Server Failure
+
+Database Failure
+
+AI Failure
+
+Storage Failure
+
+Rollback
+
+Recovery Time Objective
+
+Recovery Point Objective
+
+==========================================================
+
+CHAPTER 15
+
+PERFORMANCE
+
+Generate
+
+Caching
+
+Redis
+
+Compression
+
+Lazy Loading
+
+Database Optimization
+
+Connection Pool
+
+Load Balancing
+
+==========================================================
+
+CHAPTER 16
+
+SECURITY
+
+Generate
+
+HTTPS
+
+TLS
+
+Firewall
+
+SSH Hardening
+
+Docker Security
+
+Container Isolation
+
+Fail2Ban
+
+Rate Limiting
+
+==========================================================
+
+CHAPTER 17
+
+OPERATIONS
+
+Generate
+
+Daily Checklist
+
+Weekly Checklist
+
+Monthly Checklist
+
+Patch Management
+
+Log Review
+
+Capacity Planning
+
+==========================================================
+
+CHAPTER 18
+
+RELEASE MANAGEMENT
+
+Generate
+
+Versioning
+
+Semantic Versioning
+
+Release Candidate
+
+Production Release
+
+Rollback Strategy
+
+Hotfix
+
+==========================================================
+
+CHAPTER 19
+
+PRODUCTION CHECKLIST
+
+Generate
+
+Infrastructure
+
+Database
+
+Backend
+
+Frontend
+
+AI
+
+Monitoring
+
+Security
+
+Backup
+
+Acceptance
+
+==========================================================
+
+CHAPTER 20
+
+OPERATIONS HANDBOOK
+
+Generate
+
+Deployment SOP
+
+Restart SOP
+
+Rollback SOP
+
+Backup SOP
+
+Recovery SOP
+
+Monitoring SOP
+
+Incident SOP
+
+Maintenance SOP
+
+==========================================================
+
+FOR EVERY SERVICE
+
+Generate
+
+Purpose
+
+Image
+
+Container
+
+Ports
+
+Volumes
+
+Environment Variables
+
+Dependencies
+
+Health Check
+
+Restart Policy
+
+Logs
+
+Monitoring
+
+==========================================================
+
+FOR EVERY PIPELINE
+
+Generate
+
+Trigger
+
+Steps
+
+Validation
+
+Testing
+
+Security Scan
+
+Deployment
+
+Rollback
+
+Notification
+
+==========================================================
+
+FOR EVERY SERVER
+
+Generate
+
+CPU Recommendation
+
+RAM Recommendation
+
+Storage
+
+Network
+
+Scaling Strategy
+
+Backup
+
+Security
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any service.
+
+Never skip any deployment step.
+
+Generate production-ready DevOps architecture.
+
+Always explain WHY.
+
+Always explain HOW.
+
+Always explain WHEN.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+DevOps & Deployment Bible
+
+following
+
+Docker Best Practices
+
+GitHub Actions Best Practices
+
+Cloud Native Principles
+
+Site Reliability Engineering (SRE)
+
+Twelve-Factor App
+
+Infrastructure as Code Principles
+
+Production Deployment Best Practices
+
+The rendered document should exceed
+
+350 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 12
+
+PRESENTATION, DEMONSTRATION
+& PROJECT DEFENSE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY SECTION
+
+WRITE LIKE
+
+Principal Solution Architect
+
+Technical Project Manager
+
+Senior UX Presenter
+
+Startup Pitch Coach
+
+Medical Software Consultant
+
+University Thesis Advisor
+
+==========================================================
+
+ROLE
+
+You are responsible for creating the COMPLETE
+
+Presentation
+
+Demonstration
+
+Project Defense
+
+Evaluation
+
+Documentation
+
+for the GrowTH Project.
+
+This document must allow the project team
+to present and defend the project successfully.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 12
+
+Presentation, Demonstration &
+Project Defense Bible
+
+==========================================================
+
+MISSION
+
+Generate COMPLETE presentation materials.
+
+Generate COMPLETE demo scenarios.
+
+Generate COMPLETE defense preparation.
+
+Generate COMPLETE Q&A.
+
+==========================================================
+
+CHAPTER 1
+
+PRESENTATION STRATEGY
+
+Explain
+
+Presentation Objective
+
+Target Audience
+
+Evaluation Criteria
+
+Judging Perspective
+
+Technical Perspective
+
+Medical Perspective
+
+Business Perspective
+
+User Perspective
+
+==========================================================
+
+CHAPTER 2
+
+SLIDE STRUCTURE
+
+Generate complete slide deck
+
+Title
+
+Agenda
+
+Problem Statement
+
+Background
+
+Current Problems
+
+Research
+
+TOR Objectives
+
+Project Scope
+
+Solution
+
+System Overview
+
+Architecture
+
+AI Overview
+
+Database
+
+API
+
+Security
+
+UI/UX
+
+Demo
+
+Testing
+
+Results
+
+Future Work
+
+Conclusion
+
+Q&A
+
+==========================================================
+
+CHAPTER 3
+
+PRESENTATION SCRIPT
+
+Generate script
+
+Opening
+
+Introduction
+
+Problem
+
+Objective
+
+Methodology
+
+Architecture
+
+Frontend
+
+Backend
+
+Database
+
+AI
+
+Testing
+
+Conclusion
+
+Closing
+
+==========================================================
+
+CHAPTER 4
+
+DEMO STRATEGY
+
+Generate complete demo flow
+
+System Startup
+
+Login
+
+Dashboard
+
+Add Child
+
+Growth Tracking
+
+Growth Chart
+
+Bone Age Upload
+
+Bone Age Prediction
+
+Knowledge Center
+
+Profile
+
+Logout
+
+==========================================================
+
+CHAPTER 5
+
+DEMO DATASET
+
+Generate realistic demo data
+
+User
+
+Child
+
+Growth
+
+Height
+
+Weight
+
+BMI
+
+Bone Age
+
+Puberty Screening
+
+Knowledge Articles
+
+Notifications
+
+==========================================================
+
+CHAPTER 6
+
+LIVE DEMONSTRATION SOP
+
+Generate
+
+Preparation
+
+Checklist
+
+Backup Plan
+
+Internet Failure
+
+Server Failure
+
+AI Failure
+
+Database Failure
+
+Recovery
+
+==========================================================
+
+CHAPTER 7
+
+VIDEO STORYBOARD
+
+Generate
+
+Opening Scene
+
+Problem
+
+Current Situation
+
+GrowTH Introduction
+
+Feature Showcase
+
+Growth Tracking
+
+Bone Age
+
+Knowledge Center
+
+Testing
+
+Results
+
+Closing
+
+==========================================================
+
+CHAPTER 8
+
+MOTION GRAPHIC PLAN
+
+Generate
+
+Scene
+
+Animation
+
+Transition
+
+Camera
+
+Subtitle
+
+Narration
+
+Background Music
+
+Timing
+
+==========================================================
+
+CHAPTER 9
+
+TECHNICAL DEFENSE
+
+Generate explanation for
+
+Architecture
+
+Frontend
+
+Backend
+
+Database
+
+API
+
+AI
+
+Security
+
+Testing
+
+Deployment
+
+==========================================================
+
+CHAPTER 10
+
+MEDICAL DEFENSE
+
+Generate explanation for
+
+Growth Standard
+
+WHO Reference
+
+Bone Age
+
+Medical Disclaimer
+
+Clinical Limitation
+
+AI Limitation
+
+Ethics
+
+==========================================================
+
+CHAPTER 11
+
+SECURITY DEFENSE
+
+Generate explanation for
+
+Authentication
+
+Authorization
+
+JWT
+
+Database Security
+
+File Upload
+
+OWASP
+
+Medical Privacy
+
+Audit Logs
+
+==========================================================
+
+CHAPTER 12
+
+TESTING DEFENSE
+
+Generate explanation for
+
+Unit Test
+
+Integration Test
+
+API Test
+
+Performance Test
+
+Security Test
+
+AI Validation
+
+User Acceptance Test
+
+==========================================================
+
+CHAPTER 13
+
+TOR DEFENSE
+
+Generate complete mapping
+
+TOR Requirement
+
+↓
+
+Implemented Module
+
+↓
+
+Evidence
+
+↓
+
+Testing
+
+↓
+
+Presentation Slide
+
+↓
+
+Demo Step
+
+==========================================================
+
+CHAPTER 14
+
+QUESTION & ANSWER
+
+Generate at least
+
+150 possible questions.
+
+Categories
+
+General
+
+Frontend
+
+Backend
+
+Database
+
+API
+
+Security
+
+AI
+
+Medical
+
+Testing
+
+Deployment
+
+Project Management
+
+Future Work
+
+==========================================================
+
+CHAPTER 15
+
+MODEL ANSWERS
+
+Generate detailed answers
+
+for every possible question.
+
+Explain
+
+WHY
+
+HOW
+
+WHEN
+
+ADVANTAGES
+
+LIMITATIONS
+
+==========================================================
+
+CHAPTER 16
+
+JUDGE PERSPECTIVE
+
+Generate
+
+Questions likely asked by
+
+Software Engineer
+
+Medical Expert
+
+Project Advisor
+
+UI Expert
+
+Security Expert
+
+AI Expert
+
+==========================================================
+
+CHAPTER 17
+
+SCORING STRATEGY
+
+Generate
+
+Presentation Rubric
+
+Demo Rubric
+
+Technical Rubric
+
+Innovation Rubric
+
+Medical Rubric
+
+Documentation Rubric
+
+Risk Rubric
+
+==========================================================
+
+CHAPTER 18
+
+DELIVERABLE CHECKLIST
+
+Generate
+
+Source Code
+
+Documentation
+
+Database
+
+API
+
+AI
+
+Video
+
+Slides
+
+Poster
+
+User Manual
+
+Installation Guide
+
+TOR Compliance
+
+==========================================================
+
+CHAPTER 19
+
+FINAL REHEARSAL
+
+Generate
+
+Presentation Timeline
+
+Speaking Time
+
+Demo Time
+
+Question Time
+
+Emergency Plan
+
+Backup Presenter
+
+Technical Checklist
+
+==========================================================
+
+CHAPTER 20
+
+PROJECT ACCEPTANCE
+
+Generate
+
+Acceptance Checklist
+
+Supervisor Checklist
+
+Committee Checklist
+
+Medical Validation Checklist
+
+Technical Validation Checklist
+
+Release Checklist
+
+Lessons Learned
+
+Future Improvements
+
+==========================================================
+
+FOR EVERY SLIDE
+
+Generate
+
+Purpose
+
+Key Message
+
+Talking Points
+
+Visual Elements
+
+Charts
+
+Images
+
+Animation
+
+Timing
+
+Expected Questions
+
+==========================================================
+
+FOR EVERY DEMO STEP
+
+Generate
+
+Action
+
+Expected Result
+
+Fallback Plan
+
+Recovery
+
+Evidence
+
+==========================================================
+
+FOR EVERY QUESTION
+
+Generate
+
+Question
+
+Reason Behind Question
+
+Expected Answer
+
+Supporting Evidence
+
+Related TOR
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any slide.
+
+Never skip any demo.
+
+Never skip any Q&A.
+
+Every explanation must be
+presentation-ready.
+
+Generate professional
+presentation documentation.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Presentation, Demonstration &
+Project Defense Bible
+
+following
+
+Technical Presentation Best Practices
+
+IEEE Presentation Standards
+
+Software Engineering Capstone Defense Standards
+
+Medical Software Demonstration Guidelines
+
+The rendered document should exceed
+
+300 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 13
+
+TOR COMPLIANCE
+FINAL DELIVERY
+&
+PROJECT ACCEPTANCE BIBLE
+
+Master Prompt Version 2.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY TOR ITEM
+
+DO NOT CREATE NEW REQUIREMENTS
+
+ONLY VERIFY
+TRACE
+MAP
+AUDIT
+VALIDATE
+
+WRITE LIKE
+
+Principal Software Architect
+
+Project Auditor
+
+Systems Integration Lead
+
+Enterprise Solution Architect
+
+Quality Assurance Director
+
+Medical Software Compliance Consultant
+
+==========================================================
+
+ROLE
+
+You are responsible for auditing
+the COMPLETE GrowTH Project.
+
+You must verify
+
+Every TOR Requirement
+
+Every Functional Requirement
+
+Every UI
+
+Every API
+
+Every Database Table
+
+Every AI Function
+
+Every Test
+
+Every Deliverable
+
+Everything must be traceable.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 13
+
+TOR Compliance
+Final Delivery
+&
+Project Acceptance Bible
+
+==========================================================
+
+MISSION
+
+Generate
+
+Complete Project Audit
+
+Complete Requirement Traceability
+
+Complete Gap Analysis
+
+Complete Acceptance Checklist
+
+Complete Delivery Checklist
+
+Project Readiness Assessment
+
+==========================================================
+
+CHAPTER 1
+
+PROJECT OVERVIEW
+
+Generate
+
+Project Summary
+
+Objectives
+
+Expected Deliverables
+
+Architecture Summary
+
+Scope
+
+Out of Scope
+
+Success Criteria
+
+==========================================================
+
+CHAPTER 2
+
+TOR ANALYSIS
+
+Break down EVERY TOR item.
+
+For each TOR item generate
+
+Requirement ID
+
+Description
+
+Priority
+
+Category
+
+Business Objective
+
+Medical Objective
+
+Technical Objective
+
+Expected Deliverable
+
+Acceptance Criteria
+
+Owner
+
+Dependencies
+
+Risk
+
+==========================================================
+
+CHAPTER 3
+
+REQUIREMENT TRACEABILITY MATRIX
+
+Generate COMPLETE RTM
+
+TOR
+
+↓
+
+Business Requirement
+
+↓
+
+Functional Requirement
+
+↓
+
+UI Screen
+
+↓
+
+Backend Module
+
+↓
+
+Database
+
+↓
+
+API
+
+↓
+
+AI Module
+
+↓
+
+Testing
+
+↓
+
+Evidence
+
+↓
+
+Acceptance
+
+==========================================================
+
+CHAPTER 4
+
+FUNCTIONAL COVERAGE
+
+Verify every FR.
+
+Generate
+
+Covered
+
+Partially Covered
+
+Not Covered
+
+Reason
+
+Evidence
+
+Recommendation
+
+==========================================================
+
+CHAPTER 5
+
+UI COVERAGE
+
+Verify
+
+Every Screen
+
+Every Component
+
+Every Navigation
+
+Every Responsive Layout
+
+Accessibility
+
+Evidence
+
+==========================================================
+
+CHAPTER 6
+
+BACKEND COVERAGE
+
+Verify
+
+Every Module
+
+Controller
+
+Service
+
+Repository
+
+Business Logic
+
+Authentication
+
+Authorization
+
+Logging
+
+==========================================================
+
+CHAPTER 7
+
+DATABASE COVERAGE
+
+Verify
+
+Every Table
+
+Relationship
+
+Index
+
+Constraint
+
+Migration
+
+Seed
+
+Audit
+
+==========================================================
+
+CHAPTER 8
+
+API COVERAGE
+
+Verify
+
+Every Endpoint
+
+Authentication
+
+Validation
+
+Response
+
+Errors
+
+Performance
+
+Security
+
+Documentation
+
+==========================================================
+
+CHAPTER 9
+
+AI COVERAGE
+
+Verify
+
+Dataset
+
+Model
+
+Inference
+
+Prediction
+
+Medical Disclaimer
+
+Confidence
+
+Logging
+
+Monitoring
+
+Limitations
+
+==========================================================
+
+CHAPTER 10
+
+SECURITY COVERAGE
+
+Verify
+
+Authentication
+
+Authorization
+
+JWT
+
+RBAC
+
+Upload Security
+
+Encryption
+
+Logging
+
+OWASP Controls
+
+Privacy Controls
+
+==========================================================
+
+CHAPTER 11
+
+TESTING COVERAGE
+
+Verify
+
+Unit Test
+
+Integration Test
+
+API Test
+
+UI Test
+
+Performance Test
+
+Security Test
+
+AI Validation
+
+UAT
+
+Regression
+
+Coverage %
+
+==========================================================
+
+CHAPTER 12
+
+DOCUMENTATION COVERAGE
+
+Verify
+
+User Manual
+
+Developer Manual
+
+Installation Guide
+
+API Document
+
+Architecture
+
+Database
+
+Deployment
+
+Testing
+
+Presentation
+
+==========================================================
+
+CHAPTER 13
+
+DELIVERABLE CHECKLIST
+
+Generate
+
+Source Code
+
+Frontend
+
+Backend
+
+Database
+
+AI
+
+Docker
+
+Configuration
+
+README
+
+License
+
+Documents
+
+Presentation
+
+Poster
+
+Video
+
+==========================================================
+
+CHAPTER 14
+
+DEPLOYMENT READINESS
+
+Generate checklist
+
+Server
+
+Database
+
+Storage
+
+Domain
+
+HTTPS
+
+Environment Variables
+
+Secrets
+
+Monitoring
+
+Logging
+
+Backup
+
+Rollback
+
+==========================================================
+
+CHAPTER 15
+
+RISK ANALYSIS
+
+Generate
+
+Technical Risks
+
+Business Risks
+
+Medical Risks
+
+Security Risks
+
+Deployment Risks
+
+Operational Risks
+
+Mitigation
+
+Contingency Plan
+
+==========================================================
+
+CHAPTER 16
+
+GAP ANALYSIS
+
+Generate
+
+Missing Feature
+
+Incomplete Feature
+
+Optional Feature
+
+Future Enhancement
+
+Technical Debt
+
+Recommendation
+
+==========================================================
+
+CHAPTER 17
+
+FINAL ACCEPTANCE
+
+Generate
+
+Acceptance Matrix
+
+Supervisor
+
+Committee
+
+Medical Advisor
+
+QA
+
+Developer
+
+Project Manager
+
+==========================================================
+
+CHAPTER 18
+
+PROJECT READINESS SCORE
+
+Generate score
+
+Documentation
+
+Architecture
+
+Frontend
+
+Backend
+
+Database
+
+API
+
+AI
+
+Security
+
+Testing
+
+Deployment
+
+Presentation
+
+Overall Readiness
+
+==========================================================
+
+CHAPTER 19
+
+FINAL RECOMMENDATION
+
+Generate
+
+Ready for Demo
+
+Ready for Submission
+
+Ready for Production
+
+Known Limitations
+
+Future Roadmap
+
+Maintenance Plan
+
+==========================================================
+
+CHAPTER 20
+
+PROJECT CLOSURE
+
+Generate
+
+Lessons Learned
+
+Knowledge Transfer
+
+Maintenance Responsibility
+
+Archive Checklist
+
+Version History
+
+Project Completion Report
+
+Project Completion Certificate Template
+
+==========================================================
+
+FOR EVERY TOR ITEM
+
+Generate
+
+Requirement
+
+Implementation
+
+Evidence
+
+Related Volume
+
+Related Module
+
+Testing
+
+Acceptance
+
+Status
+
+==========================================================
+
+FOR EVERY MODULE
+
+Generate
+
+Completion %
+
+Evidence
+
+Remaining Tasks
+
+Risk
+
+Priority
+
+Recommendation
+
+==========================================================
+
+FOR EVERY DELIVERABLE
+
+Generate
+
+Filename
+
+Description
+
+Owner
+
+Status
+
+Review Status
+
+Approval Status
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never create new requirements.
+
+Never skip any TOR item.
+
+Every statement must be traceable.
+
+Every conclusion must reference evidence.
+
+Clearly distinguish:
+
+Implemented
+
+Partially Implemented
+
+Future Scope
+
+Out of Scope
+
+==========================================================
+
+FINAL OUTPUT
+
+Generate
+
+Master Requirement Traceability Matrix
+
+Master TOR Compliance Matrix
+
+Master Deliverable Checklist
+
+Master Acceptance Checklist
+
+Master Risk Register
+
+Master Gap Analysis
+
+Master Readiness Report
+
+Master Project Closure Report
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Project Audit &
+Final Delivery Bible
+
+following
+
+IEEE 29148
+
+ISO/IEC/IEEE 12207
+
+ISO 25010
+
+PMBOK Deliverable Validation Principles
+
+Software Engineering Capstone Best Practices
+
+Healthcare Software Documentation Best Practices
+
+The rendered document should exceed
+
+300 pages.
+
+END OF MASTER PROMPT
