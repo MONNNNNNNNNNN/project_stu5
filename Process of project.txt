@@ -1,1 +1,8041 @@
+==========================================================
+GrowTH Master Project Bible
+Volume 01
+PROJECT FOUNDATION
+Master Prompt Version 1.0
 
+DO NOT SUMMARIZE
+DO NOT SKIP ANY SECTION
+WRITE LIKE A SENIOR SOFTWARE ARCHITECT
+==========================================================
+
+ROLE
+
+You are a Senior Software Architect,
+Senior System Analyst,
+Medical Software Consultant,
+UX Architect,
+Technical Writer,
+Project Manager,
+Cloud Solution Architect,
+and Software Engineering Professor.
+
+Your responsibility is to produce a professional Software Design Document (SDD)
+for the GrowTH Project.
+
+This document is NOT a report.
+
+This document will become
+
+THE MASTER DOCUMENT
+
+for
+
+Frontend Team
+
+Backend Team
+
+AI Team
+
+UX/UI Team
+
+Video Team
+
+Testing Team
+
+Documentation Team
+
+Project Manager
+
+Supervisor
+
+Medical Advisor
+
+Every chapter must contain enough information that another software engineer
+can develop the system WITHOUT reading the TOR.
+
+Never summarize.
+
+Always explain every topic in detail.
+
+Whenever diagrams are needed,
+describe them completely.
+
+Never say "refer to previous chapter."
+
+Every chapter must be self-contained.
+
+==========================================================
+
+DOCUMENT INFORMATION
+
+Document Name
+
+GrowTH Master Project Bible
+
+Volume 01
+
+Project Foundation
+
+Version
+
+1.0
+
+Status
+
+Draft
+
+Language
+
+English
+
+Writing Style
+
+Professional
+
+Academic
+
+Industrial Standard
+
+IEEE Style
+
+Software Design Document
+
+Target Reader
+
+Software Engineers
+
+System Analysts
+
+Developers
+
+Medical Experts
+
+Project Managers
+
+University Committee
+
+==========================================================
+
+DOCUMENT FORMAT
+
+Generate the document using the following format.
+
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+Paragraph
+
+Table
+
+Bullet List
+
+Number List
+
+Notes
+
+Warnings
+
+Examples
+
+Decision
+
+Recommendation
+
+Summary
+
+Use Markdown formatting.
+
+==========================================================
+
+PAGE STYLE
+
+Every chapter begins with
+
+Chapter Number
+
+Objectives
+
+Purpose
+
+Scope
+
+Audience
+
+Related Chapters
+
+Expected Outcome
+
+References
+
+==========================================================
+
+CHAPTER 1
+
+PROJECT INTRODUCTION
+
+Explain
+
+What is GrowTH
+
+Why this project exists
+
+Medical background
+
+Problems parents face
+
+Problems doctors face
+
+Current workflow
+
+Current limitations
+
+Digital transformation
+
+Artificial Intelligence
+
+Growth Monitoring
+
+Bone Age
+
+Puberty Screening
+
+Health Education
+
+Explain all concepts professionally.
+
+Minimum 6 pages.
+
+==========================================================
+
+CHAPTER 2
+
+PROJECT OBJECTIVES
+
+Explain
+
+Business Objectives
+
+Medical Objectives
+
+Technical Objectives
+
+Educational Objectives
+
+Research Objectives
+
+Long-term Objectives
+
+Short-term Objectives
+
+Expected Benefits
+
+Key Success Indicators
+
+KPIs
+
+Acceptance Criteria
+
+Minimum 4 pages.
+
+==========================================================
+
+CHAPTER 3
+
+PROJECT SCOPE
+
+Describe
+
+In Scope
+
+Out of Scope
+
+Future Scope
+
+Phase 1
+
+Phase 2
+
+Phase 3
+
+Limitations
+
+Assumptions
+
+Dependencies
+
+Minimum 5 pages.
+
+==========================================================
+
+CHAPTER 4
+
+PROBLEM STATEMENT
+
+Explain
+
+Current Problems
+
+Current Manual Process
+
+Hospital Workflow
+
+Parent Workflow
+
+Pain Points
+
+Opportunity
+
+Technology Gap
+
+Business Gap
+
+Research Gap
+
+Medical Gap
+
+Minimum 5 pages.
+
+==========================================================
+
+CHAPTER 5
+
+PROJECT OVERVIEW
+
+Explain
+
+System Overview
+
+Web Application
+
+Architecture Overview
+
+AI Integration
+
+Database
+
+Authentication
+
+Knowledge Center
+
+Growth Tracking
+
+Puberty
+
+Bone Age
+
+Explain interaction between every module.
+
+Create detailed system description.
+
+Minimum 6 pages.
+
+==========================================================
+
+CHAPTER 6
+
+TARGET USERS
+
+Identify every stakeholder.
+
+Parent
+
+Guardian
+
+Doctor
+
+Administrator
+
+Researcher
+
+Medical Staff
+
+University Supervisor
+
+For each role explain
+
+Responsibilities
+
+Goals
+
+Pain Points
+
+Permissions
+
+User Journey
+
+Expected Experience
+
+Minimum 6 pages.
+
+==========================================================
+
+CHAPTER 7
+
+PROJECT DELIVERABLES
+
+Describe
+
+Frontend
+
+Backend
+
+Database
+
+AI Model
+
+Knowledge Center
+
+Medical Articles
+
+Video
+
+Presentation
+
+Documentation
+
+Deployment
+
+Testing
+
+Final Demonstration
+
+Acceptance
+
+Minimum 5 pages.
+
+==========================================================
+
+CHAPTER 8
+
+TEAM STRUCTURE
+
+Explain
+
+Project Manager
+
+Frontend Team
+
+Backend Team
+
+AI Team
+
+Database Team
+
+UX Team
+
+Research Team
+
+Medical Team
+
+Testing Team
+
+Documentation Team
+
+Video Team
+
+For every team include
+
+Responsibilities
+
+Inputs
+
+Outputs
+
+Deliverables
+
+Dependencies
+
+Communication Flow
+
+Risk
+
+Minimum 8 pages.
+
+==========================================================
+
+CHAPTER 9
+
+PROJECT WORKFLOW
+
+Explain
+
+Requirement
+
+Analysis
+
+Design
+
+Development
+
+Testing
+
+Deployment
+
+Maintenance
+
+Feedback
+
+Iteration
+
+Show detailed workflow.
+
+Explain responsibilities of each phase.
+
+Minimum 6 pages.
+
+==========================================================
+
+CHAPTER 10
+
+SYSTEM MODULE OVERVIEW
+
+Authentication
+
+Dashboard
+
+Family
+
+Child
+
+Growth Tracking
+
+Bone Age
+
+Puberty
+
+Knowledge Center
+
+Profile
+
+Notification
+
+Administration
+
+Future Modules
+
+For each module explain
+
+Purpose
+
+Features
+
+Inputs
+
+Outputs
+
+Dependencies
+
+Priority
+
+Related TOR
+
+Minimum 8 pages.
+
+==========================================================
+
+CHAPTER 11
+
+PROJECT TIMELINE
+
+Generate
+
+Milestones
+
+Weekly Plan
+
+Sprint
+
+Deliverables
+
+Critical Path
+
+Dependencies
+
+Gantt Description
+
+Resource Allocation
+
+Minimum 4 pages.
+
+==========================================================
+
+CHAPTER 12
+
+PROJECT RISKS
+
+Technical Risks
+
+Medical Risks
+
+Schedule Risks
+
+AI Risks
+
+Security Risks
+
+Team Risks
+
+Communication Risks
+
+Deployment Risks
+
+Risk Matrix
+
+Probability
+
+Impact
+
+Mitigation
+
+Contingency Plan
+
+Minimum 5 pages.
+
+==========================================================
+
+CHAPTER 13
+
+SUCCESS CRITERIA
+
+Define
+
+Project Success
+
+Technical Success
+
+Medical Success
+
+Business Success
+
+User Success
+
+TOR Success
+
+Testing Success
+
+Deployment Success
+
+Minimum 4 pages.
+
+==========================================================
+
+CHAPTER 14
+
+PROJECT ASSUMPTIONS
+
+Hardware
+
+Software
+
+Cloud
+
+Browser
+
+Internet
+
+Medical Data
+
+WHO Standard
+
+Growth Standard
+
+Bone Age Model
+
+AI Accuracy
+
+Minimum 4 pages.
+
+==========================================================
+
+CHAPTER 15
+
+DOCUMENT CONTROL
+
+Version
+
+Revision
+
+Approval
+
+Author
+
+Reviewer
+
+Status
+
+History
+
+==========================================================
+
+CHAPTER 16
+
+GLOSSARY
+
+Define every important term.
+
+AI
+
+API
+
+REST
+
+BMI
+
+SDS
+
+WHO
+
+Percentile
+
+Bone Age
+
+Puberty
+
+JWT
+
+Authentication
+
+Authorization
+
+Growth Curve
+
+Knowledge Center
+
+Medical Disclaimer
+
+==========================================================
+
+CHAPTER 17
+
+REFERENCES
+
+Medical References
+
+WHO
+
+CDC
+
+Research Papers
+
+IEEE
+
+Software Engineering
+
+REST API
+
+UX
+
+AI
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Every chapter must include
+
+Objectives
+
+Overview
+
+Detailed Explanation
+
+Examples
+
+Tables
+
+Recommendations
+
+Risks
+
+Best Practices
+
+Summary
+
+Never write fewer than three paragraphs for any topic.
+
+Do not use placeholder text.
+
+Never use Lorem Ipsum.
+
+Never skip explanations.
+
+Maintain professional terminology throughout.
+
+==========================================================
+
+OUTPUT REQUIREMENTS
+
+Produce a publication-ready Software Design Document.
+
+The document must be suitable for:
+
+University submission
+
+Software development
+
+Technical documentation
+
+Project management
+
+Future maintenance
+
+Every section must be detailed enough for another engineering team to continue development without additional clarification.
+
+END OF MASTER PROMPT
+
+
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 02
+FUNCTIONAL REQUIREMENTS BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+DO NOT SKIP ANY REQUIREMENT
+WRITE LIKE A SENIOR SOFTWARE ARCHITECT
+
+==========================================================
+
+ROLE
+
+You are
+
+Senior Software Architect
+
+Senior System Analyst
+
+Senior Business Analyst
+
+Medical Software Consultant
+
+Hospital Information System Specialist
+
+AI Solution Architect
+
+Software Engineering Professor
+
+Technical Writer
+
+Your responsibility is to create the COMPLETE
+
+Software Requirement Specification
+
+for the GrowTH Project.
+
+This document must become the ONLY Functional Requirement
+document required by
+
+Frontend Team
+
+Backend Team
+
+Database Team
+
+AI Team
+
+Testing Team
+
+UI Team
+
+Medical Team
+
+Video Team
+
+Project Manager
+
+Supervisor
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 02
+
+Functional Requirements Bible
+
+==========================================================
+
+OBJECTIVE
+
+Generate a COMPLETE Functional Requirement document.
+
+Every requirement must be fully explained.
+
+Every requirement must contain
+
+Purpose
+
+Business Goal
+
+Medical Goal
+
+User Story
+
+Actors
+
+Preconditions
+
+Trigger
+
+Workflow
+
+Main Flow
+
+Alternative Flow
+
+Exception Flow
+
+Input
+
+Validation
+
+Business Rules
+
+Output
+
+Database Tables
+
+API Endpoint
+
+UI Screen
+
+Navigation
+
+Error Handling
+
+Acceptance Criteria
+
+Priority
+
+Dependencies
+
+Future Enhancement
+
+Testing Scenario
+
+Edge Cases
+
+Security Consideration
+
+Related TOR
+
+==========================================================
+
+DOCUMENT FORMAT
+
+Markdown
+
+Heading
+
+Table
+
+Bullet
+
+Numbered List
+
+Decision
+
+Warning
+
+Recommendation
+
+Example
+
+==========================================================
+
+REQUIREMENT CLASSIFICATION
+
+Functional Requirements
+
+Non Functional Requirements
+
+Business Requirements
+
+Medical Requirements
+
+AI Requirements
+
+Security Requirements
+
+Performance Requirements
+
+Usability Requirements
+
+Accessibility Requirements
+
+Deployment Requirements
+
+Maintenance Requirements
+
+==========================================================
+
+FOR EVERY REQUIREMENT
+
+Use exactly this structure
+
+------------------------------------------------------
+
+Requirement ID
+
+FR-XX
+
+Requirement Name
+
+Overview
+
+Purpose
+
+Description
+
+Business Objective
+
+Medical Objective
+
+User Story
+
+Primary Actor
+
+Secondary Actor
+
+Stakeholders
+
+Priority
+
+Critical
+
+High
+
+Medium
+
+Low
+
+Precondition
+
+Postcondition
+
+Trigger
+
+Main Workflow
+
+Alternative Workflow
+
+Exception Workflow
+
+Business Rules
+
+Validation Rules
+
+Security Rules
+
+Data Required
+
+Database Tables
+
+API Request
+
+API Response
+
+Status Code
+
+Frontend Components
+
+Backend Modules
+
+AI Modules
+
+Notifications
+
+Audit Log
+
+History
+
+Reports
+
+Acceptance Criteria
+
+Unit Test
+
+Integration Test
+
+System Test
+
+User Acceptance Test
+
+Related TOR
+
+Future Improvement
+
+Summary
+
+------------------------------------------------------
+
+==========================================================
+
+GENERATE
+
+FR01
+
+User Registration
+
+Explain in detail
+
+Name
+
+Email
+
+Password
+
+Phone Number
+
+Terms Acceptance
+
+Validation
+
+Email Verification
+
+Duplicate Account
+
+Password Policy
+
+Error Cases
+
+Database
+
+REST API
+
+JWT
+
+Testing
+
+Minimum
+
+6 pages
+
+==========================================================
+
+FR02
+
+User Login
+
+Complete Authentication
+
+JWT
+
+Refresh Token
+
+Session
+
+Remember Me
+
+Logout
+
+Authorization
+
+Minimum
+
+6 pages
+
+==========================================================
+
+FR03
+
+Forgot Password
+
+Password Reset
+
+OTP
+
+Email
+
+Verification
+
+Expiration
+
+Security
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR04
+
+Dashboard
+
+Overview
+
+Widgets
+
+Notifications
+
+Family Selection
+
+Recent Activities
+
+Medical Summary
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR05
+
+Family Management
+
+Create Family
+
+Edit Family
+
+Delete Family
+
+Switch Family
+
+Invite Members
+
+Roles
+
+Permissions
+
+Minimum
+
+6 pages
+
+==========================================================
+
+FR06
+
+Child Management
+
+Add Child
+
+Edit Child
+
+Delete Child
+
+Avatar
+
+Medical Information
+
+Birth Date
+
+Gender
+
+Age Calculation
+
+Validation
+
+Minimum
+
+7 pages
+
+==========================================================
+
+FR07
+
+Growth Tracking
+
+Height
+
+Weight
+
+BMI
+
+Percentile
+
+WHO Standard
+
+SDS
+
+Growth Chart
+
+Trend
+
+History
+
+Medical Recommendation
+
+Validation
+
+Minimum
+
+10 pages
+
+==========================================================
+
+FR08
+
+Bone Age Assessment
+
+Upload X-ray
+
+AI Prediction
+
+Confidence Score
+
+Medical Explanation
+
+History
+
+Download Report
+
+Validation
+
+Minimum
+
+10 pages
+
+==========================================================
+
+FR09
+
+Puberty Screening
+
+Questionnaire
+
+Age
+
+Gender
+
+Scoring
+
+Recommendations
+
+History
+
+Validation
+
+Minimum
+
+8 pages
+
+==========================================================
+
+FR10
+
+Knowledge Center
+
+Articles
+
+Categories
+
+Search
+
+Medical Citation
+
+Bookmark
+
+History
+
+Video
+
+Minimum
+
+6 pages
+
+==========================================================
+
+FR11
+
+Notification System
+
+Medical Reminder
+
+Growth Reminder
+
+Result Ready
+
+Announcement
+
+Read Status
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR12
+
+Profile Management
+
+Update Profile
+
+Password
+
+Language
+
+Preferences
+
+Privacy
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR13
+
+Administration
+
+Manage Users
+
+Manage Articles
+
+Manage AI Models
+
+Manage Notifications
+
+System Dashboard
+
+Reports
+
+Audit Logs
+
+Minimum
+
+8 pages
+
+==========================================================
+
+FR14
+
+Security
+
+Authentication
+
+Authorization
+
+Encryption
+
+JWT
+
+HTTPS
+
+Upload Security
+
+Audit Trail
+
+OWASP
+
+Minimum
+
+7 pages
+
+==========================================================
+
+FR15
+
+Logging
+
+Audit
+
+Monitoring
+
+Crash Report
+
+API Log
+
+User Activity
+
+Performance Metrics
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR16
+
+Reporting
+
+Growth Report
+
+Bone Age Report
+
+Puberty Report
+
+Export PDF
+
+CSV
+
+Medical Summary
+
+Minimum
+
+6 pages
+
+==========================================================
+
+FR17
+
+Search
+
+Global Search
+
+Article Search
+
+Child Search
+
+History Search
+
+Minimum
+
+4 pages
+
+==========================================================
+
+FR18
+
+Help Center
+
+FAQ
+
+Support
+
+Tutorial
+
+Contact
+
+Medical Disclaimer
+
+Minimum
+
+4 pages
+
+==========================================================
+
+FR19
+
+Performance
+
+Loading Time
+
+Response Time
+
+Caching
+
+Optimization
+
+Compression
+
+Pagination
+
+Minimum
+
+5 pages
+
+==========================================================
+
+FR20
+
+Accessibility
+
+Responsive
+
+Keyboard
+
+Screen Reader
+
+WCAG
+
+Minimum
+
+4 pages
+
+==========================================================
+
+FR21
+
+Non Functional Requirements
+
+Availability
+
+Reliability
+
+Scalability
+
+Maintainability
+
+Portability
+
+Interoperability
+
+Compatibility
+
+Minimum
+
+8 pages
+
+==========================================================
+
+FR22
+
+Business Rules
+
+Generate every Business Rule
+
+Growth
+
+Puberty
+
+Bone Age
+
+Knowledge
+
+Security
+
+Minimum
+
+10 pages
+
+==========================================================
+
+FR23
+
+Medical Rules
+
+WHO
+
+CDC
+
+Bone Age Standard
+
+Medical Disclaimer
+
+Clinical Limitation
+
+Medical Recommendation
+
+Minimum
+
+8 pages
+
+==========================================================
+
+FR24
+
+Requirement Traceability Matrix
+
+Generate
+
+Requirement
+
+TOR Mapping
+
+Database
+
+API
+
+UI
+
+Testing
+
+Deployment
+
+Status
+
+Owner
+
+Risk
+
+Dependency
+
+Acceptance
+
+==========================================================
+
+AFTER ALL REQUIREMENTS
+
+Generate
+
+Requirement Dependency Diagram
+
+Module Relationship
+
+Requirement Priority Matrix
+
+Implementation Roadmap
+
+Development Sequence
+
+Testing Checklist
+
+Definition of Done
+
+Risk Assessment
+
+Gap Analysis
+
+Architecture Recommendation
+
+Technical Recommendation
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any subsection.
+
+Every requirement must be implementation-ready.
+
+Every requirement must be understandable by developers.
+
+Every requirement must include business logic.
+
+Every requirement must include database implication.
+
+Every requirement must include API implication.
+
+Every requirement must include UI implication.
+
+Every requirement must include testing implication.
+
+Always explain WHY.
+
+Always explain HOW.
+
+Always explain WHEN.
+
+Always explain EXCEPTIONS.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Software Requirement Specification (SRS)
+
+following IEEE 830 / ISO/IEC/IEEE 29148 style.
+
+The final document should exceed 180 pages when rendered.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 03
+
+UI / UX BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+DO NOT SKIP ANY SCREEN
+DO NOT CREATE PLACEHOLDER CONTENT
+
+Write like
+
+Senior UX Architect
+
+Senior UI Designer
+
+Design System Engineer
+
+Google Material Design Specialist
+
+Apple Human Interface Guideline Expert
+
+Medical UX Specialist
+
+Software Architect
+
+==========================================================
+
+MISSION
+
+Create the COMPLETE UI/UX Bible
+for GrowTH.
+
+This document must be detailed enough that
+
+UI Designer
+
+UX Designer
+
+Frontend Developer
+
+Backend Developer
+
+QA
+
+Video Team
+
+can build the entire application without asking additional questions.
+
+This document is NOT a Figma description.
+
+It is the MASTER DESIGN DOCUMENT.
+
+==========================================================
+
+DOCUMENT FORMAT
+
+Markdown
+
+Heading
+
+Sub Heading
+
+Tables
+
+Wireframe Description
+
+Component List
+
+UX Notes
+
+Accessibility Notes
+
+Developer Notes
+
+Best Practices
+
+Warning
+
+Recommendation
+
+==========================================================
+
+DESIGN PRINCIPLES
+
+Generate a complete Design Language.
+
+Explain
+
+Minimal Design
+
+Medical Theme
+
+Friendly
+
+Modern
+
+Responsive
+
+Accessibility
+
+Trustworthy
+
+Readable
+
+Parent Friendly
+
+Professional
+
+==========================================================
+
+CHAPTER 1
+
+DESIGN PHILOSOPHY
+
+Explain
+
+Mission
+
+Vision
+
+Design Goals
+
+User Emotion
+
+Color Psychology
+
+Medical UX
+
+Parent Experience
+
+Trust Building
+
+Stress Reduction
+
+Confidence
+
+Accessibility
+
+Consistency
+
+Predictability
+
+Error Prevention
+
+Minimum
+
+8 pages
+
+==========================================================
+
+CHAPTER 2
+
+DESIGN SYSTEM
+
+Generate
+
+Color Palette
+
+Primary
+
+Secondary
+
+Success
+
+Warning
+
+Danger
+
+Background
+
+Surface
+
+Border
+
+Shadow
+
+Overlay
+
+Typography
+
+Font Family
+
+Heading
+
+Body
+
+Caption
+
+Button
+
+Spacing System
+
+8pt Grid
+
+Border Radius
+
+Elevation
+
+Animation
+
+Transition
+
+Icon Style
+
+Illustration Style
+
+Avatar Style
+
+Medical Image Style
+
+Chart Style
+
+Empty State
+
+Loading State
+
+Skeleton
+
+Dark Mode Strategy
+
+Minimum
+
+15 pages
+
+==========================================================
+
+CHAPTER 3
+
+COMPONENT LIBRARY
+
+Generate every reusable component.
+
+Button
+
+Primary
+
+Secondary
+
+Danger
+
+Outline
+
+Ghost
+
+Input
+
+Password
+
+Search
+
+Dropdown
+
+Radio
+
+Checkbox
+
+Switch
+
+Slider
+
+Date Picker
+
+Time Picker
+
+Card
+
+Child Card
+
+Article Card
+
+Statistic Card
+
+Alert Card
+
+Modal
+
+Dialog
+
+Bottom Sheet
+
+Toast
+
+Snackbar
+
+Progress
+
+Stepper
+
+Timeline
+
+Table
+
+Pagination
+
+Tabs
+
+Accordion
+
+Tooltip
+
+Breadcrumb
+
+Navigation Bar
+
+Sidebar
+
+Footer
+
+Avatar
+
+Badge
+
+Chip
+
+Notification
+
+Upload
+
+Chart
+
+Loading
+
+Error
+
+Empty
+
+404
+
+500
+
+Success Page
+
+Warning Page
+
+Confirmation Dialog
+
+Every component must contain
+
+Purpose
+
+Variants
+
+Properties
+
+Behavior
+
+States
+
+Accessibility
+
+Keyboard Support
+
+Validation
+
+Error
+
+Animation
+
+Responsive Behavior
+
+Developer Notes
+
+Minimum
+
+30 pages
+
+==========================================================
+
+CHAPTER 4
+
+RESPONSIVE DESIGN
+
+Desktop
+
+Laptop
+
+Tablet
+
+Mobile
+
+Breakpoints
+
+Grid
+
+Layout
+
+Spacing
+
+Typography Scaling
+
+Navigation
+
+Card Layout
+
+Chart Scaling
+
+Medical Image Scaling
+
+Performance
+
+Minimum
+
+10 pages
+
+==========================================================
+
+CHAPTER 5
+
+NAVIGATION DESIGN
+
+Navigation Flow
+
+Menu Structure
+
+Header
+
+Sidebar
+
+Bottom Navigation
+
+Breadcrumb
+
+Back Button
+
+Forward
+
+Deep Link
+
+Routing
+
+Permission
+
+Error Flow
+
+Minimum
+
+10 pages
+
+==========================================================
+
+CHAPTER 6
+
+SCREEN SPECIFICATION
+
+Generate EVERY screen.
+
+For each screen include
+
+Purpose
+
+Goal
+
+User
+
+Entry Point
+
+Exit Point
+
+Navigation
+
+Components
+
+Data Required
+
+API Required
+
+Validation
+
+Business Rules
+
+Loading
+
+Empty
+
+Success
+
+Failure
+
+Accessibility
+
+Animation
+
+Responsive
+
+Developer Notes
+
+Testing Notes
+
+==========================================================
+
+SCREENS
+
+Splash
+
+Login
+
+Register
+
+Forgot Password
+
+Dashboard
+
+Family Selection
+
+Child List
+
+Add Child
+
+Edit Child
+
+Child Profile
+
+Growth Tracking
+
+Add Height
+
+Add Weight
+
+Growth Chart
+
+Bone Age Upload
+
+Bone Age Result
+
+Bone Age History
+
+Puberty Questionnaire
+
+Puberty Result
+
+Knowledge Center
+
+Article
+
+Video
+
+Notification
+
+Profile
+
+Settings
+
+Help
+
+Contact
+
+Privacy
+
+Terms
+
+404
+
+500
+
+Maintenance
+
+==========================================================
+
+CHAPTER 7
+
+USER FLOW
+
+Generate
+
+Complete User Journey
+
+Guest
+
+Registered User
+
+Parent
+
+Doctor
+
+Administrator
+
+For every journey
+
+Entry
+
+Decision
+
+Action
+
+Feedback
+
+Exit
+
+Recovery
+
+Exception
+
+Minimum
+
+20 pages
+
+==========================================================
+
+CHAPTER 8
+
+WIREFRAME DESCRIPTION
+
+Describe every screen.
+
+Top Area
+
+Content Area
+
+Sidebar
+
+Footer
+
+Buttons
+
+Cards
+
+Forms
+
+Charts
+
+Notifications
+
+Dialogs
+
+Mobile Layout
+
+Desktop Layout
+
+Minimum
+
+20 pages
+
+==========================================================
+
+CHAPTER 9
+
+FORM DESIGN
+
+Every form
+
+Label
+
+Placeholder
+
+Validation
+
+Error Message
+
+Success Message
+
+Focus State
+
+Keyboard
+
+Auto Complete
+
+Medical Validation
+
+Date Validation
+
+Upload Validation
+
+Accessibility
+
+==========================================================
+
+CHAPTER 10
+
+CHART DESIGN
+
+Growth Chart
+
+Height
+
+Weight
+
+BMI
+
+Percentile
+
+SDS
+
+Timeline
+
+Zoom
+
+Tooltip
+
+Legend
+
+Export
+
+Responsive
+
+Medical Colors
+
+==========================================================
+
+CHAPTER 11
+
+MEDICAL UX
+
+Explain
+
+Medical Terminology
+
+Warning Messages
+
+Disclaimer
+
+Result Explanation
+
+Confidence Building
+
+Reduce Anxiety
+
+Educational Content
+
+Doctor Recommendation
+
+==========================================================
+
+CHAPTER 12
+
+ERROR HANDLING
+
+Every Error
+
+Network
+
+Validation
+
+Server
+
+Unauthorized
+
+Upload
+
+Timeout
+
+Unknown
+
+Permission
+
+Recovery
+
+Retry
+
+User Guidance
+
+==========================================================
+
+CHAPTER 13
+
+ACCESSIBILITY
+
+WCAG 2.2
+
+Keyboard
+
+Focus
+
+Contrast
+
+Screen Reader
+
+Color Blind
+
+Font Scaling
+
+Touch Target
+
+Medical Accessibility
+
+==========================================================
+
+CHAPTER 14
+
+MICRO INTERACTION
+
+Hover
+
+Click
+
+Tap
+
+Loading
+
+Success
+
+Delete
+
+Upload
+
+Animation
+
+Progress
+
+Notification
+
+==========================================================
+
+CHAPTER 15
+
+CONTENT DESIGN
+
+Button Text
+
+Empty State
+
+Success Message
+
+Error Message
+
+Medical Language
+
+Friendly Language
+
+Educational Language
+
+Warning
+
+Confirmation
+
+==========================================================
+
+CHAPTER 16
+
+ICONOGRAPHY
+
+Generate icon system
+
+Medical
+
+Navigation
+
+Action
+
+Status
+
+Warning
+
+Growth
+
+Bone
+
+Child
+
+Knowledge
+
+Profile
+
+==========================================================
+
+CHAPTER 17
+
+ILLUSTRATION
+
+Illustration Style
+
+Character
+
+Parent
+
+Child
+
+Doctor
+
+Hospital
+
+Growth
+
+Education
+
+AI
+
+==========================================================
+
+CHAPTER 18
+
+VIDEO TEAM SUPPORT
+
+Describe every screen from the perspective of
+
+Storyboard
+
+Screen Recording
+
+Motion Graphic
+
+Promotional Video
+
+Doctor Interview
+
+UI Highlight
+
+==========================================================
+
+CHAPTER 19
+
+DESIGN QA
+
+Generate
+
+Design Checklist
+
+Accessibility Checklist
+
+Responsive Checklist
+
+Visual Checklist
+
+Interaction Checklist
+
+Developer Handoff Checklist
+
+==========================================================
+
+CHAPTER 20
+
+FINAL DESIGN SPECIFICATION
+
+Generate
+
+Screen Matrix
+
+Component Matrix
+
+Flow Matrix
+
+Responsive Matrix
+
+API Mapping
+
+Requirement Mapping
+
+Developer Handoff
+
+Definition of Done
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any screen.
+
+Never skip any component.
+
+Every UI decision must explain WHY.
+
+Every UX decision must explain WHY.
+
+Every screen must include
+
+Business Goal
+
+Medical Goal
+
+UX Goal
+
+Technical Goal
+
+Accessibility Goal
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+UI / UX DESIGN BIBLE
+
+following
+
+Google Material Design 3
+
+Apple Human Interface Guidelines
+
+WCAG 2.2
+
+Nielsen Heuristics
+
+Medical UX Best Practices
+
+The final document should exceed
+
+250 pages
+
+when rendered.
+
+END OF MASTER PROMPT
+
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 04
+
+FRONTEND ARCHITECTURE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY MODULE
+
+WRITE LIKE
+
+Senior Frontend Architect
+
+React Tech Lead
+
+Next.js Architect
+
+Google Software Engineer
+
+Microsoft Software Engineer
+
+==========================================================
+
+ROLE
+
+You are a Principal Frontend Architect.
+
+You have designed enterprise systems for
+
+Google
+
+Microsoft
+
+Meta
+
+AWS
+
+Hospital Information Systems
+
+Medical AI Platforms
+
+Your responsibility is to produce
+
+THE COMPLETE FRONTEND ARCHITECTURE
+
+for GrowTH.
+
+This document must allow another frontend team to
+build the entire project without asking any question.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 04
+
+Frontend Architecture Bible
+
+==========================================================
+
+TARGET
+
+React
+
+TypeScript
+
+Vite
+
+TailwindCSS
+
+Material UI
+
+React Router
+
+Axios
+
+TanStack Query
+
+React Hook Form
+
+Zod
+
+Framer Motion
+
+Chart.js
+
+Recharts
+
+==========================================================
+
+GOALS
+
+Generate
+
+Complete Frontend Architecture
+
+Folder Structure
+
+Coding Standard
+
+State Management
+
+API Layer
+
+Authentication
+
+Component Library
+
+Responsive Design
+
+Accessibility
+
+Testing Strategy
+
+Deployment
+
+==========================================================
+
+CHAPTER 1
+
+FRONTEND OVERVIEW
+
+Explain
+
+Purpose
+
+Architecture
+
+SPA
+
+Component Driven Development
+
+Medical Application Design
+
+Advantages
+
+Scalability
+
+Maintainability
+
+Developer Experience
+
+==========================================================
+
+CHAPTER 2
+
+PROJECT STRUCTURE
+
+Generate COMPLETE folder structure
+
+src/
+
+assets/
+
+components/
+
+layouts/
+
+pages/
+
+routes/
+
+hooks/
+
+services/
+
+api/
+
+store/
+
+contexts/
+
+constants/
+
+config/
+
+types/
+
+interfaces/
+
+styles/
+
+utils/
+
+helpers/
+
+lib/
+
+middleware/
+
+providers/
+
+theme/
+
+charts/
+
+animations/
+
+validators/
+
+forms/
+
+features/
+
+modules/
+
+For every folder explain
+
+Purpose
+
+Contents
+
+Rules
+
+Naming Convention
+
+Examples
+
+==========================================================
+
+CHAPTER 3
+
+MODULE STRUCTURE
+
+Authentication
+
+Dashboard
+
+Family
+
+Child
+
+Growth
+
+Bone Age
+
+Puberty
+
+Knowledge
+
+Notification
+
+Profile
+
+Admin
+
+Every module contains
+
+Pages
+
+Components
+
+Hooks
+
+Services
+
+API
+
+Types
+
+Validation
+
+Constants
+
+Utils
+
+Tests
+
+==========================================================
+
+CHAPTER 4
+
+ROUTING
+
+React Router
+
+Protected Route
+
+Guest Route
+
+Admin Route
+
+Nested Route
+
+Dynamic Route
+
+Lazy Loading
+
+Route Guards
+
+404
+
+500
+
+Maintenance
+
+==========================================================
+
+CHAPTER 5
+
+STATE MANAGEMENT
+
+Generate architecture using
+
+TanStack Query
+
+Context API
+
+Local State
+
+Global State
+
+Session
+
+Cache
+
+Mutation
+
+Optimistic Update
+
+Invalidation
+
+==========================================================
+
+CHAPTER 6
+
+API ARCHITECTURE
+
+Axios
+
+Request Interceptor
+
+Response Interceptor
+
+JWT
+
+Refresh Token
+
+Retry
+
+Error Handling
+
+Cancellation
+
+Timeout
+
+Upload
+
+Download
+
+Pagination
+
+Filtering
+
+Search
+
+==========================================================
+
+CHAPTER 7
+
+AUTHENTICATION
+
+Login
+
+Register
+
+Logout
+
+Remember Me
+
+Forgot Password
+
+JWT
+
+Refresh Token
+
+Protected Pages
+
+Permission
+
+Role
+
+Session Expiration
+
+==========================================================
+
+CHAPTER 8
+
+FORM ARCHITECTURE
+
+React Hook Form
+
+Zod
+
+Validation
+
+Medical Validation
+
+Async Validation
+
+Nested Form
+
+Wizard Form
+
+Upload Form
+
+==========================================================
+
+CHAPTER 9
+
+COMPONENT DESIGN
+
+Generate standards for
+
+Atomic Design
+
+Atoms
+
+Molecules
+
+Organisms
+
+Templates
+
+Pages
+
+Every component
+
+Purpose
+
+Props
+
+Events
+
+Accessibility
+
+Performance
+
+Testing
+
+==========================================================
+
+CHAPTER 10
+
+COMMON COMPONENTS
+
+Button
+
+Input
+
+Select
+
+Date Picker
+
+Modal
+
+Dialog
+
+Toast
+
+Notification
+
+Card
+
+Chart
+
+Avatar
+
+Badge
+
+Progress
+
+Upload
+
+Article Card
+
+Child Card
+
+Growth Card
+
+Medical Card
+
+==========================================================
+
+CHAPTER 11
+
+CHARTS
+
+Growth Chart
+
+Height
+
+Weight
+
+BMI
+
+Percentile
+
+SDS
+
+Timeline
+
+History
+
+Tooltip
+
+Responsive
+
+==========================================================
+
+CHAPTER 12
+
+FILE UPLOAD
+
+Bone Age
+
+X-ray Upload
+
+Validation
+
+Preview
+
+Compression
+
+Progress
+
+Retry
+
+Cancel
+
+Security
+
+==========================================================
+
+CHAPTER 13
+
+ERROR HANDLING
+
+Network
+
+Server
+
+Validation
+
+Unauthorized
+
+Forbidden
+
+Not Found
+
+Timeout
+
+Unknown
+
+Recovery
+
+Retry
+
+==========================================================
+
+CHAPTER 14
+
+PERFORMANCE
+
+Lazy Loading
+
+Memoization
+
+Suspense
+
+Virtualization
+
+Image Optimization
+
+Bundle Splitting
+
+Tree Shaking
+
+Caching
+
+Prefetch
+
+Code Splitting
+
+==========================================================
+
+CHAPTER 15
+
+RESPONSIVE
+
+Desktop
+
+Tablet
+
+Mobile
+
+Landscape
+
+Portrait
+
+Breakpoints
+
+Grid
+
+Spacing
+
+==========================================================
+
+CHAPTER 16
+
+ACCESSIBILITY
+
+WCAG
+
+Keyboard
+
+Focus
+
+Screen Reader
+
+Contrast
+
+Touch Target
+
+Medical Accessibility
+
+==========================================================
+
+CHAPTER 17
+
+ANIMATION
+
+Framer Motion
+
+Page Transition
+
+Modal
+
+Loading
+
+Chart Animation
+
+Button Animation
+
+Success
+
+Error
+
+==========================================================
+
+CHAPTER 18
+
+TESTING
+
+Unit Test
+
+Vitest
+
+React Testing Library
+
+Integration Test
+
+Component Test
+
+Snapshot
+
+Mock API
+
+Coverage
+
+==========================================================
+
+CHAPTER 19
+
+CODING STANDARD
+
+Naming Convention
+
+Folder Naming
+
+Component Naming
+
+Hook Naming
+
+Type Naming
+
+API Naming
+
+CSS Naming
+
+Commit Convention
+
+ESLint
+
+Prettier
+
+Husky
+
+Lint Staged
+
+==========================================================
+
+CHAPTER 20
+
+DEVELOPER HANDBOOK
+
+Git Workflow
+
+Branch Strategy
+
+Pull Request
+
+Review Checklist
+
+Merge Strategy
+
+Release
+
+Deployment
+
+Rollback
+
+Definition of Done
+
+==========================================================
+
+FOR EVERY PAGE
+
+Generate
+
+Purpose
+
+Components
+
+Hooks
+
+API
+
+Validation
+
+Error
+
+Loading
+
+Success
+
+Responsive
+
+Accessibility
+
+Testing
+
+==========================================================
+
+FOR EVERY COMPONENT
+
+Generate
+
+Props
+
+State
+
+Events
+
+Methods
+
+Accessibility
+
+Animation
+
+Testing
+
+Examples
+
+==========================================================
+
+FOR EVERY API
+
+Generate
+
+Request
+
+Response
+
+Loading
+
+Error
+
+Retry
+
+Caching
+
+Invalidation
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any folder.
+
+Never skip any component.
+
+Never skip any page.
+
+Explain WHY.
+
+Explain HOW.
+
+Explain WHEN.
+
+Generate production-ready frontend architecture.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Frontend Architecture Bible
+
+following
+
+React Best Practices
+
+Google Engineering Standards
+
+Clean Architecture
+
+SOLID Principles
+
+Atomic Design
+
+Material Design 3
+
+WCAG 2.2
+
+The rendered document should exceed
+
+300 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 05
+
+BACKEND ARCHITECTURE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY MODULE
+
+WRITE LIKE
+
+Principal Backend Architect
+
+Senior Software Architect
+
+Cloud Solution Architect
+
+Medical Information System Architect
+
+Security Engineer
+
+==========================================================
+
+ROLE
+
+You are one of the world's best Backend Architects.
+
+You have designed scalable backend systems for
+
+Hospital Information Systems
+
+Medical AI Platforms
+
+Enterprise SaaS
+
+Government Platforms
+
+Cloud Native Applications
+
+Your mission is to create the COMPLETE backend
+architecture for the GrowTH project.
+
+This document must allow another backend team
+to implement the entire system without asking
+additional questions.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 05
+
+Backend Architecture Bible
+
+==========================================================
+
+TARGET TECHNOLOGY
+
+Node.js
+
+NestJS
+
+TypeScript
+
+PostgreSQL
+
+Prisma ORM
+
+Redis
+
+Docker
+
+JWT
+
+REST API
+
+OpenAPI 3.1
+
+Cloud Storage
+
+AI Service
+
+==========================================================
+
+ARCHITECTURE STYLE
+
+Generate backend using
+
+Clean Architecture
+
+SOLID
+
+Repository Pattern
+
+Dependency Injection
+
+Service Layer
+
+Domain Layer
+
+Infrastructure Layer
+
+CQRS (optional)
+
+DDD Ready
+
+Modular Monolith
+
+Microservice Ready
+
+==========================================================
+
+CHAPTER 1
+
+SYSTEM OVERVIEW
+
+Explain
+
+Purpose
+
+Architecture
+
+Layered Architecture
+
+Request Flow
+
+API Flow
+
+Authentication Flow
+
+Database Flow
+
+AI Flow
+
+Medical Workflow
+
+Advantages
+
+Disadvantages
+
+Scalability
+
+Maintainability
+
+==========================================================
+
+CHAPTER 2
+
+PROJECT STRUCTURE
+
+Generate COMPLETE folder structure
+
+src/
+
+main.ts
+
+app.module.ts
+
+modules/
+
+auth/
+
+users/
+
+children/
+
+family/
+
+growth/
+
+bone-age/
+
+puberty/
+
+knowledge/
+
+notifications/
+
+profile/
+
+admin/
+
+common/
+
+config/
+
+database/
+
+prisma/
+
+middleware/
+
+guards/
+
+filters/
+
+pipes/
+
+decorators/
+
+dto/
+
+entities/
+
+repositories/
+
+services/
+
+interfaces/
+
+types/
+
+utils/
+
+storage/
+
+logger/
+
+cache/
+
+events/
+
+jobs/
+
+mail/
+
+tests/
+
+For every folder explain
+
+Purpose
+
+Rules
+
+Contents
+
+Naming Convention
+
+Examples
+
+==========================================================
+
+CHAPTER 3
+
+MODULE ARCHITECTURE
+
+Generate
+
+Authentication Module
+
+User Module
+
+Family Module
+
+Child Module
+
+Growth Module
+
+Bone Age Module
+
+Puberty Module
+
+Knowledge Module
+
+Notification Module
+
+Profile Module
+
+Admin Module
+
+Every module contains
+
+Controller
+
+Service
+
+Repository
+
+DTO
+
+Entity
+
+Mapper
+
+Validation
+
+Business Logic
+
+Exception
+
+Testing
+
+==========================================================
+
+CHAPTER 4
+
+APPLICATION LAYER
+
+Explain
+
+Controller
+
+Routing
+
+Request Validation
+
+Authentication
+
+Authorization
+
+DTO
+
+Response Format
+
+Error Handling
+
+Global Exception Filter
+
+==========================================================
+
+CHAPTER 5
+
+DOMAIN LAYER
+
+Explain
+
+Entities
+
+Value Objects
+
+Business Rules
+
+Aggregate
+
+Domain Service
+
+Domain Event
+
+Use Cases
+
+==========================================================
+
+CHAPTER 6
+
+INFRASTRUCTURE LAYER
+
+Database
+
+Storage
+
+Mail
+
+Redis
+
+Cloud
+
+Prisma
+
+Logging
+
+Scheduler
+
+Queue
+
+==========================================================
+
+CHAPTER 7
+
+AUTHENTICATION
+
+Register
+
+Login
+
+Logout
+
+JWT
+
+Refresh Token
+
+Password Hash
+
+Forgot Password
+
+Role
+
+Permission
+
+RBAC
+
+Token Rotation
+
+==========================================================
+
+CHAPTER 8
+
+AUTHORIZATION
+
+Role
+
+Permission
+
+Policy
+
+Guard
+
+Owner Access
+
+Medical Restriction
+
+==========================================================
+
+CHAPTER 9
+
+DATABASE ACCESS
+
+Prisma
+
+Repository Pattern
+
+Transactions
+
+Pagination
+
+Search
+
+Sorting
+
+Filtering
+
+Soft Delete
+
+Migration
+
+Seed
+
+==========================================================
+
+CHAPTER 10
+
+BUSINESS LOGIC
+
+Growth
+
+BMI
+
+WHO Standard
+
+Percentile
+
+SDS
+
+Bone Age
+
+Puberty
+
+Knowledge
+
+Notification
+
+Medical Recommendation
+
+==========================================================
+
+CHAPTER 11
+
+AI INTEGRATION
+
+Bone Age AI
+
+Upload
+
+Prediction
+
+Inference
+
+Confidence
+
+Model Version
+
+Timeout
+
+Retry
+
+Fallback
+
+Error Handling
+
+Medical Disclaimer
+
+==========================================================
+
+CHAPTER 12
+
+FILE STORAGE
+
+X-ray Upload
+
+Image Validation
+
+Compression
+
+Virus Scan
+
+Cloud Storage
+
+Versioning
+
+Retention
+
+Delete Policy
+
+==========================================================
+
+CHAPTER 13
+
+API RESPONSE STANDARD
+
+Generate standard response
+
+Success
+
+Error
+
+Validation
+
+Pagination
+
+Upload
+
+Authentication
+
+Medical Result
+
+Every response contains
+
+status
+
+code
+
+message
+
+data
+
+metadata
+
+timestamp
+
+requestId
+
+==========================================================
+
+CHAPTER 14
+
+ERROR HANDLING
+
+Validation Error
+
+Business Error
+
+Medical Error
+
+Authentication Error
+
+Authorization Error
+
+AI Error
+
+Database Error
+
+Timeout
+
+Network
+
+Storage
+
+==========================================================
+
+CHAPTER 15
+
+SECURITY
+
+OWASP ASVS
+
+JWT
+
+Password Hash
+
+Bcrypt
+
+Helmet
+
+CORS
+
+Rate Limit
+
+CSRF
+
+SQL Injection
+
+XSS
+
+File Upload Security
+
+Medical Privacy
+
+==========================================================
+
+CHAPTER 16
+
+LOGGING
+
+Audit Log
+
+API Log
+
+Security Log
+
+Medical Log
+
+AI Log
+
+Performance Log
+
+User Activity
+
+==========================================================
+
+CHAPTER 17
+
+CACHE
+
+Redis
+
+Growth Cache
+
+Knowledge Cache
+
+Article Cache
+
+Profile Cache
+
+TTL
+
+Invalidation
+
+==========================================================
+
+CHAPTER 18
+
+BACKGROUND JOBS
+
+Reminder
+
+Notification
+
+Email
+
+Cleanup
+
+Statistics
+
+Scheduled Tasks
+
+Cron Jobs
+
+Retry
+
+==========================================================
+
+CHAPTER 19
+
+TESTING
+
+Unit Test
+
+Integration Test
+
+API Test
+
+Repository Test
+
+Service Test
+
+E2E Test
+
+Mock AI
+
+Mock Database
+
+Coverage
+
+==========================================================
+
+CHAPTER 20
+
+DEPLOYMENT
+
+Docker
+
+Docker Compose
+
+Environment Variables
+
+Secrets
+
+Health Check
+
+Readiness
+
+Liveness
+
+Monitoring
+
+Backup
+
+Recovery
+
+==========================================================
+
+FOR EVERY MODULE
+
+Generate
+
+Overview
+
+Purpose
+
+Architecture
+
+Controller
+
+Service
+
+Repository
+
+Entity
+
+DTO
+
+Validation
+
+Business Rules
+
+API
+
+Security
+
+Testing
+
+Dependencies
+
+==========================================================
+
+FOR EVERY ENDPOINT
+
+Generate
+
+HTTP Method
+
+URL
+
+Headers
+
+Authentication
+
+Permission
+
+Request
+
+Response
+
+Validation
+
+Error
+
+Status Code
+
+Business Rule
+
+Database
+
+Testing
+
+==========================================================
+
+FOR EVERY SERVICE
+
+Generate
+
+Input
+
+Processing
+
+Business Logic
+
+Validation
+
+Repository
+
+Events
+
+Output
+
+Error
+
+Performance
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any module.
+
+Never skip any endpoint.
+
+Never skip business logic.
+
+Explain WHY.
+
+Explain HOW.
+
+Explain WHEN.
+
+Generate production-ready backend architecture.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Backend Architecture Bible
+
+following
+
+Clean Architecture
+
+SOLID Principles
+
+NestJS Best Practices
+
+OWASP ASVS
+
+REST API Standards
+
+OpenAPI 3.1
+
+Prisma Best Practices
+
+Medical Software Best Practices
+
+The rendered document should exceed
+
+350 pages.
+
+END OF MASTER PROMPT
+
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 06
+
+DATABASE ARCHITECTURE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY TABLE
+
+WRITE LIKE
+
+Principal Database Architect
+
+Senior PostgreSQL Engineer
+
+Healthcare Database Specialist
+
+Cloud Data Architect
+
+Medical Information System Architect
+
+==========================================================
+
+ROLE
+
+You are one of the world's best Database Architects.
+
+You have designed database systems for
+
+Hospital Information Systems
+
+Enterprise SaaS
+
+Government Systems
+
+Healthcare AI Platforms
+
+Medical Research Platforms
+
+Cloud Native Applications
+
+Your responsibility is to create the COMPLETE
+Database Architecture for the GrowTH Project.
+
+This document must allow another database engineer
+to implement the entire database without asking
+additional questions.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 06
+
+Database Architecture Bible
+
+==========================================================
+
+TARGET DATABASE
+
+PostgreSQL 16+
+
+Prisma ORM
+
+UUID Primary Keys
+
+JSONB Support
+
+Full Text Search
+
+GIN Index
+
+B-Tree Index
+
+Partitioning Ready
+
+Replication Ready
+
+==========================================================
+
+DATABASE DESIGN PRINCIPLES
+
+Generate architecture following
+
+Normalization (3NF minimum)
+
+Domain Driven Design
+
+Scalable Schema
+
+Auditability
+
+Soft Delete
+
+Medical Data Integrity
+
+Data Consistency
+
+ACID Transactions
+
+Performance Optimization
+
+Future Scalability
+
+==========================================================
+
+CHAPTER 1
+
+DATABASE OVERVIEW
+
+Explain
+
+Purpose
+
+Architecture
+
+Data Flow
+
+Relationship with Backend
+
+Relationship with AI
+
+Relationship with Frontend
+
+Advantages
+
+Scalability
+
+Maintainability
+
+==========================================================
+
+CHAPTER 2
+
+DATABASE DESIGN PRINCIPLES
+
+Explain
+
+Normalization
+
+Denormalization
+
+Primary Key Strategy
+
+UUID Strategy
+
+Foreign Keys
+
+Composite Keys
+
+Constraints
+
+Cascade Rules
+
+Unique Constraints
+
+Check Constraints
+
+==========================================================
+
+CHAPTER 3
+
+ENTITY RELATIONSHIP MODEL
+
+Generate COMPLETE ER Diagram.
+
+Include
+
+Users
+
+Roles
+
+Permissions
+
+Sessions
+
+Families
+
+Children
+
+Growth Records
+
+BMI Records
+
+Percentile Records
+
+Puberty Screening
+
+Bone Age Prediction
+
+Knowledge Articles
+
+Categories
+
+Bookmarks
+
+Notifications
+
+Audit Logs
+
+System Logs
+
+Medical References
+
+Settings
+
+Uploads
+
+==========================================================
+
+CHAPTER 4
+
+TABLE SPECIFICATION
+
+For EVERY table generate
+
+Purpose
+
+Description
+
+Columns
+
+Data Types
+
+Nullable
+
+Default Values
+
+Primary Key
+
+Foreign Keys
+
+Indexes
+
+Unique Constraints
+
+Check Constraints
+
+Triggers
+
+Relationships
+
+Soft Delete Strategy
+
+Example Data
+
+==========================================================
+
+CHAPTER 5
+
+DATA DICTIONARY
+
+Generate COMPLETE Data Dictionary.
+
+For every column explain
+
+Business Meaning
+
+Medical Meaning
+
+Allowed Values
+
+Validation
+
+Units
+
+Examples
+
+==========================================================
+
+CHAPTER 6
+
+INDEX STRATEGY
+
+Generate indexes for
+
+Users
+
+Children
+
+Growth
+
+Bone Age
+
+Articles
+
+Notifications
+
+History
+
+Search
+
+Performance
+
+Composite Index
+
+GIN
+
+BTree
+
+Hash
+
+Explain WHY each index exists.
+
+==========================================================
+
+CHAPTER 7
+
+DATA VALIDATION
+
+Generate validation rules
+
+Height
+
+Weight
+
+Age
+
+Birth Date
+
+Gender
+
+Email
+
+Phone
+
+Medical Result
+
+Bone Age
+
+Puberty Score
+
+File Upload
+
+==========================================================
+
+CHAPTER 8
+
+MEDICAL DATA MODEL
+
+Generate complete model for
+
+Growth Monitoring
+
+WHO Standards
+
+Percentile
+
+BMI
+
+SDS
+
+Bone Age
+
+Puberty Screening
+
+Medical Disclaimer
+
+==========================================================
+
+CHAPTER 9
+
+AUDIT TABLES
+
+Audit Logs
+
+User Activity
+
+Medical Access
+
+AI Prediction Logs
+
+Admin Logs
+
+Login History
+
+Changes
+
+Deleted Records
+
+==========================================================
+
+CHAPTER 10
+
+TRANSACTION DESIGN
+
+Generate transaction flow
+
+Register
+
+Login
+
+Add Child
+
+Growth Record
+
+Bone Age Upload
+
+Puberty Screening
+
+Knowledge Bookmark
+
+Notification Read
+
+Rollback
+
+Retry
+
+Concurrency
+
+==========================================================
+
+CHAPTER 11
+
+DATABASE SECURITY
+
+Encryption
+
+PII
+
+Medical Privacy
+
+Password Hash
+
+Access Control
+
+Audit Trail
+
+Data Masking
+
+Retention Policy
+
+==========================================================
+
+CHAPTER 12
+
+PERFORMANCE OPTIMIZATION
+
+Explain
+
+Index Optimization
+
+Query Optimization
+
+Pagination
+
+Partitioning
+
+Connection Pool
+
+Caching
+
+Materialized View
+
+Statistics
+
+Vacuum
+
+Analyze
+
+==========================================================
+
+CHAPTER 13
+
+MIGRATION STRATEGY
+
+Generate
+
+Migration Rules
+
+Rollback
+
+Seed Data
+
+Development
+
+Production
+
+Versioning
+
+==========================================================
+
+CHAPTER 14
+
+BACKUP & RECOVERY
+
+Full Backup
+
+Incremental Backup
+
+Point-in-Time Recovery
+
+Disaster Recovery
+
+Replication
+
+High Availability
+
+==========================================================
+
+CHAPTER 15
+
+DATA RETENTION
+
+Medical Data
+
+AI Prediction
+
+Audit Logs
+
+Notifications
+
+Uploads
+
+Deleted Accounts
+
+Legal Compliance
+
+==========================================================
+
+CHAPTER 16
+
+REPORTING DATABASE
+
+Growth Reports
+
+Medical Reports
+
+Statistics
+
+Analytics
+
+Dashboard Queries
+
+==========================================================
+
+CHAPTER 17
+
+AI DATA STORAGE
+
+Bone Age Images
+
+Prediction Results
+
+Confidence
+
+Model Version
+
+Inference Time
+
+Explainability
+
+Error Logs
+
+==========================================================
+
+CHAPTER 18
+
+SEARCH MODEL
+
+Article Search
+
+Child Search
+
+Growth Search
+
+History Search
+
+Full Text Search
+
+GIN Index
+
+Ranking
+
+==========================================================
+
+CHAPTER 19
+
+TEST DATABASE
+
+Test Data
+
+Mock Data
+
+Factories
+
+Seed Files
+
+Medical Sample Data
+
+Performance Dataset
+
+==========================================================
+
+CHAPTER 20
+
+DATABASE HANDBOOK
+
+Naming Convention
+
+Column Convention
+
+Index Convention
+
+Constraint Convention
+
+Migration Convention
+
+Best Practices
+
+Anti-patterns
+
+Checklist
+
+==========================================================
+
+FOR EVERY TABLE
+
+Generate
+
+Purpose
+
+Columns
+
+Relationships
+
+Indexes
+
+Constraints
+
+Validation
+
+Business Rules
+
+Medical Rules
+
+API Usage
+
+Frontend Usage
+
+Backend Usage
+
+Testing
+
+==========================================================
+
+FOR EVERY COLUMN
+
+Generate
+
+Name
+
+Type
+
+Description
+
+Validation
+
+Business Rule
+
+Medical Rule
+
+Nullable
+
+Example
+
+==========================================================
+
+FOR EVERY RELATIONSHIP
+
+Generate
+
+Cardinality
+
+Cascade Rule
+
+Delete Strategy
+
+Update Strategy
+
+Performance Impact
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any table.
+
+Never skip any relationship.
+
+Never skip indexes.
+
+Never skip constraints.
+
+Explain WHY.
+
+Explain HOW.
+
+Explain WHEN.
+
+Generate production-ready database architecture.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Database Architecture Bible
+
+following
+
+PostgreSQL Best Practices
+
+Prisma Best Practices
+
+3NF Normalization
+
+Medical Database Standards
+
+HIPAA-inspired Data Design Principles
+
+Cloud Native Database Design
+
+The rendered document should exceed
+
+300 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 07
+
+AI & BONE AGE ARCHITECTURE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY SECTION
+
+WRITE LIKE
+
+Principal AI Architect
+
+Medical AI Researcher
+
+Computer Vision Engineer
+
+Machine Learning Architect
+
+Healthcare AI Consultant
+
+Medical Imaging Specialist
+
+==========================================================
+
+ROLE
+
+You are responsible for designing the COMPLETE
+Artificial Intelligence architecture
+for the GrowTH Project.
+
+The AI system is NOT a diagnostic system.
+
+The AI system is a decision support system.
+
+The output must always include a medical disclaimer.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 07
+
+AI & Bone Age Architecture Bible
+
+==========================================================
+
+MISSION
+
+Generate the complete AI architecture.
+
+The document must explain
+
+AI Objectives
+
+Medical Objectives
+
+Dataset
+
+Training Pipeline
+
+Inference Pipeline
+
+Validation
+
+Deployment
+
+Monitoring
+
+Security
+
+Maintenance
+
+Future Improvement
+
+==========================================================
+
+CHAPTER 1
+
+AI OVERVIEW
+
+Explain
+
+Purpose
+
+Medical Objective
+
+Business Objective
+
+Research Objective
+
+Limitations
+
+Expected Accuracy
+
+Clinical Usage
+
+Legal Limitation
+
+Medical Disclaimer
+
+Difference between
+
+Decision Support
+
+Clinical Decision
+
+Diagnosis
+
+Prediction
+
+Recommendation
+
+==========================================================
+
+CHAPTER 2
+
+SYSTEM ARCHITECTURE
+
+Generate complete architecture
+
+Frontend
+
+↓
+
+Backend
+
+↓
+
+Storage
+
+↓
+
+AI Service
+
+↓
+
+Model
+
+↓
+
+Prediction
+
+↓
+
+Backend
+
+↓
+
+Database
+
+↓
+
+Frontend
+
+Explain every step.
+
+Generate sequence description.
+
+==========================================================
+
+CHAPTER 3
+
+BONE AGE WORKFLOW
+
+Describe
+
+Upload Image
+
+Validate
+
+Store File
+
+Queue Request
+
+Run Inference
+
+Predict Bone Age
+
+Estimate Confidence
+
+Estimate Error
+
+Return Result
+
+Save History
+
+Explain Result
+
+Display Result
+
+==========================================================
+
+CHAPTER 4
+
+IMAGE REQUIREMENTS
+
+Generate rules
+
+Supported File Types
+
+PNG
+
+JPEG
+
+DICOM (optional)
+
+Maximum Size
+
+Resolution
+
+Minimum Resolution
+
+Orientation
+
+Brightness
+
+Contrast
+
+Hand Position
+
+Left Hand Requirement
+
+Image Quality
+
+Noise
+
+Blur
+
+Cropping
+
+Rotation
+
+Validation Rules
+
+==========================================================
+
+CHAPTER 5
+
+DATASET
+
+Describe
+
+Dataset Sources
+
+Medical References
+
+Public Dataset
+
+Hospital Dataset
+
+Labeling Process
+
+Annotation
+
+Quality Control
+
+Expert Validation
+
+Dataset Versioning
+
+Metadata
+
+Bias
+
+Limitations
+
+==========================================================
+
+CHAPTER 6
+
+MODEL ARCHITECTURE
+
+Generate
+
+CNN
+
+ResNet
+
+EfficientNet
+
+Vision Transformer
+
+Transfer Learning
+
+Feature Extraction
+
+Regression Head
+
+Classification Head
+
+Ensemble Strategy
+
+Explain WHY each architecture may be chosen.
+
+==========================================================
+
+CHAPTER 7
+
+TRAINING PIPELINE
+
+Generate
+
+Preprocessing
+
+Resize
+
+Normalization
+
+Augmentation
+
+Training
+
+Validation
+
+Testing
+
+Checkpoint
+
+Early Stopping
+
+Hyperparameter Tuning
+
+Model Selection
+
+Cross Validation
+
+==========================================================
+
+CHAPTER 8
+
+INFERENCE PIPELINE
+
+Generate
+
+Receive Request
+
+Validate Image
+
+Load Model
+
+Run Prediction
+
+Confidence Calculation
+
+Margin of Error
+
+Medical Rule Check
+
+Response Generation
+
+Logging
+
+==========================================================
+
+CHAPTER 9
+
+OUTPUT FORMAT
+
+Generate standard response
+
+predictionBoneAge
+
+confidence
+
+marginOfError
+
+modelVersion
+
+processingTime
+
+requestId
+
+warning
+
+medicalDisclaimer
+
+status
+
+==========================================================
+
+CHAPTER 10
+
+MEDICAL EXPLANATION
+
+Generate guideline
+
+Explain Result
+
+Explain Confidence
+
+Explain Limitation
+
+Explain Recommendation
+
+Explain Next Step
+
+Medical Warning
+
+Doctor Consultation Recommendation
+
+==========================================================
+
+CHAPTER 11
+
+MODEL VALIDATION
+
+Generate
+
+Accuracy
+
+MAE
+
+RMSE
+
+Precision
+
+Recall
+
+Sensitivity
+
+Specificity
+
+F1
+
+ROC
+
+Calibration
+
+Medical Validation
+
+Clinical Validation
+
+==========================================================
+
+CHAPTER 12
+
+MODEL MONITORING
+
+Generate
+
+Prediction Count
+
+Average Confidence
+
+Average Processing Time
+
+Failure Rate
+
+Drift Detection
+
+Dataset Drift
+
+Performance Drift
+
+Alert Rules
+
+==========================================================
+
+CHAPTER 13
+
+MODEL VERSIONING
+
+Version
+
+Release
+
+Rollback
+
+Experiment
+
+Production
+
+A/B Testing
+
+Canary Deployment
+
+==========================================================
+
+CHAPTER 14
+
+SECURITY
+
+Secure Upload
+
+Virus Scan
+
+Malicious Image Detection
+
+Rate Limit
+
+Authentication
+
+Authorization
+
+Audit Log
+
+Medical Privacy
+
+==========================================================
+
+CHAPTER 15
+
+ETHICS
+
+Medical Ethics
+
+AI Ethics
+
+Bias
+
+Fairness
+
+Explainability
+
+Transparency
+
+Human Oversight
+
+Privacy
+
+==========================================================
+
+CHAPTER 16
+
+ERROR HANDLING
+
+Unsupported File
+
+Low Quality Image
+
+Corrupted Image
+
+Timeout
+
+Model Failure
+
+Server Failure
+
+Retry
+
+Fallback
+
+User Guidance
+
+==========================================================
+
+CHAPTER 17
+
+API SPECIFICATION
+
+POST
+
+/ai/bone-age/predict
+
+Generate
+
+Request
+
+Headers
+
+Authentication
+
+Validation
+
+Response
+
+Status Codes
+
+Errors
+
+Examples
+
+==========================================================
+
+CHAPTER 18
+
+DATABASE RELATIONSHIP
+
+Prediction Table
+
+Image Table
+
+History
+
+Audit
+
+Model Version
+
+Medical Reference
+
+Relationships
+
+Retention
+
+==========================================================
+
+CHAPTER 19
+
+TESTING
+
+Unit Test
+
+Inference Test
+
+Performance Test
+
+Stress Test
+
+Medical Validation
+
+Acceptance Test
+
+Mock Prediction
+
+Edge Cases
+
+==========================================================
+
+CHAPTER 20
+
+FUTURE ROADMAP
+
+Future AI
+
+Growth Prediction
+
+Adult Height Prediction
+
+Risk Classification
+
+Nutrition Recommendation
+
+Medical Chat Assistant
+
+Doctor Dashboard
+
+Research Platform
+
+Clearly identify these as
+
+Future Scope
+
+Not included in current TOR.
+
+==========================================================
+
+FOR EVERY MODEL
+
+Generate
+
+Purpose
+
+Input
+
+Output
+
+Training
+
+Validation
+
+Inference
+
+Performance
+
+Advantages
+
+Limitations
+
+==========================================================
+
+FOR EVERY API
+
+Generate
+
+Purpose
+
+Authentication
+
+Request
+
+Validation
+
+Response
+
+Error
+
+Logging
+
+Security
+
+==========================================================
+
+FOR EVERY ERROR
+
+Generate
+
+Cause
+
+Detection
+
+Recovery
+
+User Message
+
+Developer Message
+
+Logging
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never claim medical diagnosis.
+
+Always include medical disclaimer.
+
+Always explain limitations.
+
+Never overstate model capability.
+
+Every prediction must require
+professional medical confirmation.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+AI & Bone Age Architecture Bible
+
+following
+
+Medical AI Best Practices
+
+Computer Vision Standards
+
+MLOps Principles
+
+Explainable AI (XAI)
+
+Responsible AI
+
+Healthcare AI Guidelines
+
+The rendered document should exceed
+
+300 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 08
+
+API SPECIFICATION BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY ENDPOINT
+
+WRITE LIKE
+
+Principal API Architect
+
+Senior Backend Architect
+
+OpenAPI Specialist
+
+Healthcare Integration Architect
+
+Cloud API Engineer
+
+==========================================================
+
+ROLE
+
+You are responsible for creating the COMPLETE
+REST API Specification
+for the GrowTH Project.
+
+The API specification must become the ONLY API reference
+used by
+
+Frontend Team
+
+Backend Team
+
+AI Team
+
+QA Team
+
+Mobile Team
+
+Documentation Team
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 08
+
+API Specification Bible
+
+==========================================================
+
+MISSION
+
+Generate a COMPLETE API Specification.
+
+Follow
+
+REST API Best Practices
+
+OpenAPI 3.1
+
+JSON Schema
+
+RFC 7807 Problem Details
+
+HTTP Standards
+
+Healthcare API Design
+
+==========================================================
+
+API STYLE
+
+REST
+
+JSON
+
+HTTPS Only
+
+JWT Authentication
+
+Versioning
+
+/api/v1/
+
+Resource Based
+
+Stateless
+
+Idempotent
+
+==========================================================
+
+GLOBAL API STANDARDS
+
+Generate standards for
+
+Naming Convention
+
+HTTP Method Usage
+
+URL Structure
+
+Headers
+
+Authentication
+
+Authorization
+
+Rate Limiting
+
+Versioning
+
+Pagination
+
+Sorting
+
+Filtering
+
+Searching
+
+Caching
+
+Idempotency
+
+Correlation ID
+
+Request ID
+
+==========================================================
+
+STANDARD RESPONSE FORMAT
+
+Generate ONE standard response format
+
+Success
+
+{
+  "success": true,
+  "code": 200,
+  "message": "",
+  "data": {},
+  "meta": {},
+  "timestamp": "",
+  "requestId": ""
+}
+
+Validation Error
+
+Authentication Error
+
+Authorization Error
+
+Business Error
+
+Medical Error
+
+AI Error
+
+Internal Server Error
+
+==========================================================
+
+STANDARD ERROR FORMAT
+
+Generate RFC7807 compatible errors
+
+type
+
+title
+
+status
+
+detail
+
+instance
+
+errorCode
+
+requestId
+
+==========================================================
+
+AUTHENTICATION
+
+Generate API
+
+POST /auth/register
+
+POST /auth/login
+
+POST /auth/logout
+
+POST /auth/refresh
+
+POST /auth/forgot-password
+
+POST /auth/reset-password
+
+GET /auth/profile
+
+PATCH /auth/profile
+
+==========================================================
+
+USER MANAGEMENT
+
+GET /users/me
+
+PATCH /users/me
+
+DELETE /users/me
+
+==========================================================
+
+CHILD MANAGEMENT
+
+POST /children
+
+GET /children
+
+GET /children/{id}
+
+PATCH /children/{id}
+
+DELETE /children/{id}
+
+==========================================================
+
+GROWTH MODULE
+
+POST /growth
+
+GET /growth
+
+GET /growth/{id}
+
+PATCH /growth/{id}
+
+DELETE /growth/{id}
+
+GET /growth/chart
+
+GET /growth/history
+
+GET /growth/statistics
+
+==========================================================
+
+BMI MODULE
+
+GET /growth/bmi
+
+GET /growth/percentile
+
+GET /growth/sds
+
+==========================================================
+
+BONE AGE MODULE
+
+POST /bone-age/upload
+
+POST /bone-age/predict
+
+GET /bone-age/history
+
+GET /bone-age/{id}
+
+DELETE /bone-age/{id}
+
+==========================================================
+
+PUBERTY MODULE
+
+POST /puberty/questionnaire
+
+GET /puberty/history
+
+GET /puberty/{id}
+
+==========================================================
+
+KNOWLEDGE MODULE
+
+GET /articles
+
+GET /articles/{id}
+
+GET /categories
+
+GET /search
+
+==========================================================
+
+PROFILE MODULE
+
+GET /profile
+
+PATCH /profile
+
+==========================================================
+
+NOTIFICATION MODULE
+
+GET /notifications
+
+PATCH /notifications/{id}
+
+DELETE /notifications/{id}
+
+==========================================================
+
+ADMIN MODULE
+
+GET /admin/users
+
+GET /admin/statistics
+
+GET /admin/logs
+
+PATCH /admin/articles
+
+DELETE /admin/articles/{id}
+
+==========================================================
+
+FOR EVERY ENDPOINT
+
+Generate
+
+Endpoint Name
+
+Purpose
+
+Business Goal
+
+Medical Goal
+
+Authentication
+
+Authorization
+
+Permission
+
+Headers
+
+HTTP Method
+
+URL
+
+Content-Type
+
+Request Body
+
+Path Parameters
+
+Query Parameters
+
+Validation Rules
+
+Business Rules
+
+Medical Rules
+
+Response Body
+
+Status Codes
+
+Error Codes
+
+Example Request
+
+Example Response
+
+Example Error
+
+Database Tables
+
+AI Interaction
+
+Audit Log
+
+Rate Limit
+
+Caching
+
+Security
+
+Performance
+
+Testing
+
+Frontend Usage
+
+Backend Flow
+
+Sequence Diagram Description
+
+Related TOR
+
+==========================================================
+
+PAGINATION
+
+Generate standard
+
+page
+
+limit
+
+offset
+
+cursor
+
+total
+
+hasNext
+
+hasPrevious
+
+==========================================================
+
+FILTERING
+
+Generate
+
+dateFrom
+
+dateTo
+
+gender
+
+age
+
+category
+
+status
+
+keyword
+
+==========================================================
+
+SORTING
+
+Generate
+
+sortBy
+
+order
+
+==========================================================
+
+SEARCH
+
+Generate
+
+Global Search
+
+Knowledge Search
+
+Child Search
+
+Growth History Search
+
+==========================================================
+
+UPLOAD API
+
+Generate
+
+File Validation
+
+Content Type
+
+Maximum Size
+
+Virus Scan
+
+Image Compression
+
+Storage Flow
+
+Error Handling
+
+==========================================================
+
+API SECURITY
+
+JWT
+
+Refresh Token
+
+Bearer Token
+
+HTTPS
+
+CORS
+
+CSRF Strategy
+
+Rate Limiting
+
+Replay Protection
+
+Upload Validation
+
+Medical Privacy
+
+==========================================================
+
+API PERFORMANCE
+
+Compression
+
+Caching
+
+ETag
+
+Conditional Requests
+
+Connection Pool
+
+Timeout
+
+Retry
+
+Circuit Breaker
+
+==========================================================
+
+WEBHOOKS (Future Scope)
+
+Prediction Finished
+
+Notification
+
+Medical Report Ready
+
+Clearly mark
+
+Future Scope
+
+==========================================================
+
+API VERSIONING
+
+v1
+
+v2 Strategy
+
+Deprecation Policy
+
+Backward Compatibility
+
+==========================================================
+
+OPENAPI
+
+Generate complete
+
+OpenAPI 3.1 specification
+
+Schemas
+
+Components
+
+Security
+
+Tags
+
+Examples
+
+==========================================================
+
+JSON SCHEMA
+
+Generate schemas
+
+User
+
+Child
+
+GrowthRecord
+
+BoneAgePrediction
+
+PubertyScreening
+
+Article
+
+Notification
+
+ErrorResponse
+
+SuccessResponse
+
+==========================================================
+
+TESTING
+
+Generate
+
+Postman Collection
+
+Swagger Examples
+
+Contract Testing
+
+Integration Testing
+
+Load Testing
+
+Security Testing
+
+Mock Server
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any endpoint.
+
+Every endpoint must contain
+
+Business Logic
+
+Medical Logic
+
+Validation
+
+Security
+
+Testing
+
+Examples
+
+Always explain WHY.
+
+Always explain HOW.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Enterprise REST API Specification
+
+following
+
+OpenAPI 3.1
+
+REST API Best Practices
+
+RFC7231
+
+RFC7807
+
+JSON Schema Draft 2020-12
+
+OWASP API Security Top 10
+
+Healthcare API Guidelines
+
+The rendered document should exceed
+
+350 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 09
+
+SECURITY & PRIVACY BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+DO NOT SKIP ANY SECTION
+
+WRITE LIKE
+
+Principal Security Architect
+Healthcare Cybersecurity Consultant
+Cloud Security Architect
+Application Security Engineer
+OWASP Specialist
+Medical Information Security Architect
+
+==========================================================
+
+ROLE
+
+You are responsible for designing the COMPLETE
+Security Architecture
+for the GrowTH Project.
+
+The objective is to secure
+
+Frontend
+
+Backend
+
+Database
+
+API
+
+Authentication
+
+AI Module
+
+Medical Data
+
+Cloud Infrastructure
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 09
+
+Security & Privacy Bible
+
+==========================================================
+
+MISSION
+
+Generate the COMPLETE security design.
+
+The document must be implementation-ready.
+
+Developers
+
+Backend Team
+
+Frontend Team
+
+Database Team
+
+Cloud Team
+
+QA Team
+
+must be able to implement every security control
+without additional clarification.
+
+==========================================================
+
+SECURITY STANDARDS
+
+Follow
+
+OWASP ASVS
+
+OWASP Top 10
+
+OWASP API Security Top 10
+
+NIST Cybersecurity Framework
+
+CIS Controls
+
+Zero Trust Principles
+
+Secure SDLC
+
+Defense in Depth
+
+Principle of Least Privilege
+
+==========================================================
+
+CHAPTER 1
+
+SECURITY OVERVIEW
+
+Explain
+
+Security Objectives
+
+Medical Data Protection
+
+CIA Triad
+
+Confidentiality
+
+Integrity
+
+Availability
+
+Risk-Based Security
+
+Threat Landscape
+
+Healthcare Risks
+
+Business Risks
+
+==========================================================
+
+CHAPTER 2
+
+THREAT MODEL
+
+Generate
+
+Assets
+
+Attack Surface
+
+Threat Actors
+
+Internal Threat
+
+External Threat
+
+Malicious User
+
+Compromised Device
+
+Cloud Threat
+
+AI Threat
+
+Medical Threat
+
+Generate STRIDE analysis
+
+Spoofing
+
+Tampering
+
+Repudiation
+
+Information Disclosure
+
+Denial of Service
+
+Elevation of Privilege
+
+==========================================================
+
+CHAPTER 3
+
+AUTHENTICATION SECURITY
+
+Password Policy
+
+Password Hashing
+
+Argon2id (preferred)
+
+bcrypt (alternative)
+
+JWT
+
+Refresh Token Rotation
+
+Session Expiration
+
+Account Lockout
+
+Brute Force Protection
+
+Password Reset
+
+Email Verification
+
+==========================================================
+
+CHAPTER 4
+
+AUTHORIZATION
+
+RBAC
+
+Roles
+
+Permissions
+
+Ownership Validation
+
+Resource Access
+
+Admin Access
+
+Medical Access Rules
+
+Policy Based Access
+
+Least Privilege
+
+==========================================================
+
+CHAPTER 5
+
+API SECURITY
+
+HTTPS Only
+
+JWT
+
+Bearer Token
+
+Request Validation
+
+Input Sanitization
+
+Output Encoding
+
+Rate Limiting
+
+API Gateway
+
+Replay Protection
+
+CORS
+
+Request Signing (Future)
+
+==========================================================
+
+CHAPTER 6
+
+INPUT VALIDATION
+
+Validation Strategy
+
+Server Validation
+
+Client Validation
+
+Whitelist
+
+Blacklist
+
+Length Validation
+
+Medical Validation
+
+File Validation
+
+Date Validation
+
+==========================================================
+
+CHAPTER 7
+
+FILE UPLOAD SECURITY
+
+Bone Age Image Upload
+
+Allowed MIME Types
+
+Maximum Size
+
+Extension Validation
+
+Magic Number Validation
+
+Virus Scan
+
+Malware Scan
+
+Image Re-encoding
+
+Secure Storage
+
+Signed URL
+
+Temporary Upload
+
+==========================================================
+
+CHAPTER 8
+
+DATABASE SECURITY
+
+Encryption at Rest
+
+TLS in Transit
+
+Parameterized Queries
+
+ORM Safety
+
+SQL Injection Prevention
+
+Secrets Management
+
+Database Roles
+
+Audit Trail
+
+Backup Encryption
+
+==========================================================
+
+CHAPTER 9
+
+MEDICAL DATA PRIVACY
+
+Personally Identifiable Information
+
+Health Data Classification
+
+Consent
+
+Data Minimization
+
+Retention Policy
+
+Deletion Policy
+
+Access Logging
+
+Medical Disclaimer
+
+Explain principles compatible with
+privacy regulations (e.g. PDPA/GDPR),
+without providing legal advice.
+
+==========================================================
+
+CHAPTER 10
+
+AI SECURITY
+
+Model Access
+
+Inference Protection
+
+Prompt Injection Awareness
+
+Adversarial Images
+
+Model Version Control
+
+Prediction Logging
+
+Confidence Validation
+
+Medical Limitation
+
+==========================================================
+
+CHAPTER 11
+
+LOGGING
+
+Security Log
+
+Authentication Log
+
+Medical Access Log
+
+Audit Log
+
+AI Log
+
+System Log
+
+Admin Log
+
+Log Integrity
+
+Log Retention
+
+==========================================================
+
+CHAPTER 12
+
+MONITORING
+
+Health Check
+
+Security Alert
+
+Login Failure
+
+Abnormal Activity
+
+API Abuse
+
+Upload Abuse
+
+Performance Monitoring
+
+Threat Detection
+
+==========================================================
+
+CHAPTER 13
+
+INCIDENT RESPONSE
+
+Preparation
+
+Detection
+
+Containment
+
+Investigation
+
+Recovery
+
+Lessons Learned
+
+Security Communication
+
+Medical Impact
+
+==========================================================
+
+CHAPTER 14
+
+BACKUP SECURITY
+
+Backup Encryption
+
+Backup Validation
+
+Restore Testing
+
+Disaster Recovery
+
+Point in Time Recovery
+
+Cloud Backup
+
+==========================================================
+
+CHAPTER 15
+
+DEVSECOPS
+
+Security in CI/CD
+
+Dependency Scan
+
+SAST
+
+DAST
+
+Secret Scanning
+
+Container Scanning
+
+SBOM
+
+==========================================================
+
+CHAPTER 16
+
+SECURE CODING
+
+TypeScript Security
+
+NestJS Security
+
+React Security
+
+XSS Prevention
+
+CSRF Strategy
+
+Clickjacking Prevention
+
+Open Redirect Prevention
+
+==========================================================
+
+CHAPTER 17
+
+OWASP TOP 10
+
+Generate implementation guide
+
+Broken Access Control
+
+Cryptographic Failures
+
+Injection
+
+Insecure Design
+
+Security Misconfiguration
+
+Vulnerable Components
+
+Authentication Failures
+
+Integrity Failures
+
+Logging Failures
+
+SSRF
+
+==========================================================
+
+CHAPTER 18
+
+OWASP API SECURITY
+
+Broken Object Level Authorization
+
+Broken Authentication
+
+Excessive Data Exposure
+
+Resource Consumption
+
+Function Level Authorization
+
+Sensitive Business Flow
+
+Mass Assignment
+
+Security Misconfiguration
+
+Inventory Management
+
+Unsafe API Consumption
+
+==========================================================
+
+CHAPTER 19
+
+SECURITY TESTING
+
+Static Analysis
+
+Dynamic Analysis
+
+Dependency Scan
+
+Penetration Test
+
+API Test
+
+Authentication Test
+
+Authorization Test
+
+Upload Test
+
+AI Test
+
+==========================================================
+
+CHAPTER 20
+
+SECURITY CHECKLIST
+
+Generate
+
+Developer Checklist
+
+Backend Checklist
+
+Frontend Checklist
+
+Database Checklist
+
+Cloud Checklist
+
+AI Checklist
+
+Deployment Checklist
+
+TOR Mapping
+
+Definition of Done
+
+==========================================================
+
+FOR EVERY SECURITY CONTROL
+
+Generate
+
+Purpose
+
+Threat
+
+Implementation
+
+Configuration
+
+Validation
+
+Testing
+
+Monitoring
+
+Recovery
+
+Best Practice
+
+==========================================================
+
+FOR EVERY THREAT
+
+Generate
+
+Description
+
+Attack Vector
+
+Likelihood
+
+Impact
+
+Detection
+
+Mitigation
+
+Recovery
+
+==========================================================
+
+FOR EVERY MODULE
+
+Generate
+
+Security Requirement
+
+Authentication
+
+Authorization
+
+Validation
+
+Logging
+
+Monitoring
+
+Testing
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any security control.
+
+Always explain WHY.
+
+Always explain HOW.
+
+Always explain WHEN.
+
+Generate production-ready
+security architecture.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Security & Privacy Bible
+
+following
+
+OWASP ASVS
+
+OWASP API Security Top 10
+
+OWASP Top 10
+
+NIST Cybersecurity Framework
+
+Zero Trust Principles
+
+Healthcare Security Best Practices
+
+The rendered document should exceed
+
+350 pages.
+
+END OF MASTER PROMPT
+
+
+==========================================================
+GrowTH Master Project Bible
+Volume 10
+
+TESTING & QUALITY ASSURANCE BIBLE
+
+Master Prompt Version 1.0
+
+DO NOT SUMMARIZE
+
+DO NOT SKIP ANY TEST
+
+WRITE LIKE
+
+Principal QA Architect
+
+Senior Test Architect
+
+Medical Software Validation Specialist
+
+Healthcare Quality Engineer
+
+Automation Test Lead
+
+==========================================================
+
+ROLE
+
+You are responsible for creating the COMPLETE
+
+Testing Strategy
+
+Quality Assurance
+
+Validation Strategy
+
+Verification Strategy
+
+for the GrowTH Project.
+
+This document will become the MASTER QA DOCUMENT.
+
+==========================================================
+
+DOCUMENT NAME
+
+GrowTH Master Project Bible
+
+Volume 10
+
+Testing & Quality Assurance Bible
+
+==========================================================
+
+MISSION
+
+Generate COMPLETE testing documentation.
+
+Every test must be implementation-ready.
+
+Every requirement must have at least one test.
+
+Every module must have
+
+Unit Test
+
+Integration Test
+
+System Test
+
+Acceptance Test
+
+==========================================================
+
+QUALITY STANDARDS
+
+Follow
+
+ISTQB
+
+ISO 25010
+
+IEEE 829
+
+Risk Based Testing
+
+Medical Software Validation Principles
+
+==========================================================
+
+CHAPTER 1
+
+QUALITY STRATEGY
+
+Explain
+
+Quality Objectives
+
+Verification
+
+Validation
+
+Quality Gates
+
+Definition of Done
+
+Exit Criteria
+
+Entry Criteria
+
+Risk Based Testing
+
+==========================================================
+
+CHAPTER 2
+
+TEST STRATEGY
+
+Generate
+
+Testing Pyramid
+
+Unit
+
+Integration
+
+API
+
+System
+
+End to End
+
+User Acceptance
+
+Regression
+
+Performance
+
+Security
+
+Medical Validation
+
+==========================================================
+
+CHAPTER 3
+
+REQUIREMENT TRACEABILITY
+
+Generate
+
+FR Mapping
+
+Requirement
+
+Test Case
+
+API
+
+Database
+
+UI
+
+AI
+
+Owner
+
+Status
+
+Priority
+
+Risk
+
+Acceptance
+
+==========================================================
+
+CHAPTER 4
+
+UNIT TESTING
+
+Frontend
+
+Backend
+
+Utility
+
+Service
+
+Repository
+
+Validation
+
+Calculation
+
+Growth Algorithm
+
+BMI
+
+Percentile
+
+WHO Logic
+
+Bone Age Service
+
+==========================================================
+
+CHAPTER 5
+
+INTEGRATION TESTING
+
+Generate
+
+Frontend ↔ Backend
+
+Backend ↔ Database
+
+Backend ↔ AI
+
+Upload Flow
+
+Authentication Flow
+
+Growth Flow
+
+Knowledge Flow
+
+==========================================================
+
+CHAPTER 6
+
+API TESTING
+
+Authentication
+
+Child
+
+Growth
+
+Bone Age
+
+Puberty
+
+Knowledge
+
+Profile
+
+Admin
+
+Generate
+
+Positive Test
+
+Negative Test
+
+Boundary Test
+
+Security Test
+
+==========================================================
+
+CHAPTER 7
+
+SYSTEM TESTING
+
+Complete User Journey
+
+Register
+
+Login
+
+Add Child
+
+Record Growth
+
+Bone Age
+
+Knowledge
+
+Logout
+
+Generate
+
+Happy Path
+
+Alternative Path
+
+Failure Path
+
+Recovery
+
+==========================================================
+
+CHAPTER 8
+
+USER ACCEPTANCE TEST
+
+Generate
+
+Scenario
+
+Expected Result
+
+Medical Validation
+
+Parent Validation
+
+Supervisor Validation
+
+TOR Validation
+
+Acceptance Checklist
+
+==========================================================
+
+CHAPTER 9
+
+UI TESTING
+
+Responsive
+
+Desktop
+
+Tablet
+
+Mobile
+
+Accessibility
+
+Typography
+
+Spacing
+
+Buttons
+
+Forms
+
+Charts
+
+Dialogs
+
+==========================================================
+
+CHAPTER 10
+
+PERFORMANCE TESTING
+
+Response Time
+
+API Throughput
+
+Upload Speed
+
+AI Inference Time
+
+Database Query
+
+Memory Usage
+
+CPU Usage
+
+Stress Test
+
+Load Test
+
+==========================================================
+
+CHAPTER 11
+
+SECURITY TESTING
+
+Authentication
+
+Authorization
+
+JWT
+
+Rate Limit
+
+SQL Injection
+
+XSS
+
+CSRF
+
+Upload
+
+Broken Access Control
+
+OWASP Testing
+
+==========================================================
+
+CHAPTER 12
+
+DATABASE TESTING
+
+Migration
+
+Rollback
+
+Transaction
+
+Constraint
+
+Foreign Key
+
+Index
+
+Performance
+
+Backup
+
+Restore
+
+==========================================================
+
+CHAPTER 13
+
+AI VALIDATION
+
+Prediction
+
+Confidence
+
+Image Validation
+
+Wrong Image
+
+Low Quality
+
+Timeout
+
+Retry
+
+Model Version
+
+Medical Disclaimer
+
+==========================================================
+
+CHAPTER 14
+
+TEST DATA
+
+Generate
+
+Mock User
+
+Mock Child
+
+Growth Records
+
+Bone Age Images
+
+Articles
+
+Notifications
+
+Admin
+
+Medical Data
+
+==========================================================
+
+CHAPTER 15
+
+AUTOMATION
+
+Vitest
+
+Jest
+
+Playwright
+
+Supertest
+
+Postman
+
+CI
+
+Coverage
+
+Mock Server
+
+==========================================================
+
+CHAPTER 16
+
+BUG MANAGEMENT
+
+Severity
+
+Priority
+
+Status
+
+Lifecycle
+
+Assignment
+
+Verification
+
+Closure
+
+Regression
+
+==========================================================
+
+CHAPTER 17
+
+TEST REPORT
+
+Daily Report
+
+Sprint Report
+
+Coverage Report
+
+Defect Report
+
+Risk Report
+
+Performance Report
+
+==========================================================
+
+CHAPTER 18
+
+QUALITY METRICS
+
+Coverage
+
+Pass Rate
+
+Failure Rate
+
+Defect Density
+
+Mean Time to Repair
+
+Mean Time Between Failure
+
+Escaped Defects
+
+==========================================================
+
+CHAPTER 19
+
+TOR COMPLIANCE TEST
+
+Generate
+
+Every FR
+
+↓
+
+Related Test
+
+↓
+
+Expected Result
+
+↓
+
+Evidence
+
+↓
+
+Status
+
+Generate complete TOR verification matrix.
+
+==========================================================
+
+CHAPTER 20
+
+FINAL ACCEPTANCE
+
+Generate
+
+Release Checklist
+
+Deployment Validation
+
+Smoke Test
+
+Production Validation
+
+Rollback Validation
+
+Project Acceptance
+
+Supervisor Acceptance
+
+Medical Acceptance
+
+==========================================================
+
+FOR EVERY MODULE
+
+Generate
+
+Purpose
+
+Test Scope
+
+Positive Cases
+
+Negative Cases
+
+Boundary Cases
+
+Edge Cases
+
+Performance
+
+Security
+
+Accessibility
+
+Regression
+
+==========================================================
+
+FOR EVERY TEST CASE
+
+Generate
+
+Test ID
+
+Title
+
+Objective
+
+Requirement
+
+Precondition
+
+Steps
+
+Input
+
+Expected Result
+
+Actual Result
+
+Status
+
+Priority
+
+Severity
+
+Evidence
+
+==========================================================
+
+QUALITY REQUIREMENTS
+
+Never summarize.
+
+Never skip any module.
+
+Every Requirement
+
+must have
+
+Test Case
+
+Evidence
+
+Acceptance Criteria
+
+Generate production-ready QA documentation.
+
+==========================================================
+
+OUTPUT
+
+Produce a professional
+
+Testing & Quality Assurance Bible
+
+following
+
+ISTQB
+
+IEEE 829
+
+ISO 25010
+
+Healthcare Software Validation Best Practices
+
+The rendered document should exceed
+
+350 pages.
+
+END OF MASTER PROMPT
