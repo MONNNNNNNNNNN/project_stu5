@@ -1,0 +1,267 @@
+// GrowTH — Database Architecture (Volume 06 of Process of project.txt)
+// PostgreSQL 16+, Prisma ORM, UUID primary keys, soft delete on medical records.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Identity & Access
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  PARENT
+  EDUCATOR
+  ADMIN
+}
+
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  passwordHash        String
+  fullName            String
+  role                UserRole  @default(PARENT)
+  avatarUrl           String?
+  isVerified          Boolean   @default(false)
+  resetTokenHash      String?
+  resetTokenExpiresAt DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
+
+  children      ChildGuardian[]
+  sessions      Session[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshToken String    @unique
+  userAgent    String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime  @default(now())
+  revokedAt    DateTime?
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+// ---------------------------------------------------------------------------
+// Family / Child
+// ---------------------------------------------------------------------------
+
+enum ChildSex {
+  MALE
+  FEMALE
+}
+
+enum GuardianRelation {
+  PARENT
+  GUARDIAN
+  RELATIVE
+}
+
+model Child {
+  id          String    @id @default(uuid())
+  fullName    String
+  nickname    String?
+  sex         ChildSex
+  dateOfBirth DateTime
+  avatarUrl   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  guardians          ChildGuardian[]
+  growthRecords      GrowthRecord[]
+  pubertyScreenings  PubertyScreening[]
+  boneAgePredictions BoneAgePrediction[]
+
+  @@map("children")
+}
+
+model ChildGuardian {
+  id        String           @id @default(uuid())
+  childId   String
+  child     Child            @relation(fields: [childId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  relation  GuardianRelation @default(PARENT)
+  isPrimary Boolean          @default(true)
+  createdAt DateTime         @default(now())
+
+  @@unique([childId, userId])
+  @@index([userId])
+  @@map("child_guardians")
+}
+
+// ---------------------------------------------------------------------------
+// Growth Tracking
+// ---------------------------------------------------------------------------
+
+model GrowthRecord {
+  id               String    @id @default(uuid())
+  childId          String
+  child            Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  measuredAt       DateTime  @default(now())
+  heightCm         Decimal?  @db.Decimal(5, 2)
+  weightKg         Decimal?  @db.Decimal(5, 2)
+  bmi              Decimal?  @db.Decimal(4, 2)
+  heightPercentile Decimal?  @db.Decimal(5, 2)
+  weightPercentile Decimal?  @db.Decimal(5, 2)
+  bmiPercentile    Decimal?  @db.Decimal(5, 2)
+  heightSds        Decimal?  @db.Decimal(4, 2)
+  weightSds        Decimal?  @db.Decimal(4, 2)
+  note             String?
+  createdAt        DateTime  @default(now())
+  deletedAt        DateTime?
+
+  @@index([childId, measuredAt])
+  @@map("growth_records")
+}
+
+// ---------------------------------------------------------------------------
+// Puberty Screening (Tanner Staging)
+// ---------------------------------------------------------------------------
+
+enum TannerStage {
+  STAGE_1
+  STAGE_2
+  STAGE_3
+  STAGE_4
+  STAGE_5
+}
+
+model PubertyScreening {
+  id          String      @id @default(uuid())
+  childId     String
+  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
+  tannerStage TannerStage
+  answers     Json
+  notes       String?
+  assessedAt  DateTime    @default(now())
+  createdAt   DateTime    @default(now())
+
+  @@index([childId, assessedAt])
+  @@map("puberty_screenings")
+}
+
+// ---------------------------------------------------------------------------
+// AI Bone Age (stub — real inference wired in later by AI team)
+// ---------------------------------------------------------------------------
+
+enum BoneAgePredictionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model BoneAgePrediction {
+  id                 String                  @id @default(uuid())
+  childId            String
+  child              Child                   @relation(fields: [childId], references: [id], onDelete: Cascade)
+  imageUrl           String
+  status             BoneAgePredictionStatus @default(PENDING)
+  predictedAgeMonths Int?
+  confidenceScore    Decimal?                @db.Decimal(4, 3)
+  modelVersion       String?
+  createdAt          DateTime                @default(now())
+  completedAt        DateTime?
+
+  @@index([childId, createdAt])
+  @@map("bone_age_predictions")
+}
+
+// ---------------------------------------------------------------------------
+// Knowledge Center
+// ---------------------------------------------------------------------------
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  articles Article[]
+
+  @@map("categories")
+}
+
+model Article {
+  id            String    @id @default(uuid())
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+  title         String
+  slug          String    @unique
+  summary       String
+  contentMd     String
+  coverImageUrl String?
+  tag           String?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookmarks Bookmark[]
+
+  @@index([categoryId])
+  @@map("articles")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, articleId])
+  @@map("bookmarks")
+}
+
+// ---------------------------------------------------------------------------
+// Notifications / Audit
+// ---------------------------------------------------------------------------
+
+enum NotificationType {
+  MEASUREMENT_REMINDER
+  BONE_AGE_RESULT
+  PUBERTY_MILESTONE
+  SYSTEM
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
