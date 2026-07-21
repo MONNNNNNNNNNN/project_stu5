@@ -219,7 +219,7 @@ export default function GrowthTracking() {
                   </span>
                 </div>
                 {record.guidance?.flagged && (
-                  <p className="text-xs text-amber-700">{record.guidance.message}</p>
+                  <p className="text-xs text-amber-700 dark:text-amber-400">{record.guidance.message}</p>
                 )}
               </div>
             ),

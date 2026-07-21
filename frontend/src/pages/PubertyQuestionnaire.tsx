@@ -44,6 +44,7 @@ function SignQuestion({
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border border-gray-100 rounded-xl p-3">
       <FormControlLabel
+        sx={{ ml: 0 }}
         control={<Checkbox checked={checked} onChange={(e) => onCheckedChange(e.target.checked)} />}
         label={<span className="text-sm">{label}</span>}
       />
@@ -230,7 +231,7 @@ export default function PubertyQuestionnaire() {
             <div key={h.id} className="py-2 flex flex-col gap-1 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">{new Date(h.assessedAt).toLocaleDateString()}</span>
-                {h.result.flagged && <span className="text-amber-700 text-xs font-medium">Flagged</span>}
+                {h.result.flagged && <span className="text-amber-700 dark:text-amber-400 text-xs font-medium">Flagged</span>}
               </div>
               <p className="text-xs text-gray-500">{h.result.summary}</p>
             </div>
