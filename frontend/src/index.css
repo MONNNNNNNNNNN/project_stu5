@@ -33,8 +33,33 @@
   --color-cream: #14181a;
   --color-ink: #edf1ee;
   --color-surface: #1f2528;
-  --color-brand-50: #1c2b28;
-  --color-brand-100: #24443d;
+
+  /* Text/accent shades (400-900) are re-tuned lighter for contrast against a dark
+     surface; solid-fill shades (400-500) stay close to their light-mode value since
+     they sit under white button/badge text either way. */
+  --color-brand-50: #16241f;
+  --color-brand-100: #1d3229;
+  --color-brand-200: #2a473a;
+  --color-brand-300: #3c6553;
+  --color-brand-400: #56917a;
+  --color-brand-500: #66a48c;
+  --color-brand-600: #8ec4ab;
+  --color-brand-700: #b7ddc9;
+  --color-brand-800: #d7ecdf;
+  --color-brand-900: #eef8f2;
+
+  --color-sage-50: #1a231a;
+  --color-sage-100: #26331f;
+  --color-sage-200: #3a4a30;
+
+  /* Neutral text: Tailwind's default gray-* is tuned for dark-on-light and goes
+     low-contrast on a near-black surface, so these are inverted brighter. */
+  --color-gray-100: #2a3033;
+  --color-gray-200: #3a4145;
+  --color-gray-300: #565f64;
+  --color-gray-400: #8b939a;
+  --color-gray-500: #a7afb6;
+  --color-gray-600: #c2c8ce;
 }
 
 body {

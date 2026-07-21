@@ -17,11 +17,11 @@ import { ThemeToggleButton } from './ThemeToggleButton';
 
 const desktopNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/children', label: 'Children' },
   { to: '/growth', label: 'Growth Tracking' },
   { to: '/puberty', label: 'Puberty Screening' },
   { to: '/bone-age', label: 'Bone Age AI' },
   { to: '/learn', label: 'Learn' },
-  { to: '/children', label: 'Children' },
 ];
 
 const mobileNavItems = [
@@ -99,10 +99,7 @@ export function AppShell() {
       {/* Desktop top nav */}
       <header className="hidden md:flex items-center justify-between px-8 py-4 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-2">
-            <img src="/logo.png" alt="GrowTH" className="h-9 w-9 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
-            <span className="font-semibold text-lg text-brand-700">GrowTH</span>
-          </div>
+          <img src="/logo.png" alt="GrowTH" className="h-12 w-12 rounded-full object-contain bg-white p-1.5 ring-1 ring-brand-100" />
           <nav className="flex items-center gap-6">
             {desktopNavItems.map((item) => (
               <NavLink
@@ -131,11 +128,8 @@ export function AppShell() {
       {/* Mobile top bar */}
       <header className="flex md:hidden items-center justify-between px-4 py-3 bg-surface border-b border-brand-100 sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="GrowTH" className="h-8 w-8 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
-          <div>
-            <p className="font-semibold text-sm leading-tight text-brand-700">GrowTH</p>
-            <p className="text-xs text-gray-500 leading-tight">Welcome back, {user?.fullName}</p>
-          </div>
+          <img src="/logo.png" alt="GrowTH" className="h-11 w-11 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
+          <p className="text-xs text-gray-500 leading-tight">Welcome back, {user?.fullName}</p>
         </div>
         <div className="flex items-center gap-1">
           <ThemeToggleButton />
