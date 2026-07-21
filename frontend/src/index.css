@@ -62,6 +62,10 @@
   --color-gray-600: #c2c8ce;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background: var(--color-cream);
@@ -69,8 +73,22 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
 }
 
 #root {
   min-height: 100svh;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a,
+  button {
+    transition: color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  }
 }

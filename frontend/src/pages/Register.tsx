@@ -45,7 +45,7 @@ export default function Register() {
       <div className="fixed top-4 right-4"><ThemeToggleButton size="medium" /></div>
       <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <div className="flex flex-col items-center mb-6">
-          <img src="/logo.png" alt="GrowTH" className="h-24 w-24 rounded-full object-contain bg-white p-1.5 ring-1 ring-brand-100 mb-3" />
+          <img src="/logo.png" alt="GrowTH" className="h-24 w-24 rounded-2xl object-contain bg-white p-1.5 ring-1 ring-brand-100 mb-3" />
           <h1 className="text-xl font-semibold text-brand-700">Create your account</h1>
           <p className="text-sm text-gray-500">Start tracking your child's growth journey</p>
         </div>

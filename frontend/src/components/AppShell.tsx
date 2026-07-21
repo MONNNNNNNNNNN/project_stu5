@@ -99,14 +99,16 @@ export function AppShell() {
       {/* Desktop top nav */}
       <header className="hidden md:flex items-center justify-between px-8 py-4 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <img src="/logo.png" alt="GrowTH" className="h-12 w-12 rounded-full object-contain bg-white p-1.5 ring-1 ring-brand-100" />
+          <NavLink to="/dashboard" className="shrink-0 transition-transform hover:scale-105 active:scale-95">
+            <img src="/logo.png" alt="GrowTH — go to dashboard" className="h-12 w-12 rounded-2xl object-contain bg-white p-1.5 ring-1 ring-brand-100" />
+          </NavLink>
           <nav className="flex items-center gap-6">
             {desktopNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `text-sm font-medium ${isActive ? 'text-brand-700' : 'text-gray-500 hover:text-brand-600'}`
+                  `text-sm font-medium transition-colors duration-150 ${isActive ? 'text-brand-700' : 'text-gray-500 hover:text-brand-600'}`
                 }
               >
                 {item.label}
@@ -128,7 +130,9 @@ export function AppShell() {
       {/* Mobile top bar */}
       <header className="flex md:hidden items-center justify-between px-4 py-3 bg-surface border-b border-brand-100 sticky top-0 z-20">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="GrowTH" className="h-11 w-11 rounded-full object-contain bg-white p-1 ring-1 ring-brand-100" />
+          <NavLink to="/dashboard" className="shrink-0 transition-transform active:scale-95">
+            <img src="/logo.png" alt="GrowTH — go to dashboard" className="h-11 w-11 rounded-2xl object-contain bg-white p-1 ring-1 ring-brand-100" />
+          </NavLink>
           <p className="text-xs text-gray-500 leading-tight">Welcome back, {user?.fullName}</p>
         </div>
         <div className="flex items-center gap-1">
@@ -153,7 +157,7 @@ export function AppShell() {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 text-[11px] ${isActive ? 'text-brand-700' : 'text-gray-400'}`
+              `flex flex-col items-center gap-0.5 text-[11px] transition-colors duration-150 active:scale-95 ${isActive ? 'text-brand-700' : 'text-gray-400'}`
             }
           >
             <item.icon fontSize="small" />

@@ -65,12 +65,23 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl bg-brand-500 text-white p-6 flex items-center justify-between">
+      <div className="rounded-2xl bg-brand-500 text-white p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-lg font-semibold">Good morning{selectedChild ? `, ${selectedChild.nickname || selectedChild.fullName}` : ''}</h1>
-          <p className="text-brand-50 text-sm opacity-90">Here's the latest growth snapshot.</p>
+          <p className="text-white/80 text-sm">Here's the latest growth snapshot.</p>
         </div>
-        <Button component={Link} to="/growth/add" variant="contained" sx={{ bgcolor: 'white', color: '#396f63', '&:hover': { bgcolor: '#f2f5f1' } }}>
+        <Button
+          component={Link}
+          to="/growth/add"
+          variant="contained"
+          sx={{
+            bgcolor: 'white',
+            color: '#396f63',
+            transition: 'transform 0.15s ease, background-color 0.15s ease',
+            '&:hover': { bgcolor: '#f2f5f1', transform: 'translateY(-1px)' },
+            '&:active': { transform: 'translateY(0)' },
+          }}
+        >
           + Log New Measurement
         </Button>
       </div>

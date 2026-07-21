@@ -167,7 +167,7 @@ export default function GrowthTracking() {
         <div className="flex flex-col divide-y divide-gray-100">
           {(history ?? []).map((record) =>
             editingId === record.id ? (
-              <div key={record.id} className="py-2 flex items-center gap-2 text-sm">
+              <div key={record.id} className="py-2 flex flex-wrap items-center gap-2 text-sm">
                 <span className="text-gray-500 w-24 shrink-0">{new Date(record.measuredAt).toLocaleDateString()}</span>
                 <TextField
                   size="small"
@@ -199,12 +199,12 @@ export default function GrowthTracking() {
               </div>
             ) : (
               <div key={record.id} className="py-3 flex flex-col gap-1 text-sm">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
                   <span>{record.heightCm ? `${record.heightCm} cm (${fmtPercentile(record.heightPercentile)})` : '—'}</span>
                   <span>{record.weightKg ? `${record.weightKg} kg (${fmtPercentile(record.weightPercentile)})` : '—'}</span>
                   <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 ml-auto">
                     <IconButton size="small" onClick={() => startEdit(record)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
