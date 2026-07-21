@@ -7,13 +7,9 @@ import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import type { Article, GrowthChartPoint, GrowthStatistics, PubertyScreening } from '../types';
 
-const TANNER_LABEL: Record<string, string> = {
-  STAGE_1: 'Stage 1 · Pre-pubertal',
-  STAGE_2: 'Stage 2 · Early changes',
-  STAGE_3: 'Stage 3 · Active puberty',
-  STAGE_4: 'Stage 4',
-  STAGE_5: 'Stage 5 · Mature',
-};
+interface PubertyScreeningWithResult extends PubertyScreening {
+  result: { summary: string; flagged: boolean };
+}
 
 function fmt(n: number | string | null | undefined, unit: string) {
   if (n === null || n === undefined) return '—';
@@ -41,7 +37,11 @@ export default function Dashboard() {
   const { data: pubertyHistory } = useQuery({
     queryKey: ['puberty-history', selectedChildId],
     queryFn: async () =>
-      (await api.get<PubertyScreening[]>('/puberty/history', { params: { childId: selectedChildId } })).data,
+      (
+        await api.get<PubertyScreeningWithResult[]>('/puberty/history', {
+          params: { childId: selectedChildId },
+        })
+      ).data,
     enabled: !!selectedChildId,
   });
 
@@ -50,7 +50,7 @@ export default function Dashboard() {
     queryFn: async () => (await api.get<Article[]>('/articles')).data,
   });
 
-  const latestStage = pubertyHistory?.[0]?.tannerStage;
+  const latestScreening = pubertyHistory?.[0];
 
   if (!selectedChildId) {
     return (
@@ -76,11 +76,32 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="HEIGHT" value={fmt(stats?.latest?.heightCm, ' cm')} delta={stats?.heightDeltaCm ? `+${stats.heightDeltaCm}cm` : null} />
-        <StatCard label="WEIGHT" value={fmt(stats?.latest?.weightKg, ' kg')} delta={stats?.weightDeltaKg ? `+${stats.weightDeltaKg}kg` : null} />
-        <StatCard label="BMI" value={fmt(stats?.latest?.bmi, '')} delta={null} />
+        <StatCard
+          label="HEIGHT"
+          value={fmt(stats?.latest?.heightCm, ' cm')}
+          delta={stats?.heightDeltaCm ? `+${stats.heightDeltaCm}cm` : null}
+          sub={stats?.latest?.heightPercentile ? `P${Math.round(Number(stats.latest.heightPercentile))}` : undefined}
+        />
+        <StatCard
+          label="WEIGHT"
+          value={fmt(stats?.latest?.weightKg, ' kg')}
+          delta={stats?.weightDeltaKg ? `+${stats.weightDeltaKg}kg` : null}
+          sub={stats?.latest?.weightPercentile ? `P${Math.round(Number(stats.latest.weightPercentile))}` : undefined}
+        />
+        <StatCard
+          label="BMI"
+          value={fmt(stats?.latest?.bmi, '')}
+          delta={null}
+          sub={stats?.latest?.guidance?.nutritionalStatus ?? undefined}
+        />
         <StatCard label="RECORDS" value={String(chart?.length ?? 0)} delta={null} />
       </div>
+
+      {stats?.latest?.guidance?.flagged && (
+        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
+          {stats.latest.guidance.message}
+        </div>
+      )}
 
       <div className="grid md:grid-cols-3 gap-4">
         <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5">
@@ -103,8 +124,8 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-ink">Puberty Screening</h2>
           </div>
-          {latestStage ? (
-            <p className="text-sm text-gray-600">{TANNER_LABEL[latestStage]}</p>
+          {latestScreening ? (
+            <p className="text-sm text-gray-600">{latestScreening.result.summary}</p>
           ) : (
             <p className="text-sm text-gray-500">No screening yet.</p>
           )}
@@ -154,12 +175,23 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ label, value, delta }: { label: string; value: string; delta: string | null }) {
+function StatCard({
+  label,
+  value,
+  delta,
+  sub,
+}: {
+  label: string;
+  value: string;
+  delta: string | null;
+  sub?: string;
+}) {
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-4 border-l-4 border-brand-400">
       <p className="text-[10px] font-semibold text-gray-400 tracking-wide">{label}</p>
       <p className="text-2xl font-semibold text-ink">{value}</p>
       {delta && <p className="text-xs text-brand-600 mt-1">↑ {delta} since last</p>}
+      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }

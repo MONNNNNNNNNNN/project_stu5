@@ -1,31 +1,81 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, TextField, Alert } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import { Button, TextField, Alert, Checkbox, FormControlLabel } from '@mui/material';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
-import type { PubertyScreening, TannerStage } from '../types';
+import type { PubertyScreening } from '../types';
 
-const STAGES: { value: TannerStage; label: string; description: string }[] = [
-  { value: 'STAGE_1', label: 'Stage 1', description: 'No visible pubertal changes yet (pre-pubertal).' },
-  { value: 'STAGE_2', label: 'Stage 2', description: 'Early changes beginning — the first visible signs of puberty.' },
-  { value: 'STAGE_3', label: 'Stage 3', description: 'Changes are clearly progressing and more noticeable.' },
-  { value: 'STAGE_4', label: 'Stage 4', description: 'Development is well advanced, approaching adult appearance.' },
-  { value: 'STAGE_5', label: 'Stage 5', description: 'Development appears complete (adult stage).' },
-];
+interface Answers {
+  breastDevelopment?: boolean;
+  breastDevelopmentAgeYears?: number;
+  menstruation?: boolean;
+  menstruationAgeYears?: number;
+  testicularOrGenitalEnlargement?: boolean;
+  testicularOrGenitalEnlargementAgeYears?: number;
+  voiceDeepening?: boolean;
+  pubicOrBodyHairGrowth?: boolean;
+  pubicOrBodyHairGrowthAgeYears?: number;
+  growthSpurt?: boolean;
+  familyPubertyOnsetAgeYears?: number;
+  behavioralMoodSkinChanges?: boolean;
+  otherHealthNotes?: string;
+}
+
+interface ScreeningResult {
+  summary: string;
+  signsReported: string[];
+  flagged: boolean;
+  flagReason: string | null;
+}
+
+function SignQuestion({
+  label,
+  checked,
+  onCheckedChange,
+  ageValue,
+  onAgeChange,
+}: {
+  label: string;
+  checked: boolean;
+  onCheckedChange: (v: boolean) => void;
+  ageValue?: number;
+  onAgeChange: (v: number | undefined) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border border-gray-100 rounded-xl p-3">
+      <FormControlLabel
+        control={<Checkbox checked={checked} onChange={(e) => onCheckedChange(e.target.checked)} />}
+        label={<span className="text-sm">{label}</span>}
+      />
+      {checked && (
+        <TextField
+          size="small"
+          type="number"
+          label="Approx. age (years)"
+          value={ageValue ?? ''}
+          onChange={(e) => onAgeChange(e.target.value ? Number(e.target.value) : undefined)}
+          sx={{ width: 160 }}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function PubertyQuestionnaire() {
-  const { selectedChildId } = useChildren();
+  const { selectedChildId, selectedChild } = useChildren();
   const queryClient = useQueryClient();
-  const [stage, setStage] = useState<TannerStage | null>(null);
+  const [answers, setAnswers] = useState<Answers>({});
   const [notes, setNotes] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [lastResult, setLastResult] = useState<ScreeningResult | null>(null);
 
   const { data: history } = useQuery({
     queryKey: ['puberty-history', selectedChildId],
     queryFn: async () =>
-      (await api.get<PubertyScreening[]>('/puberty/history', { params: { childId: selectedChildId } })).data,
+      (
+        await api.get<(PubertyScreening & { result: ScreeningResult })[]>('/puberty/history', {
+          params: { childId: selectedChildId },
+        })
+      ).data,
     enabled: !!selectedChildId,
   });
 
@@ -34,61 +84,132 @@ export default function PubertyQuestionnaire() {
       (
         await api.post('/puberty/questionnaire', {
           childId: selectedChildId,
-          tannerStage: stage,
-          answers: { selectedStage: stage },
+          answers,
           notes: notes || undefined,
         })
-      ).data,
-    onSuccess: async () => {
-      setSubmitted(true);
+      ).data as { result: ScreeningResult },
+    onSuccess: async (data) => {
+      setLastResult(data.result);
+      setAnswers({});
+      setNotes('');
       await queryClient.invalidateQueries({ queryKey: ['puberty-history', selectedChildId] });
     },
   });
 
-  if (!selectedChildId) {
+  function set<K extends keyof Answers>(key: K, value: Answers[K]) {
+    setAnswers((a) => ({ ...a, [key]: value }));
+  }
+
+  if (!selectedChildId || !selectedChild) {
     return <p className="text-gray-500">Select or add a child first.</p>;
   }
+
+  const isFemale = selectedChild.sex === 'FEMALE';
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
       <div>
         <h1 className="text-xl font-semibold text-brand-700">Puberty Screening</h1>
         <p className="text-sm text-gray-500 mt-1">
-          This is a self-report screening tool, not a clinical diagnosis. Talk to a pediatrician
-          for a formal assessment.
+          A guided screening tool, not a clinical diagnosis. Talk to a pediatrician for a formal
+          assessment.
         </p>
       </div>
 
-      {submitted && (
-        <Alert severity="success" onClose={() => setSubmitted(false)}>
-          Screening saved.
+      {lastResult && (
+        <Alert severity={lastResult.flagged ? 'warning' : 'success'} onClose={() => setLastResult(null)}>
+          {lastResult.summary} {lastResult.flagReason}
         </Alert>
       )}
 
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h2 className="font-semibold text-ink mb-4">Which description best matches right now?</h2>
-        <div className="flex flex-col gap-2">
-          {STAGES.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              onClick={() => setStage(s.value)}
-              className={`flex items-start gap-3 text-left p-3 rounded-xl border ${
-                stage === s.value ? 'border-brand-400 bg-brand-50' : 'border-gray-200'
-              }`}
-            >
-              {stage === s.value ? (
-                <CheckCircleIcon className="text-brand-600 mt-0.5" fontSize="small" />
-              ) : (
-                <RadioButtonUncheckedIcon className="text-gray-300 mt-0.5" fontSize="small" />
-              )}
-              <div>
-                <p className="font-medium text-sm text-ink">{s.label}</p>
-                <p className="text-xs text-gray-500">{s.description}</p>
-              </div>
-            </button>
-          ))}
-        </div>
+      <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+        <h2 className="font-semibold text-ink mb-1">
+          {isFemale ? 'For girls' : 'For boys'}
+        </h2>
+
+        {isFemale ? (
+          <>
+            <SignQuestion
+              label="Has breast development (thelarche) been observed?"
+              checked={!!answers.breastDevelopment}
+              onCheckedChange={(v) => set('breastDevelopment', v)}
+              ageValue={answers.breastDevelopmentAgeYears}
+              onAgeChange={(v) => set('breastDevelopmentAgeYears', v)}
+            />
+            <SignQuestion
+              label="Has menstruation begun?"
+              checked={!!answers.menstruation}
+              onCheckedChange={(v) => set('menstruation', v)}
+              ageValue={answers.menstruationAgeYears}
+              onAgeChange={(v) => set('menstruationAgeYears', v)}
+            />
+          </>
+        ) : (
+          <>
+            <SignQuestion
+              label="Has testicular or genital enlargement been observed?"
+              checked={!!answers.testicularOrGenitalEnlargement}
+              onCheckedChange={(v) => set('testicularOrGenitalEnlargement', v)}
+              ageValue={answers.testicularOrGenitalEnlargementAgeYears}
+              onAgeChange={(v) => set('testicularOrGenitalEnlargementAgeYears', v)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={!!answers.voiceDeepening}
+                  onChange={(e) => set('voiceDeepening', e.target.checked)}
+                />
+              }
+              label={<span className="text-sm">Has voice deepening been observed?</span>}
+            />
+          </>
+        )}
+
+        <SignQuestion
+          label={isFemale ? 'Has pubic or underarm hair growth been observed?' : 'Has pubic, underarm, or facial hair growth been observed?'}
+          checked={!!answers.pubicOrBodyHairGrowth}
+          onCheckedChange={(v) => set('pubicOrBodyHairGrowth', v)}
+          ageValue={answers.pubicOrBodyHairGrowthAgeYears}
+          onAgeChange={(v) => set('pubicOrBodyHairGrowthAgeYears', v)}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={!!answers.growthSpurt}
+              onChange={(e) => set('growthSpurt', e.target.checked)}
+            />
+          }
+          label={<span className="text-sm">Has the child experienced a noticeable recent increase in height growth rate?</span>}
+        />
+      </div>
+
+      <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+        <h2 className="font-semibold text-ink mb-1">General</h2>
+        <TextField
+          size="small"
+          type="number"
+          label="At approx. what age did the child's parents or siblings begin puberty? (optional)"
+          value={answers.familyPubertyOnsetAgeYears ?? ''}
+          onChange={(e) => set('familyPubertyOnsetAgeYears', e.target.value ? Number(e.target.value) : undefined)}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={!!answers.behavioralMoodSkinChanges}
+              onChange={(e) => set('behavioralMoodSkinChanges', e.target.checked)}
+            />
+          }
+          label={<span className="text-sm">Any behavioral, mood, or skin changes (e.g., acne, body odor) associated with early development?</span>}
+        />
+        <TextField
+          label="Other health conditions, medications, or relevant history (optional)"
+          fullWidth
+          multiline
+          minRows={2}
+          value={answers.otherHealthNotes ?? ''}
+          onChange={(e) => set('otherHealthNotes', e.target.value)}
+        />
         <TextField
           label="Additional notes (optional)"
           fullWidth
@@ -96,15 +217,8 @@ export default function PubertyQuestionnaire() {
           minRows={2}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          sx={{ mt: 3 }}
         />
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{ mt: 3 }}
-          disabled={!stage || mutation.isPending}
-          onClick={() => mutation.mutate()}
-        >
+        <Button variant="contained" fullWidth disabled={mutation.isPending} onClick={() => mutation.mutate()}>
           {mutation.isPending ? 'Saving…' : 'Save screening'}
         </Button>
       </div>
@@ -113,9 +227,12 @@ export default function PubertyQuestionnaire() {
         <h2 className="font-semibold text-ink mb-3">History</h2>
         <div className="flex flex-col divide-y divide-gray-100">
           {(history ?? []).map((h) => (
-            <div key={h.id} className="py-2 flex items-center justify-between text-sm">
-              <span className="text-gray-500">{new Date(h.assessedAt).toLocaleDateString()}</span>
-              <span className="font-medium">{STAGES.find((s) => s.value === h.tannerStage)?.label}</span>
+            <div key={h.id} className="py-2 flex flex-col gap-1 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">{new Date(h.assessedAt).toLocaleDateString()}</span>
+                {h.result.flagged && <span className="text-amber-700 text-xs font-medium">Flagged</span>}
+              </div>
+              <p className="text-xs text-gray-500">{h.result.summary}</p>
             </div>
           ))}
           {(history ?? []).length === 0 && <p className="text-sm text-gray-500 py-2">No screenings yet.</p>}

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, TextField, Alert } from '@mui/material';
+import { Button, TextField, Alert, FormControlLabel, Checkbox, FormHelperText } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,6 +11,11 @@ const schema = z.object({
   fullName: z.string().min(1, 'Name is required'),
   email: z.string().email('Enter a valid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  phoneNumber: z
+    .string()
+    .min(9, 'Enter a valid phone number')
+    .regex(/^[0-9+\-\s()]{9,15}$/, 'Enter a valid phone number'),
+  acceptedTerms: z.boolean().refine((v) => v === true, 'You must accept the terms and privacy notice'),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -21,13 +26,14 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+  } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { acceptedTerms: false } });
 
   async function onSubmit(values: FormValues) {
     setError(null);
     try {
-      await registerUser(values.email, values.password, values.fullName);
+      await registerUser(values.email, values.password, values.fullName, values.phoneNumber, values.acceptedTerms);
       navigate('/children/new');
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Could not create account.');
@@ -60,6 +66,13 @@ export default function Register() {
             helperText={errors.email?.message}
           />
           <TextField
+            label="Phone number"
+            fullWidth
+            {...register('phoneNumber')}
+            error={!!errors.phoneNumber}
+            helperText={errors.phoneNumber?.message}
+          />
+          <TextField
             label="Password"
             type="password"
             fullWidth
@@ -67,6 +80,28 @@ export default function Register() {
             error={!!errors.password}
             helperText={errors.password?.message}
           />
+          <div>
+            <Controller
+              name="acceptedTerms"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={<Checkbox checked={field.value} onChange={(e) => field.onChange(e.target.checked)} />}
+                  label={
+                    <span className="text-sm">
+                      I agree to the terms of use and{' '}
+                      <Link to="/privacy" target="_blank" className="text-brand-600 underline">
+                        privacy notice
+                      </Link>
+                    </span>
+                  }
+                />
+              )}
+            />
+            {errors.acceptedTerms && (
+              <FormHelperText error>{errors.acceptedTerms.message}</FormHelperText>
+            )}
+          </div>
           <Button type="submit" variant="contained" disabled={isSubmitting} sx={{ py: 1.2 }}>
             {isSubmitting ? 'Creating account…' : 'Create Account'}
           </Button>

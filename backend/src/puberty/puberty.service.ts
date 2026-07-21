@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChildrenService } from '../children/children.service';
 import { SubmitPubertyScreeningDto } from './dto/submit-puberty-screening.dto';
+import { compilePubertyResult, PubertyScreeningResult } from './puberty-screening.util';
 
 @Injectable()
 export class PubertyService {
@@ -10,32 +11,54 @@ export class PubertyService {
     private childrenService: ChildrenService,
   ) {}
 
+  private ageYears(dateOfBirth: Date, on: Date): number {
+    const msPerDay = 24 * 60 * 60 * 1000;
+    return (on.getTime() - dateOfBirth.getTime()) / msPerDay / 365.25;
+  }
+
   async submit(userId: string, dto: SubmitPubertyScreeningDto) {
     await this.childrenService.assertGuardianAccess(dto.childId, userId);
-    return this.prisma.pubertyScreening.create({
+    const child = await this.prisma.child.findUniqueOrThrow({ where: { id: dto.childId } });
+    const assessedAt = new Date();
+    const ageYearsNow = this.ageYears(child.dateOfBirth, assessedAt);
+    const result = compilePubertyResult(child.sex, ageYearsNow, dto.answers);
+
+    const screening = await this.prisma.pubertyScreening.create({
       data: {
         childId: dto.childId,
-        tannerStage: dto.tannerStage,
         answers: dto.answers as any,
         notes: dto.notes,
+        assessedAt,
       },
     });
+    return { ...screening, result };
   }
 
   async history(userId: string, childId: string) {
     await this.childrenService.assertGuardianAccess(childId, userId);
-    return this.prisma.pubertyScreening.findMany({
+    const child = await this.prisma.child.findUniqueOrThrow({ where: { id: childId } });
+    const screenings = await this.prisma.pubertyScreening.findMany({
       where: { childId },
       orderBy: { assessedAt: 'desc' },
     });
+    return screenings.map((s) => ({
+      ...s,
+      result: compilePubertyResult(child.sex, this.ageYears(child.dateOfBirth, s.assessedAt), s.answers as any),
+    }));
   }
 
-  async findOne(userId: string, id: string) {
+  async findOne(userId: string, id: string): Promise<{ result: PubertyScreeningResult } & Record<string, unknown>> {
     const screening = await this.prisma.pubertyScreening.findUnique({ where: { id } });
     if (!screening) {
       throw new NotFoundException('Puberty screening not found');
     }
     await this.childrenService.assertGuardianAccess(screening.childId, userId);
-    return screening;
+    const child = await this.prisma.child.findUniqueOrThrow({ where: { id: screening.childId } });
+    const result = compilePubertyResult(
+      child.sex,
+      this.ageYears(child.dateOfBirth, screening.assessedAt),
+      screening.answers as any,
+    );
+    return { ...screening, result };
   }
 }

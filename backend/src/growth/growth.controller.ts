@@ -19,6 +19,15 @@ export class GrowthController {
     return this.growthService.chart(user.userId, childId);
   }
 
+  @Get('reference-curve')
+  referenceCurve(
+    @CurrentUser() user: AuthUser,
+    @Query('childId') childId: string,
+    @Query('measure') measure: 'height' | 'weight' | 'bmi',
+  ) {
+    return this.growthService.referenceCurve(user.userId, childId, measure);
+  }
+
   @Get('history')
   history(@CurrentUser() user: AuthUser, @Query('childId') childId: string) {
     return this.growthService.history(user.userId, childId);
@@ -35,13 +44,23 @@ export class GrowthController {
   }
 
   @Get('percentile')
-  percentile() {
-    return this.growthService.percentile();
+  percentile(
+    @Query('sex') sex: 'MALE' | 'FEMALE',
+    @Query('ageMonths') ageMonths: string,
+    @Query('measure') measure: 'height' | 'weight' | 'bmi',
+    @Query('value') value: string,
+  ) {
+    return this.growthService.percentile(sex, Number(ageMonths), measure, Number(value));
   }
 
   @Get('sds')
-  sds() {
-    return this.growthService.sds();
+  sds(
+    @Query('sex') sex: 'MALE' | 'FEMALE',
+    @Query('ageMonths') ageMonths: string,
+    @Query('measure') measure: 'height' | 'weight' | 'bmi',
+    @Query('value') value: string,
+  ) {
+    return this.growthService.sds(sex, Number(ageMonths), measure, Number(value));
   }
 
   @Get()

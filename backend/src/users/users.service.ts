@@ -10,13 +10,14 @@ export class UsersService {
     id: string;
     email: string;
     fullName: string;
+    phoneNumber: string | null;
     role: string;
     avatarUrl: string | null;
     isVerified: boolean;
     createdAt: Date;
   }) {
-    const { id, email, fullName, role, avatarUrl, isVerified, createdAt } = user;
-    return { id, email, fullName, role, avatarUrl, isVerified, createdAt };
+    const { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt } = user;
+    return { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt };
   }
 
   async me(userId: string) {

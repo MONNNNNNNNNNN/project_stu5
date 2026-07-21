@@ -22,12 +22,13 @@ export class ChildrenService {
   }
 
   async create(userId: string, dto: CreateChildDto) {
+    const { relation, ...childFields } = dto;
     return this.prisma.child.create({
       data: {
-        ...dto,
+        ...childFields,
         dateOfBirth: new Date(dto.dateOfBirth),
         guardians: {
-          create: { userId, isPrimary: true },
+          create: { userId, isPrimary: true, relation },
         },
       },
     });
@@ -51,7 +52,13 @@ export class ChildrenService {
 
   async update(userId: string, childId: string, dto: UpdateChildDto) {
     await this.assertGuardian(childId, userId);
-    const { dateOfBirth, ...rest } = dto;
+    const { dateOfBirth, relation, ...rest } = dto;
+    if (relation) {
+      await this.prisma.childGuardian.update({
+        where: { childId_userId: { childId, userId } },
+        data: { relation },
+      });
+    }
     return this.prisma.child.update({
       where: { id: childId },
       data: { ...rest, ...(dateOfBirth ? { dateOfBirth: new Date(dateOfBirth) } : {}) },

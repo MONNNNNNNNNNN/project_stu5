@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   fullName: string;
+  phoneNumber: string | null;
   role: 'PARENT' | 'EDUCATOR' | 'ADMIN';
   avatarUrl: string | null;
   isVerified: boolean;
@@ -18,6 +19,12 @@ export interface Child {
   createdAt: string;
 }
 
+export interface GrowthGuidance {
+  message: string;
+  flagged: boolean;
+  nutritionalStatus: string | null;
+}
+
 export interface GrowthRecord {
   id: string;
   childId: string;
@@ -25,8 +32,15 @@ export interface GrowthRecord {
   heightCm: string | null;
   weightKg: string | null;
   bmi: string | null;
+  heightPercentile: string | null;
+  weightPercentile: string | null;
+  bmiPercentile: string | null;
+  heightSds: string | null;
+  weightSds: string | null;
+  bmiSds: string | null;
   note: string | null;
   createdAt: string;
+  guidance?: GrowthGuidance;
 }
 
 export interface GrowthChartPoint {
@@ -34,6 +48,16 @@ export interface GrowthChartPoint {
   heightCm: number | null;
   weightKg: number | null;
   bmi: number | null;
+  heightPercentile: number | null;
+  weightPercentile: number | null;
+  bmiPercentile: number | null;
+}
+
+export interface ReferenceCurvePoint {
+  ageMonths: number;
+  p3: number;
+  p50: number;
+  p97: number;
 }
 
 export interface GrowthStatistics {
@@ -43,12 +67,9 @@ export interface GrowthStatistics {
   since: string | null;
 }
 
-export type TannerStage = 'STAGE_1' | 'STAGE_2' | 'STAGE_3' | 'STAGE_4' | 'STAGE_5';
-
 export interface PubertyScreening {
   id: string;
   childId: string;
-  tannerStage: TannerStage;
   answers: Record<string, unknown>;
   notes: string | null;
   assessedAt: string;

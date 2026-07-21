@@ -1,5 +1,5 @@
 import { IsDateString, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
-import { ChildSex } from '@prisma/client';
+import { ChildSex, GuardianRelation } from '@prisma/client';
 
 export class CreateChildDto {
   @IsString()
@@ -15,6 +15,10 @@ export class CreateChildDto {
 
   @IsDateString()
   dateOfBirth: string;
+
+  @IsOptional()
+  @IsEnum(GuardianRelation)
+  relation?: GuardianRelation;
 
   @IsOptional()
   @IsString()

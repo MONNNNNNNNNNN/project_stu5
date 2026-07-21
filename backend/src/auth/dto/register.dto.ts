@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { Equals, IsEmail, IsString, Matches, MinLength } from 'class-validator';
 
 export class RegisterDto {
   @IsEmail()
@@ -11,4 +11,12 @@ export class RegisterDto {
   @IsString()
   @MinLength(1)
   fullName: string;
+
+  @IsString()
+  @Matches(/^[0-9+\-\s()]{9,15}$/, { message: 'Enter a valid phone number' })
+  phoneNumber: string;
+
+  /** FR-2: terms of use and privacy notice must be accepted before account creation. */
+  @Equals(true, { message: 'You must accept the terms of use and privacy notice' })
+  acceptedTerms: boolean;
 }

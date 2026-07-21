@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, TextField, ToggleButton, ToggleButtonGroup, Alert } from '@mui/material';
+import { Button, TextField, ToggleButton, ToggleButtonGroup, Alert, MenuItem } from '@mui/material';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
+
+type Relation = 'PARENT' | 'GUARDIAN' | 'RELATIVE';
 
 export default function AddChild() {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ export default function AddChild() {
   const [nickname, setNickname] = useState('');
   const [sex, setSex] = useState<'MALE' | 'FEMALE'>('FEMALE');
   const [dateOfBirth, setDateOfBirth] = useState('');
+  const [relation, setRelation] = useState<Relation>('PARENT');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,7 +33,7 @@ export default function AddChild() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const payload = { fullName, nickname: nickname || undefined, sex, dateOfBirth };
+      const payload = { fullName, nickname: nickname || undefined, sex, dateOfBirth, relation };
       return isEdit
         ? (await api.patch(`/children/${id}`, payload)).data
         : (await api.post('/children', payload)).data;
@@ -79,6 +82,17 @@ export default function AddChild() {
           <ToggleButton value="FEMALE">Girl</ToggleButton>
           <ToggleButton value="MALE">Boy</ToggleButton>
         </ToggleButtonGroup>
+        <TextField
+          select
+          label="Your relationship to this child"
+          fullWidth
+          value={relation}
+          onChange={(e) => setRelation(e.target.value as Relation)}
+        >
+          <MenuItem value="PARENT">Parent</MenuItem>
+          <MenuItem value="GUARDIAN">Guardian</MenuItem>
+          <MenuItem value="RELATIVE">Relative</MenuItem>
+        </TextField>
         <Button type="submit" variant="contained" disabled={mutation.isPending} sx={{ py: 1.2 }}>
           {mutation.isPending ? 'Saving…' : isEdit ? 'Save changes' : 'Save and continue'}
         </Button>

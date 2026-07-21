@@ -25,9 +25,11 @@ model User {
   email               String    @unique
   passwordHash        String
   fullName            String
+  phoneNumber         String?
   role                UserRole  @default(PARENT)
   avatarUrl           String?
   isVerified          Boolean   @default(false)
+  termsAcceptedAt     DateTime?
   resetTokenHash      String?
   resetTokenExpiresAt DateTime?
   createdAt           DateTime  @default(now())
@@ -123,6 +125,7 @@ model GrowthRecord {
   bmiPercentile    Decimal?  @db.Decimal(5, 2)
   heightSds        Decimal?  @db.Decimal(4, 2)
   weightSds        Decimal?  @db.Decimal(4, 2)
+  bmiSds           Decimal?  @db.Decimal(4, 2)
   note             String?
   createdAt        DateTime  @default(now())
   deletedAt        DateTime?
@@ -144,14 +147,14 @@ enum TannerStage {
 }
 
 model PubertyScreening {
-  id          String      @id @default(uuid())
+  id          String       @id @default(uuid())
   childId     String
-  child       Child       @relation(fields: [childId], references: [id], onDelete: Cascade)
-  tannerStage TannerStage
+  child       Child        @relation(fields: [childId], references: [id], onDelete: Cascade)
+  tannerStage TannerStage?
   answers     Json
   notes       String?
-  assessedAt  DateTime    @default(now())
-  createdAt   DateTime    @default(now())
+  assessedAt  DateTime     @default(now())
+  createdAt   DateTime     @default(now())
 
   @@index([childId, assessedAt])
   @@map("puberty_screenings")

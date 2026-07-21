@@ -51,13 +51,14 @@ export class AuthService {
     id: string;
     email: string;
     fullName: string;
+    phoneNumber: string | null;
     role: string;
     avatarUrl: string | null;
     isVerified: boolean;
     createdAt: Date;
   }) {
-    const { id, email, fullName, role, avatarUrl, isVerified, createdAt } = user;
-    return { id, email, fullName, role, avatarUrl, isVerified, createdAt };
+    const { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt } = user;
+    return { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt };
   }
 
   async register(dto: RegisterDto) {
@@ -68,7 +69,13 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({
-      data: { email: dto.email, passwordHash, fullName: dto.fullName },
+      data: {
+        email: dto.email,
+        passwordHash,
+        fullName: dto.fullName,
+        phoneNumber: dto.phoneNumber,
+        termsAcceptedAt: new Date(),
+      },
     });
 
     const tokens = await this.issueTokens(user);

@@ -16,6 +16,7 @@ import KnowledgeCenter from './pages/KnowledgeCenter';
 import ArticleDetail from './pages/ArticleDetail';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
+import PrivacyNotice from './pages/PrivacyNotice';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/privacy" element={<PrivacyNotice />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/children/new" element={<AddChild />} />

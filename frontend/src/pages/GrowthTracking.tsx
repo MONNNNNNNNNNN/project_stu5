@@ -1,26 +1,54 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
-import { Button, TextField, IconButton } from '@mui/material';
+import { Button, TextField, IconButton, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../lib/api';
+import { ageInMonths } from '../lib/age';
 import { useChildren } from '../context/ChildContext';
-import type { GrowthChartPoint, GrowthRecord } from '../types';
+import { PercentileChart } from '../components/PercentileChart';
+import type { GrowthChartPoint, GrowthRecord, ReferenceCurvePoint } from '../types';
+
+function fmtPercentile(p: string | null) {
+  return p !== null ? `P${Math.round(Number(p))}` : '—';
+}
 
 export default function GrowthTracking() {
-  const { selectedChildId } = useChildren();
+  const { selectedChildId, selectedChild } = useChildren();
   const queryClient = useQueryClient();
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
   const [measuredAt, setMeasuredAt] = useState(() => new Date().toISOString().slice(0, 10));
+  const [lastGuidance, setLastGuidance] = useState<GrowthRecord['guidance'] | null>(null);
 
   const { data: chart } = useQuery({
     queryKey: ['growth-chart', selectedChildId],
     queryFn: async () =>
       (await api.get<GrowthChartPoint[]>('/growth/chart', { params: { childId: selectedChildId } })).data,
+    enabled: !!selectedChildId,
+  });
+
+  const { data: heightCurve } = useQuery({
+    queryKey: ['growth-reference-curve', selectedChildId, 'height'],
+    queryFn: async () =>
+      (
+        await api.get<ReferenceCurvePoint[]>('/growth/reference-curve', {
+          params: { childId: selectedChildId, measure: 'height' },
+        })
+      ).data,
+    enabled: !!selectedChildId,
+  });
+
+  const { data: weightCurve } = useQuery({
+    queryKey: ['growth-reference-curve', selectedChildId, 'weight'],
+    queryFn: async () =>
+      (
+        await api.get<ReferenceCurvePoint[]>('/growth/reference-curve', {
+          params: { childId: selectedChildId, measure: 'weight' },
+        })
+      ).data,
     enabled: !!selectedChildId,
   });
 
@@ -50,10 +78,11 @@ export default function GrowthTracking() {
           weightKg: weightKg ? Number(weightKg) : undefined,
           measuredAt: new Date(measuredAt).toISOString(),
         })
-      ).data,
-    onSuccess: async () => {
+      ).data as GrowthRecord,
+    onSuccess: async (record) => {
       setHeightCm('');
       setWeightKg('');
+      setLastGuidance(record.guidance ?? null);
       await invalidateAll();
     },
   });
@@ -87,12 +116,27 @@ export default function GrowthTracking() {
     return <p className="text-gray-500">Select or add a child first.</p>;
   }
 
+  const heightPoints = (chart ?? []).map((c) => ({
+    ageMonths: selectedChild ? ageInMonths(selectedChild.dateOfBirth, c.date) : 0,
+    value: c.heightCm,
+  }));
+  const weightPoints = (chart ?? []).map((c) => ({
+    ageMonths: selectedChild ? ageInMonths(selectedChild.dateOfBirth, c.date) : 0,
+    value: c.weightKg,
+  }));
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-semibold text-brand-700">Growth Tracking</h1>
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">Log a new measurement</h2>
+        {lastGuidance && (
+          <Alert severity={lastGuidance.flagged ? 'warning' : 'success'} className="mb-4" onClose={() => setLastGuidance(null)}>
+            {lastGuidance.message}
+            {lastGuidance.nutritionalStatus && ` Nutritional status: ${lastGuidance.nutritionalStatus}.`}
+          </Alert>
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -115,21 +159,8 @@ export default function GrowthTracking() {
         </form>
       </div>
 
-      <div className="bg-surface rounded-2xl shadow-sm p-5">
-        <h2 className="font-semibold text-ink mb-4">Height &amp; Weight over time</h2>
-        <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={chart ?? []}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e9df" />
-            <XAxis dataKey="date" tickFormatter={(d) => new Date(d).toLocaleDateString(undefined, { month: 'short', year: '2-digit' })} fontSize={12} />
-            <YAxis yAxisId="left" fontSize={12} />
-            <YAxis yAxisId="right" orientation="right" fontSize={12} />
-            <Tooltip labelFormatter={(d) => new Date(d).toLocaleDateString()} />
-            <Legend />
-            <Line yAxisId="left" type="monotone" dataKey="heightCm" stroke="#46897a" strokeWidth={2} name="Height (cm)" />
-            <Line yAxisId="right" type="monotone" dataKey="weightKg" stroke="#87a480" strokeWidth={2} name="Weight (kg)" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      <PercentileChart title="Height-for-age" unit="cm" curve={heightCurve ?? []} points={heightPoints} color="#46897a" />
+      <PercentileChart title="Weight-for-age" unit="kg" curve={weightCurve ?? []} points={weightPoints} color="#87a480" />
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">History</h2>
@@ -167,24 +198,29 @@ export default function GrowthTracking() {
                 </IconButton>
               </div>
             ) : (
-              <div key={record.id} className="py-2 flex items-center justify-between text-sm gap-2">
-                <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
-                <span>{record.heightCm ? `${record.heightCm} cm` : '—'}</span>
-                <span>{record.weightKg ? `${record.weightKg} kg` : '—'}</span>
-                <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
-                <span className="flex items-center gap-1">
-                  <IconButton size="small" onClick={() => startEdit(record)}>
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => {
-                      if (confirm('Delete this measurement?')) deleteMutation.mutate(record.id);
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </span>
+              <div key={record.id} className="py-3 flex flex-col gap-1 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
+                  <span>{record.heightCm ? `${record.heightCm} cm (${fmtPercentile(record.heightPercentile)})` : '—'}</span>
+                  <span>{record.weightKg ? `${record.weightKg} kg (${fmtPercentile(record.weightPercentile)})` : '—'}</span>
+                  <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
+                  <span className="flex items-center gap-1">
+                    <IconButton size="small" onClick={() => startEdit(record)}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        if (confirm('Delete this measurement?')) deleteMutation.mutate(record.id);
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </span>
+                </div>
+                {record.guidance?.flagged && (
+                  <p className="text-xs text-amber-700">{record.guidance.message}</p>
+                )}
               </div>
             ),
           )}
