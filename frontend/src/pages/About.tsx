@@ -30,7 +30,7 @@ const features = [
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-screen bg-cream flex flex-col page-fade-in">
       <PublicHeader />
       <main className="flex-1 max-w-4xl mx-auto px-4 md:px-8 py-16 w-full">
         <span className="font-mono text-xs tracking-widest text-brand-500 uppercase font-semibold">About</span>

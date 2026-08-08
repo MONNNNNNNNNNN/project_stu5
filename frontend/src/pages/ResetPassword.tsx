@@ -35,7 +35,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
+    <div className="min-h-screen flex items-center justify-center bg-cream px-4 page-fade-in">
       <div className="fixed top-4 right-4"><ThemeToggleButton size="medium" /></div>
       <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <h1 className="text-xl font-semibold text-brand-700 mb-1">Set a new password</h1>

@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { IconButton, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FlagIcon from '@mui/icons-material/FlagOutlined';
@@ -103,6 +103,7 @@ function Logo({ imgClass }: { imgClass: string }) {
 }
 
 export function AppChrome({ children }: { children: ReactNode }) {
+  const location = useLocation();
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       {/* Desktop top nav */}
@@ -152,7 +153,11 @@ export function AppChrome({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">{children}</main>
+      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">
+        <div key={location.pathname} className="page-fade-in">
+          {children}
+        </div>
+      </main>
 
       <div className="hidden md:block">
         <Footer />

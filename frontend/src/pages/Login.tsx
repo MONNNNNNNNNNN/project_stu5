@@ -34,7 +34,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream px-4">
+    <div className="min-h-screen flex items-center justify-center bg-cream px-4 page-fade-in">
       <div className="fixed top-4 right-4"><ThemeToggleButton size="medium" /></div>
       <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <div className="flex flex-col items-center mb-6">
