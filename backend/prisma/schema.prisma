@@ -36,10 +36,11 @@ model User {
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
 
-  children      ChildGuardian[]
-  sessions      Session[]
-  notifications Notification[]
-  auditLogs     AuditLog[]
+  children        ChildGuardian[]
+  sessions        Session[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  supportMessages SupportMessage[]
 
   @@map("users")
 }
@@ -267,4 +268,17 @@ model AuditLog {
 
   @@index([userId, createdAt])
   @@map("audit_logs")
+}
+
+model SupportMessage {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("support_messages")
 }

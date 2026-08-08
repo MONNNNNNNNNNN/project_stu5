@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Button, TextField, Alert } from '@mui/material';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../lib/api';
+import { api, API_BASE_URL } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {
@@ -41,14 +42,19 @@ export default function Profile() {
 
   if (!user) return null;
 
+  const avatarSrc = user.avatarUrl ? `${API_BASE_URL}${user.avatarUrl}` : undefined;
+
   return (
     <div className="max-w-md mx-auto flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2">
-        <Avatar sx={{ width: 72, height: 72, bgcolor: '#87a480', fontSize: 28 }}>
+        <Avatar src={avatarSrc} sx={{ width: 72, height: 72, bgcolor: '#006b5f', fontSize: 28 }}>
           {user.fullName[0]?.toUpperCase()}
         </Avatar>
-        <h1 className="text-xl font-semibold text-brand-700">{user.fullName}</h1>
+        <h1 className="text-xl font-heading font-semibold text-brand-600">{user.fullName}</h1>
         <p className="text-sm text-gray-500">{user.email}</p>
+        <Button component={Link} to="/settings" size="small" startIcon={<SettingsOutlinedIcon />} sx={{ mt: 0.5 }}>
+          Photo &amp; password settings
+        </Button>
       </div>
 
       {saved && <Alert severity="success" onClose={() => setSaved(false)}>Profile updated.</Alert>}

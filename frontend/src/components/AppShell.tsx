@@ -8,30 +8,33 @@ import HealthIcon from '@mui/icons-material/MonitorHeartOutlined';
 import ResourcesIcon from '@mui/icons-material/MenuBookOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../context/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../lib/api';
 import type { Notification } from '../types';
 import { ThemeToggleButton } from './ThemeToggleButton';
+import { Footer } from './Footer';
 
 const desktopNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/children', label: 'Children' },
-  { to: '/growth', label: 'Growth Tracking' },
-  { to: '/puberty', label: 'Puberty Screening' },
-  { to: '/bone-age', label: 'Bone Age AI' },
-  { to: '/learn', label: 'Learn' },
+  { to: '/growth', label: 'Growth' },
+  { to: '/puberty', label: 'Puberty' },
+  { to: '/bone-age', label: 'AI Prediction' },
+  { to: '/learn', label: 'Resources' },
+  { to: '/contact', label: 'Contact' },
 ];
 
 const mobileNavItems = [
   { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
-  { to: '/milestones', label: 'Milestones', icon: FlagIcon },
-  { to: '/growth', label: 'Health Logs', icon: HealthIcon },
+  { to: '/growth', label: 'Growth', icon: HealthIcon },
+  { to: '/puberty', label: 'Puberty', icon: FlagIcon },
   { to: '/learn', label: 'Resources', icon: ResourcesIcon },
 ];
 
-function AccountMenu({ size }: { size: number }) {
+function AccountMenu({ avatarSize }: { avatarSize: number }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -44,10 +47,18 @@ function AccountMenu({ size }: { size: number }) {
 
   return (
     <>
-      <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <Avatar sx={{ width: size, height: size, bgcolor: '#87a480', fontSize: size * 0.45 }}>
+      <IconButton
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ gap: 0.5, borderRadius: 999 }}
+        aria-label="Account menu"
+      >
+        <Avatar
+          src={user?.avatarUrl ?? undefined}
+          sx={{ width: avatarSize, height: avatarSize, bgcolor: '#006b5f', fontSize: avatarSize * 0.42 }}
+        >
           {user?.fullName?.[0]?.toUpperCase()}
         </Avatar>
+        <ExpandMoreIcon fontSize="small" className="text-gray-500" />
       </IconButton>
       <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={() => setAnchorEl(null)}>
         <MenuItem
@@ -72,6 +83,17 @@ function AccountMenu({ size }: { size: number }) {
           </ListItemIcon>
           Children
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            navigate('/settings');
+          }}
+        >
+          <ListItemIcon>
+            <SettingsOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
@@ -81,6 +103,15 @@ function AccountMenu({ size }: { size: number }) {
         </MenuItem>
       </Menu>
     </>
+  );
+}
+
+function Logo({ imgClass }: { imgClass: string }) {
+  return (
+    <NavLink to="/dashboard" className="shrink-0 flex items-center gap-2.5 transition-transform hover:scale-[1.02] active:scale-95">
+      <img src="/logo.png" alt="GrowTH" className={`${imgClass} rounded-2xl object-contain bg-white p-1 ring-1 ring-brand-100`} />
+      <span className="font-heading font-extrabold text-xl text-brand-500 tracking-tight hidden sm:inline">GrowTH</span>
+    </NavLink>
   );
 }
 
@@ -95,20 +126,18 @@ export function AppShell() {
   const unread = notifications?.filter((n) => !n.isRead).length ?? 0;
 
   return (
-    <div className="min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream flex flex-col">
       {/* Desktop top nav */}
-      <header className="hidden md:flex items-center justify-between px-8 py-4 border-b border-brand-100 bg-surface sticky top-0 z-20">
+      <header className="hidden md:flex items-center justify-between px-8 py-3 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <NavLink to="/dashboard" className="shrink-0 transition-transform hover:scale-105 active:scale-95">
-            <img src="/logo.png" alt="GrowTH — go to dashboard" className="h-12 w-12 rounded-2xl object-contain bg-white p-1.5 ring-1 ring-brand-100" />
-          </NavLink>
-          <nav className="flex items-center gap-6">
+          <Logo imgClass="h-11 w-11" />
+          <nav className="flex items-center gap-7">
             {desktopNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `text-sm font-medium transition-colors duration-150 ${isActive ? 'text-brand-700' : 'text-gray-500 hover:text-brand-600'}`
+                  `text-[15px] font-semibold transition-colors duration-150 pb-1 ${isActive ? 'text-brand-500 border-b-2 border-brand-500' : 'text-gray-500 hover:text-brand-500'}`
                 }
               >
                 {item.label}
@@ -116,39 +145,38 @@ export function AppShell() {
             ))}
           </nav>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <ThemeToggleButton />
-          <IconButton size="small" onClick={() => navigate('/notifications')}>
+          <IconButton onClick={() => navigate('/notifications')} aria-label="Notifications">
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon />
             </Badge>
           </IconButton>
-          <AccountMenu size={32} />
+          <AccountMenu avatarSize={40} />
         </div>
       </header>
 
       {/* Mobile top bar */}
-      <header className="flex md:hidden items-center justify-between px-4 py-3 bg-surface border-b border-brand-100 sticky top-0 z-20">
-        <div className="flex items-center gap-2">
-          <NavLink to="/dashboard" className="shrink-0 transition-transform active:scale-95">
-            <img src="/logo.png" alt="GrowTH — go to dashboard" className="h-11 w-11 rounded-2xl object-contain bg-white p-1 ring-1 ring-brand-100" />
-          </NavLink>
-          <p className="text-xs text-gray-500 leading-tight">Welcome back, {user?.fullName}</p>
-        </div>
+      <header className="flex md:hidden items-center justify-between px-4 py-2.5 bg-surface border-b border-brand-100 sticky top-0 z-20">
+        <Logo imgClass="h-10 w-10" />
         <div className="flex items-center gap-1">
           <ThemeToggleButton />
-          <IconButton size="small" onClick={() => navigate('/notifications')}>
+          <IconButton size="small" onClick={() => navigate('/notifications')} aria-label="Notifications">
             <Badge badgeContent={unread} color="error">
               <NotificationsNoneIcon fontSize="small" />
             </Badge>
           </IconButton>
-          <AccountMenu size={28} />
+          <AccountMenu avatarSize={36} />
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10">
+      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">
         <Outlet />
       </main>
+
+      <div className="hidden md:block">
+        <Footer />
+      </div>
 
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 md:hidden bg-surface border-t border-brand-100 flex items-center justify-around py-2 z-20">
@@ -157,7 +185,7 @@ export function AppShell() {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 text-[11px] transition-colors duration-150 active:scale-95 ${isActive ? 'text-brand-700' : 'text-gray-400'}`
+              `flex flex-col items-center gap-0.5 text-[11px] transition-colors duration-150 active:scale-95 ${isActive ? 'text-brand-500' : 'text-gray-400'}`
             }
           >
             <item.icon fontSize="small" />

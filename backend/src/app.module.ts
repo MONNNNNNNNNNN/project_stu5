@@ -13,6 +13,7 @@ import { PubertyModule } from './puberty/puberty.module';
 import { BoneAgeModule } from './bone-age/bone-age.module';
 import { ArticlesModule } from './articles/articles.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { SupportModule } from './support/support.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     BoneAgeModule,
     ArticlesModule,
     NotificationsModule,
+    SupportModule,
   ],
   controllers: [AppController],
   providers: [

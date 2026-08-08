@@ -30,6 +30,11 @@ export class UsersService {
     return this.sanitize(user);
   }
 
+  async uploadAvatar(userId: string, avatarUrl: string) {
+    const user = await this.prisma.user.update({ where: { id: userId }, data: { avatarUrl } });
+    return this.sanitize(user);
+  }
+
   async deleteMe(userId: string) {
     await this.prisma.user.update({
       where: { id: userId },

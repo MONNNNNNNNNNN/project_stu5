@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, TextField, Alert, Checkbox, FormControlLabel } from '@mui/material';
+import { Button, TextField, Alert, Checkbox, FormControlLabel, Chip } from '@mui/material';
+import PsychologyIcon from '@mui/icons-material/PsychologyOutlined';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import type { PubertyScreening } from '../types';
@@ -68,6 +69,7 @@ export default function PubertyQuestionnaire() {
   const [answers, setAnswers] = useState<Answers>({});
   const [notes, setNotes] = useState('');
   const [lastResult, setLastResult] = useState<ScreeningResult | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   const { data: history } = useQuery({
     queryKey: ['puberty-history', selectedChildId],
@@ -93,6 +95,7 @@ export default function PubertyQuestionnaire() {
       setLastResult(data.result);
       setAnswers({});
       setNotes('');
+      setFormOpen(false);
       await queryClient.invalidateQueries({ queryKey: ['puberty-history', selectedChildId] });
     },
   });
@@ -106,6 +109,9 @@ export default function PubertyQuestionnaire() {
   }
 
   const isFemale = selectedChild.sex === 'FEMALE';
+  const latestScreening = history?.[0];
+  const hasHistory = !!history && history.length > 0;
+  const showForm = !hasHistory || formOpen;
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
@@ -123,10 +129,38 @@ export default function PubertyQuestionnaire() {
         </Alert>
       )}
 
+      {hasHistory && !formOpen && latestScreening && (
+        <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400">
+          <div className="flex items-center gap-2 mb-2">
+            <PsychologyIcon fontSize="small" className="text-brand-600" />
+            <h2 className="font-semibold text-ink">Latest screening</h2>
+            <Chip
+              label={latestScreening.result.flagged ? 'Flagged for review' : 'Within typical range'}
+              color={latestScreening.result.flagged ? 'warning' : 'success'}
+              size="small"
+            />
+          </div>
+          <p className="text-xs text-gray-400 mb-2">
+            {new Date(latestScreening.assessedAt).toLocaleDateString()}
+          </p>
+          <p className="text-sm text-gray-600 mb-4">{latestScreening.result.summary}</p>
+          <Button variant="contained" onClick={() => setFormOpen(true)}>
+            Continue Screening
+          </Button>
+        </div>
+      )}
+
+      {showForm && (
+      <>
       <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
-        <h2 className="font-semibold text-ink mb-1">
-          {isFemale ? 'For girls' : 'For boys'}
-        </h2>
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="font-semibold text-ink">{isFemale ? 'For girls' : 'For boys'}</h2>
+          {hasHistory && (
+            <Button size="small" onClick={() => setFormOpen(false)}>
+              Cancel
+            </Button>
+          )}
+        </div>
 
         {isFemale ? (
           <>
@@ -223,6 +257,8 @@ export default function PubertyQuestionnaire() {
           {mutation.isPending ? 'Saving…' : 'Save screening'}
         </Button>
       </div>
+      </>
+      )}
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-3">History</h2>

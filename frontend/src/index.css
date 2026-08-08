@@ -1,65 +1,66 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* "Lumina Ethos" palette — teal anchor on off-white (light) / deep charcoal with
+   vibrant teal accent (dark). Token names kept stable (brand/sage/cream/ink/surface)
+   so every existing component picks up the new palette without per-file edits. */
 @theme {
-  --color-brand-50: #eef5f4;
-  --color-brand-100: #d7e9e6;
-  --color-brand-200: #b0d3cc;
-  --color-brand-300: #85bcb1;
-  --color-brand-400: #5fa495;
-  --color-brand-500: #46897a;
-  --color-brand-600: #396f63;
-  --color-brand-700: #2f594f;
-  --color-brand-800: #274740;
-  --color-brand-900: #1f3a34;
+  --color-brand-50: #eefaf8;
+  --color-brand-100: #d3f3ee;
+  --color-brand-200: #a8e6dc;
+  --color-brand-300: #74d1c1;
+  --color-brand-400: #3fb6a3;
+  --color-brand-500: #00685f;
+  --color-brand-600: #005850;
+  --color-brand-700: #004640;
+  --color-brand-800: #063a35;
+  --color-brand-900: #0a2e2a;
 
-  --color-sage-50: #f2f5f1;
-  --color-sage-100: #e2e9df;
-  --color-sage-200: #c7d5c2;
-  --color-sage-300: #a6bd9f;
-  --color-sage-400: #87a480;
-  --color-sage-500: #6f8d68;
-  --color-sage-600: #5a7454;
+  --color-sage-50: #ecfffb;
+  --color-sage-100: #c8fff2;
+  --color-sage-200: #62fae3;
+  --color-sage-300: #3cddc7;
+  --color-sage-400: #1fc2ac;
+  --color-sage-500: #006b5f;
+  --color-sage-600: #005047;
 
-  --color-cream: #faf9f6;
-  --color-ink: #16211d;
+  --color-cream: #f8f9ff;
+  --color-ink: #0b1c30;
   --color-surface: #ffffff;
 
   --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 .dark {
-  --color-cream: #14181a;
-  --color-ink: #edf1ee;
-  --color-surface: #1f2528;
+  --color-cream: #0f172a;
+  --color-ink: #e8edf5;
+  --color-surface: #16213a;
 
-  /* Text/accent shades (400-900) are re-tuned lighter for contrast against a dark
-     surface; solid-fill shades (400-500) stay close to their light-mode value since
-     they sit under white button/badge text either way. */
-  --color-brand-50: #16241f;
-  --color-brand-100: #1d3229;
-  --color-brand-200: #2a473a;
-  --color-brand-300: #3c6553;
-  --color-brand-400: #56917a;
-  --color-brand-500: #66a48c;
-  --color-brand-600: #8ec4ab;
-  --color-brand-700: #b7ddc9;
-  --color-brand-800: #d7ecdf;
-  --color-brand-900: #eef8f2;
+  --color-brand-50: #0d211f;
+  --color-brand-100: #123832;
+  --color-brand-200: #1a5049;
+  --color-brand-300: #1f6b60;
+  --color-brand-400: #24a08e;
+  --color-brand-500: #2dd4bf;
+  --color-brand-600: #5fe4d4;
+  --color-brand-700: #93ede1;
+  --color-brand-800: #c3f5ee;
+  --color-brand-900: #e6fbf8;
 
-  --color-sage-50: #1a231a;
-  --color-sage-100: #26331f;
-  --color-sage-200: #3a4a30;
+  --color-sage-50: #0d2420;
+  --color-sage-100: #123a32;
+  --color-sage-200: #3cddc7;
 
-  /* Neutral text: Tailwind's default gray-* is tuned for dark-on-light and goes
-     low-contrast on a near-black surface, so these are inverted brighter. */
-  --color-gray-100: #2a3033;
-  --color-gray-200: #3a4145;
-  --color-gray-300: #565f64;
-  --color-gray-400: #8b939a;
-  --color-gray-500: #a7afb6;
-  --color-gray-600: #c2c8ce;
+  --color-gray-100: #1c2740;
+  --color-gray-200: #26324c;
+  --color-gray-300: #3c4a68;
+  --color-gray-400: #8a97b8;
+  --color-gray-500: #a7b1cc;
+  --color-gray-600: #c4cce0;
 }
 
 html {
@@ -79,6 +80,13 @@ body {
 
 #root {
   min-height: 100svh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
 }
 
 a,

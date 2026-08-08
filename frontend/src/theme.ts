@@ -4,16 +4,23 @@ export function createAppTheme(mode: PaletteMode) {
   return createTheme({
     palette: {
       mode,
-      primary: { main: mode === 'dark' ? '#5fa495' : '#46897a' },
-      secondary: { main: '#87a480' },
+      primary: { main: mode === 'dark' ? '#2dd4bf' : '#00685f' },
+      secondary: { main: mode === 'dark' ? '#3cddc7' : '#006b5f' },
       background: {
-        default: mode === 'dark' ? '#14181a' : '#faf9f6',
-        paper: mode === 'dark' ? '#1f2528' : '#ffffff',
+        default: mode === 'dark' ? '#0f172a' : '#f8f9ff',
+        paper: mode === 'dark' ? '#16213a' : '#ffffff',
       },
     },
-    shape: { borderRadius: 14 },
+    shape: { borderRadius: 16 },
     typography: {
       fontFamily: "'Inter', system-ui, 'Segoe UI', Roboto, sans-serif",
+      h1: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      h2: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      h3: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      h4: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      h5: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      h6: { fontFamily: "'Manrope', 'Inter', sans-serif" },
+      button: { fontWeight: 700, textTransform: 'none' },
     },
   });
 }

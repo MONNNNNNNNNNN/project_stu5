@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, TextField, ToggleButton, ToggleButtonGroup, Alert, MenuItem } from '@mui/material';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
+import { CHILD_AVATAR_PRESETS } from '../lib/childAvatars';
 
 type Relation = 'PARENT' | 'GUARDIAN' | 'RELATIVE';
 
@@ -18,6 +19,7 @@ export default function AddChild() {
   const [sex, setSex] = useState<'MALE' | 'FEMALE'>('FEMALE');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [relation, setRelation] = useState<Relation>('PARENT');
+  const [avatarKey, setAvatarKey] = useState<string>(CHILD_AVATAR_PRESETS[0].id);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -28,12 +30,13 @@ export default function AddChild() {
       setNickname(existing.nickname ?? '');
       setSex(existing.sex);
       setDateOfBirth(existing.dateOfBirth.slice(0, 10));
+      if (existing.avatarUrl) setAvatarKey(existing.avatarUrl);
     }
   }, [isEdit, id, children]);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const payload = { fullName, nickname: nickname || undefined, sex, dateOfBirth, relation };
+      const payload = { fullName, nickname: nickname || undefined, sex, dateOfBirth, relation, avatarUrl: avatarKey };
       return isEdit
         ? (await api.patch(`/children/${id}`, payload)).data
         : (await api.post('/children', payload)).data;
@@ -61,6 +64,28 @@ export default function AddChild() {
         }}
         className="flex flex-col gap-4"
       >
+        <div>
+          <p className="text-sm font-medium text-ink mb-1">Choose an avatar</p>
+          <p className="text-xs text-gray-500 mb-2">
+            For your child's privacy, profiles use a picked character instead of a real photo.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {CHILD_AVATAR_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => setAvatarKey(preset.id)}
+                className={`aspect-square rounded-full flex items-center justify-center text-2xl transition-all ${
+                  avatarKey === preset.id ? 'ring-2 ring-brand-500 ring-offset-2' : 'opacity-80 hover:opacity-100'
+                }`}
+                style={{ backgroundColor: preset.bg }}
+                aria-label={preset.id}
+              >
+                {preset.emoji}
+              </button>
+            ))}
+          </div>
+        </div>
         <TextField label="Full name" required fullWidth value={fullName} onChange={(e) => setFullName(e.target.value)} />
         <TextField label="Nickname (optional)" fullWidth value={nickname} onChange={(e) => setNickname(e.target.value)} />
         <TextField

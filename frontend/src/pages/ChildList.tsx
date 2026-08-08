@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Avatar, Button, IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/EditOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
+import { ChildAvatar } from '../components/ChildAvatar';
 
 function age(dateOfBirth: string) {
   const dob = new Date(dateOfBirth);
@@ -47,9 +48,7 @@ export default function ChildList() {
               }}
               className="flex items-center gap-4 flex-1 text-left"
             >
-              <Avatar sx={{ bgcolor: '#87a480', width: 48, height: 48 }}>
-                {child.fullName[0]?.toUpperCase()}
-              </Avatar>
+              <ChildAvatar avatarUrl={child.avatarUrl} fallbackLetter={child.fullName[0]?.toUpperCase() ?? '?'} size={48} />
               <div>
                 <p className="font-medium text-ink flex items-center gap-1">
                   {child.nickname || child.fullName}

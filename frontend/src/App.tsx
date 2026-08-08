@@ -2,10 +2,14 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppShell } from './components/AppShell';
 import { Placeholder } from './components/Placeholder';
+import { useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import ChildList from './pages/ChildList';
 import AddChild from './pages/AddChild';
@@ -15,14 +19,23 @@ import BoneAgeUpload from './pages/BoneAgeUpload';
 import KnowledgeCenter from './pages/KnowledgeCenter';
 import ArticleDetail from './pages/ArticleDetail';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
 import PrivacyNotice from './pages/PrivacyNotice';
 import NotFound from './pages/NotFound';
 
+function HomeRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <Navigate to="/dashboard" replace /> : <Home />;
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<HomeRoute />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -44,7 +57,7 @@ export default function App() {
           <Route path="/milestones" element={<Placeholder title="Milestones" />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Placeholder title="Settings" />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/help" element={<Placeholder title="Help" />} />
         </Route>
       </Route>
