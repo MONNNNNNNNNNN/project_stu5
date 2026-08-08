@@ -5,6 +5,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOnOutlined';
 import EmailIcon from '@mui/icons-material/EmailOutlined';
 import BugReportIcon from '@mui/icons-material/BugReportOutlined';
 import { PublicHeader } from '../components/PublicHeader';
+import { AppChrome } from '../components/AppShell';
 import { Footer } from '../components/Footer';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
@@ -25,10 +26,8 @@ export default function Contact() {
     },
   });
 
-  return (
-    <div className="min-h-screen bg-cream flex flex-col">
-      <PublicHeader />
-      <main className="flex-1 max-w-4xl mx-auto px-4 md:px-8 py-16 w-full">
+  const body = (
+    <div className="max-w-4xl mx-auto w-full">
         <span className="font-mono text-xs tracking-widest text-brand-500 uppercase font-semibold">Contact</span>
         <h1 className="font-heading font-bold text-3xl md:text-4xl text-ink mt-2 mb-8">Get in touch</h1>
 
@@ -91,7 +90,17 @@ export default function Contact() {
             </form>
           </div>
         )}
-      </main>
+    </div>
+  );
+
+  if (user) {
+    return <AppChrome>{body}</AppChrome>;
+  }
+
+  return (
+    <div className="min-h-screen bg-cream flex flex-col">
+      <PublicHeader />
+      <main className="flex-1 py-16 px-4 md:px-8">{body}</main>
       <Footer />
     </div>
   );

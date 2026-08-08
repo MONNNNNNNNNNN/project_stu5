@@ -17,6 +17,10 @@ function ageLabel(dateOfBirth: string) {
   return `${years} Years, ${months} Months`;
 }
 
+function formatDate(dateOfBirth: string) {
+  return new Date(dateOfBirth).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
 export function ChildProfileCard({ child }: { child: Child }) {
   const navigate = useNavigate();
   const [switcherOpen, setSwitcherOpen] = useState(false);
@@ -26,10 +30,13 @@ export function ChildProfileCard({ child }: { child: Child }) {
       <ChildAvatar avatarUrl={child.avatarUrl} fallbackLetter={child.fullName[0]?.toUpperCase() ?? '?'} size={88} border />
       <div className="text-center sm:text-left">
         <h1 className="font-heading font-bold text-2xl text-ink mb-0.5">{child.nickname || child.fullName}</h1>
-        <p className="text-gray-500">{ageLabel(child.dateOfBirth)}</p>
-        <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
+        {child.nickname && child.nickname !== child.fullName && (
+          <p className="text-sm text-gray-400 -mt-0.5">{child.fullName}</p>
+        )}
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
           <Chip label={child.sex === 'MALE' ? 'Boy' : 'Girl'} size="small" color="secondary" variant="outlined" />
-          <Chip label={`ID: ${child.id.slice(0, 8)}`} size="small" variant="outlined" />
+          <Chip label={ageLabel(child.dateOfBirth)} size="small" variant="outlined" />
+          <Chip label={`Born ${formatDate(child.dateOfBirth)}`} size="small" variant="outlined" />
         </div>
       </div>
 

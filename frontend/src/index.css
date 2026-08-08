@@ -97,6 +97,12 @@ button {
 @media (prefers-reduced-motion: no-preference) {
   a,
   button {
-    transition: color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+    transition: color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+  }
+
+  a:active,
+  button:not(:disabled):active,
+  [role='button']:not([aria-disabled='true']):active {
+    transform: scale(0.96);
   }
 }

@@ -1,31 +1,33 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Badge, IconButton, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import { useState, type ReactNode } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { IconButton, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FlagIcon from '@mui/icons-material/FlagOutlined';
 import HealthIcon from '@mui/icons-material/MonitorHeartOutlined';
 import ResourcesIcon from '@mui/icons-material/MenuBookOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../context/AuthContext';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '../lib/api';
-import type { Notification } from '../types';
 import { ThemeToggleButton } from './ThemeToggleButton';
 import { Footer } from './Footer';
+import { NotificationsMenu } from './NotificationsMenu';
+import { HeaderChildSwitcher } from './HeaderChildSwitcher';
 
-const desktopNavItems = [
+const childNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/growth', label: 'Growth' },
   { to: '/puberty', label: 'Puberty' },
   { to: '/bone-age', label: 'AI Prediction' },
+];
+
+const globalNavItems = [
   { to: '/learn', label: 'Resources' },
   { to: '/contact', label: 'Contact' },
 ];
+
+const childSwitcherPaths = ['/dashboard', '/growth', '/puberty', '/bone-age'];
 
 const mobileNavItems = [
   { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
@@ -75,17 +77,6 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
         <MenuItem
           onClick={() => {
             setAnchorEl(null);
-            navigate('/children');
-          }}
-        >
-          <ListItemIcon>
-            <GroupOutlinedIcon fontSize="small" />
-          </ListItemIcon>
-          Children
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setAnchorEl(null);
             navigate('/settings');
           }}
         >
@@ -115,15 +106,9 @@ function Logo({ imgClass }: { imgClass: string }) {
   );
 }
 
-export function AppShell() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { data: notifications } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: async () => (await api.get<Notification[]>('/notifications')).data,
-    enabled: !!user,
-  });
-  const unread = notifications?.filter((n) => !n.isRead).length ?? 0;
+export function AppChrome({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const showChildSwitcher = childSwitcherPaths.some((p) => location.pathname.startsWith(p));
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -131,8 +116,21 @@ export function AppShell() {
       <header className="hidden md:flex items-center justify-between px-8 py-3 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
           <Logo imgClass="h-11 w-11" />
-          <nav className="flex items-center gap-7">
-            {desktopNavItems.map((item) => (
+          <nav className="flex items-center gap-5">
+            {childNavItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `text-[15px] font-semibold transition-colors duration-150 pb-1 ${isActive ? 'text-brand-500 border-b-2 border-brand-500' : 'text-gray-500 hover:text-brand-500'}`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            {showChildSwitcher && <HeaderChildSwitcher />}
+            <span className="w-px h-5 bg-brand-100" />
+            {globalNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -147,11 +145,7 @@ export function AppShell() {
         </div>
         <div className="flex items-center gap-3">
           <ThemeToggleButton />
-          <IconButton onClick={() => navigate('/notifications')} aria-label="Notifications">
-            <Badge badgeContent={unread} color="error">
-              <NotificationsNoneIcon />
-            </Badge>
-          </IconButton>
+          <NotificationsMenu />
           <AccountMenu avatarSize={40} />
         </div>
       </header>
@@ -160,19 +154,14 @@ export function AppShell() {
       <header className="flex md:hidden items-center justify-between px-4 py-2.5 bg-surface border-b border-brand-100 sticky top-0 z-20">
         <Logo imgClass="h-10 w-10" />
         <div className="flex items-center gap-1">
+          {showChildSwitcher && <HeaderChildSwitcher compact />}
           <ThemeToggleButton />
-          <IconButton size="small" onClick={() => navigate('/notifications')} aria-label="Notifications">
-            <Badge badgeContent={unread} color="error">
-              <NotificationsNoneIcon fontSize="small" />
-            </Badge>
-          </IconButton>
+          <NotificationsMenu size="small" />
           <AccountMenu avatarSize={36} />
         </div>
       </header>
 
-      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">
-        <Outlet />
-      </main>
+      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">{children}</main>
 
       <div className="hidden md:block">
         <Footer />
@@ -194,5 +183,13 @@ export function AppShell() {
         ))}
       </nav>
     </div>
+  );
+}
+
+export function AppShell() {
+  return (
+    <AppChrome>
+      <Outlet />
+    </AppChrome>
   );
 }

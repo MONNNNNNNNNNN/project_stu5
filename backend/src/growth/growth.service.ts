@@ -37,8 +37,10 @@ export class GrowthService {
 
     const height = heightCm ? this.reference.compute('height', child.sex, ageMonths, heightCm) : null;
     const weight = weightKg ? this.reference.compute('weight', child.sex, ageMonths, weightKg) : null;
+    // Round before comparing: ageInMonths uses an average days-per-month divisor, which can land
+    // a hair under an exact-year threshold (e.g. 59.99 instead of 60) purely from leap-year timing.
     const bmiMetric =
-      bmi && ageMonths >= BMI_FOR_AGE_MIN_MONTHS
+      bmi && Math.round(ageMonths) >= BMI_FOR_AGE_MIN_MONTHS
         ? this.reference.compute('bmi', child.sex, ageMonths, bmi)
         : null;
 

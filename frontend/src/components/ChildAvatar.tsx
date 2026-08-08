@@ -14,16 +14,20 @@ export function ChildAvatar({ avatarUrl, fallbackLetter, size = 56, border }: Pr
   if (preset) {
     return (
       <div
-        className="rounded-full flex items-center justify-center shrink-0"
+        className="rounded-full shrink-0 overflow-hidden"
         style={{
           width: size,
           height: size,
           backgroundColor: preset.bg,
-          fontSize: size * 0.55,
           border: border ? '4px solid var(--color-brand-50)' : undefined,
         }}
       >
-        {preset.emoji}
+        <img
+          src={preset.src}
+          alt=""
+          className="w-full h-full object-cover"
+          style={{ objectPosition: '50% 15%', transform: 'scale(1.35)', transformOrigin: '50% 20%' }}
+        />
       </div>
     );
   }

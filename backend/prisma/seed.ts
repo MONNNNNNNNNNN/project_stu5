@@ -54,7 +54,7 @@ async function main() {
       slug: 'understanding-bone-age',
       summary: 'How skeletal maturity differs from chronological age and why it matters for final height prediction.',
       contentMd: '# Understanding Bone Age\n\nBone age is a measure of skeletal maturity...',
-      tag: 'Video',
+      tag: 'Explainer',
       publishedAt: new Date(),
     },
   });

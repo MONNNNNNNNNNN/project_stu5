@@ -52,6 +52,17 @@ export default function GrowthTracking() {
     enabled: !!selectedChildId,
   });
 
+  const { data: bmiCurve } = useQuery({
+    queryKey: ['growth-reference-curve', selectedChildId, 'bmi'],
+    queryFn: async () =>
+      (
+        await api.get<ReferenceCurvePoint[]>('/growth/reference-curve', {
+          params: { childId: selectedChildId, measure: 'bmi' },
+        })
+      ).data,
+    enabled: !!selectedChildId,
+  });
+
   const { data: history } = useQuery({
     queryKey: ['growth-history', selectedChildId],
     queryFn: async () =>
@@ -124,6 +135,10 @@ export default function GrowthTracking() {
     ageMonths: selectedChild ? ageInMonths(selectedChild.dateOfBirth, c.date) : 0,
     value: c.weightKg,
   }));
+  const bmiPoints = (chart ?? []).map((c) => ({
+    ageMonths: selectedChild ? ageInMonths(selectedChild.dateOfBirth, c.date) : 0,
+    value: c.bmi,
+  }));
 
   return (
     <div className="flex flex-col gap-6">
@@ -161,6 +176,10 @@ export default function GrowthTracking() {
 
       <PercentileChart title="Height-for-age" unit="cm" curve={heightCurve ?? []} points={heightPoints} color="#46897a" />
       <PercentileChart title="Weight-for-age" unit="kg" curve={weightCurve ?? []} points={weightPoints} color="#87a480" />
+      <div>
+        <PercentileChart title="BMI-for-age" unit="" curve={bmiCurve ?? []} points={bmiPoints} color="#c98a3f" />
+        <p className="text-xs text-gray-400 -mt-2 px-1">BMI-for-age applies to children aged 5 years and above.</p>
+      </div>
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">History</h2>

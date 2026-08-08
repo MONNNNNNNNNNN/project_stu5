@@ -44,7 +44,7 @@ export default function AddChild() {
     onSuccess: async (child) => {
       await queryClient.invalidateQueries({ queryKey: ['children'] });
       selectChild(child.id);
-      navigate(isEdit ? '/children' : '/dashboard');
+      navigate('/dashboard');
     },
     onError: () => setError('Could not save child. Check the form and try again.'),
   });
@@ -69,19 +69,24 @@ export default function AddChild() {
           <p className="text-xs text-gray-500 mb-2">
             For your child's privacy, profiles use a picked character instead of a real photo.
           </p>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-5 gap-2">
             {CHILD_AVATAR_PRESETS.map((preset) => (
               <button
                 key={preset.id}
                 type="button"
                 onClick={() => setAvatarKey(preset.id)}
-                className={`aspect-square rounded-full flex items-center justify-center text-2xl transition-all ${
+                className={`aspect-square rounded-full overflow-hidden transition-all ${
                   avatarKey === preset.id ? 'ring-2 ring-brand-500 ring-offset-2' : 'opacity-80 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: preset.bg }}
                 aria-label={preset.id}
               >
-                {preset.emoji}
+                <img
+                  src={preset.src}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: '50% 15%', transform: 'scale(1.35)', transformOrigin: '50% 20%' }}
+                />
               </button>
             ))}
           </div>
