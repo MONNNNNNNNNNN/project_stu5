@@ -35,11 +35,34 @@ export class UsersService {
     return this.sanitize(user);
   }
 
+  /**
+   * Hard-deletes the account (not a soft delete): a prior soft-delete implementation left the
+   * email permanently stuck (unique constraint kept blocking re-registration with that email).
+   * Children this user is the sole guardian of are deleted along with their growth/screening/
+   * bone-age history; children shared with another guardian are left intact for that guardian.
+   */
   async deleteMe(userId: string) {
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { deletedAt: new Date() },
+    const links = await this.prisma.childGuardian.findMany({
+      where: { userId },
+      select: { childId: true },
     });
+    const childIds = links.map((l) => l.childId);
+
+    if (childIds.length > 0) {
+      const guardianCounts = await this.prisma.childGuardian.groupBy({
+        by: ['childId'],
+        where: { childId: { in: childIds } },
+        _count: { userId: true },
+      });
+      const soleGuardianChildIds = guardianCounts
+        .filter((c) => c._count.userId === 1)
+        .map((c) => c.childId);
+      if (soleGuardianChildIds.length > 0) {
+        await this.prisma.child.deleteMany({ where: { id: { in: soleGuardianChildIds } } });
+      }
+    }
+
+    await this.prisma.user.delete({ where: { id: userId } });
     return { success: true };
   }
 }
