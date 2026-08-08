@@ -4,6 +4,7 @@ import { Button, TextField, Alert, Checkbox, FormControlLabel, Chip } from '@mui
 import PsychologyIcon from '@mui/icons-material/PsychologyOutlined';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
+import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { PubertyScreening } from '../types';
 
 interface Answers {
@@ -115,6 +116,7 @@ export default function PubertyQuestionnaire() {
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
+      <ChildProfileCard child={selectedChild} />
       <div>
         <h1 className="text-xl font-semibold text-brand-700">Puberty Screening</h1>
         <p className="text-sm text-gray-500 mt-1">

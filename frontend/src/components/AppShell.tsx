@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { IconButton, Avatar, Menu, MenuItem, ListItemIcon, Divider } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import FlagIcon from '@mui/icons-material/FlagOutlined';
@@ -13,7 +13,6 @@ import { useAuth } from '../context/AuthContext';
 import { ThemeToggleButton } from './ThemeToggleButton';
 import { Footer } from './Footer';
 import { NotificationsMenu } from './NotificationsMenu';
-import { HeaderChildSwitcher } from './HeaderChildSwitcher';
 
 const childNavItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -26,8 +25,6 @@ const globalNavItems = [
   { to: '/learn', label: 'Resources' },
   { to: '/contact', label: 'Contact' },
 ];
-
-const childSwitcherPaths = ['/dashboard', '/growth', '/puberty', '/bone-age'];
 
 const mobileNavItems = [
   { to: '/dashboard', label: 'Dashboard', icon: DashboardIcon },
@@ -99,23 +96,19 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
 
 function Logo({ imgClass }: { imgClass: string }) {
   return (
-    <NavLink to="/dashboard" className="shrink-0 flex items-center gap-2.5 transition-transform hover:scale-[1.02] active:scale-95">
-      <img src="/logo.png" alt="GrowTH" className={`${imgClass} rounded-2xl object-contain bg-white p-1 ring-1 ring-brand-100`} />
-      <span className="font-heading font-extrabold text-xl text-brand-500 tracking-tight hidden sm:inline">GrowTH</span>
+    <NavLink to="/dashboard" className="shrink-0 flex items-center transition-transform hover:scale-[1.02] active:scale-95">
+      <img src="/logo.png" alt="GrowTH" className={`${imgClass} w-auto object-contain`} />
     </NavLink>
   );
 }
 
 export function AppChrome({ children }: { children: ReactNode }) {
-  const location = useLocation();
-  const showChildSwitcher = childSwitcherPaths.some((p) => location.pathname.startsWith(p));
-
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       {/* Desktop top nav */}
       <header className="hidden md:flex items-center justify-between px-8 py-3 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <Logo imgClass="h-11 w-11" />
+          <Logo imgClass="h-14" />
           <nav className="flex items-center gap-5">
             {childNavItems.map((item) => (
               <NavLink
@@ -128,7 +121,6 @@ export function AppChrome({ children }: { children: ReactNode }) {
                 {item.label}
               </NavLink>
             ))}
-            {showChildSwitcher && <HeaderChildSwitcher />}
             <span className="w-px h-5 bg-brand-100" />
             {globalNavItems.map((item) => (
               <NavLink
@@ -152,9 +144,8 @@ export function AppChrome({ children }: { children: ReactNode }) {
 
       {/* Mobile top bar */}
       <header className="flex md:hidden items-center justify-between px-4 py-2.5 bg-surface border-b border-brand-100 sticky top-0 z-20">
-        <Logo imgClass="h-10 w-10" />
+        <Logo imgClass="h-12" />
         <div className="flex items-center gap-1">
-          {showChildSwitcher && <HeaderChildSwitcher compact />}
           <ThemeToggleButton />
           <NotificationsMenu size="small" />
           <AccountMenu avatarSize={36} />

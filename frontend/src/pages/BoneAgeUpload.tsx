@@ -5,10 +5,11 @@ import UploadFileIcon from '@mui/icons-material/UploadFileOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { api, API_BASE_URL } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
+import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { BoneAgePrediction } from '../types';
 
 export default function BoneAgeUpload() {
-  const { selectedChildId } = useChildren();
+  const { selectedChildId, selectedChild } = useChildren();
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -51,6 +52,7 @@ export default function BoneAgeUpload() {
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
+      {selectedChild && <ChildProfileCard child={selectedChild} />}
       <div>
         <h1 className="text-xl font-semibold text-brand-700">AI Bone Age Analysis</h1>
         <p className="text-sm text-gray-500 mt-1">

@@ -17,9 +17,8 @@ export function PublicHeader() {
     <header className="sticky top-0 z-30 bg-surface border-b border-brand-100 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/logo.png" alt="GrowTH" className="h-10 w-10 rounded-2xl object-contain bg-white p-1 ring-1 ring-brand-100" />
-            <span className="font-heading font-extrabold text-lg text-brand-500 tracking-tight hidden sm:inline">GrowTH</span>
+          <Link to="/" className="flex items-center shrink-0">
+            <img src="/logo.png" alt="GrowTH" className="h-12 w-auto object-contain" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (

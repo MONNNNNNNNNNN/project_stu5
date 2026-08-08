@@ -57,7 +57,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative py-20 px-4 flex flex-col items-center text-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-brand-50 to-cream -z-10" />
-        <img src="/logo.png" alt="GrowTH" className="w-40 h-40 md:w-52 md:h-52 object-contain drop-shadow-xl mb-6 bg-white rounded-3xl p-3 ring-1 ring-brand-100" />
+        <img src="/logo.png" alt="GrowTH" className="h-40 md:h-52 w-auto object-contain drop-shadow-xl mb-6" />
         <h1 className="font-heading font-extrabold text-3xl md:text-5xl tracking-tight bg-gradient-to-r from-brand-500 to-sage-500 bg-clip-text text-transparent max-w-3xl">
           Nurture Every Milestone
         </h1>
@@ -77,11 +77,11 @@ export default function Home() {
 
       {/* Desktop dashboard preview */}
       <section className="py-16 px-4 bg-surface">
-        <div className="max-w-5xl mx-auto text-center mb-10">
+        <div className="max-w-6xl mx-auto text-center mb-10">
           <h2 className="font-heading font-bold text-2xl md:text-3xl text-ink mb-2">Comprehensive Dashboard</h2>
           <p className="text-gray-500">Monitor growth metrics with professional precision on any device.</p>
         </div>
-        <div className="max-w-4xl mx-auto rounded-2xl border border-brand-100 shadow-xl overflow-hidden bg-gray-100 dark:bg-gray-100 p-4 md:p-8">
+        <div className="max-w-6xl mx-auto rounded-2xl border border-brand-100 shadow-xl overflow-hidden bg-gray-100 dark:bg-gray-100 p-4 md:p-8">
           <div className="rounded-lg overflow-hidden border border-brand-100 bg-cream">
             <div className="flex items-center gap-1.5 px-3 py-2 bg-surface border-b border-brand-100">
               <span className="w-2.5 h-2.5 rounded-full bg-red-300" />
@@ -97,7 +97,7 @@ export default function Home() {
 
       {/* About / mobile preview */}
       <section className="py-16 px-4" id="about">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div className="flex justify-center order-2 md:order-1">
             <div className="w-48 rounded-[2rem] border-4 border-ink/10 shadow-xl overflow-hidden bg-cream p-2">
               <DashboardPreview compact />
@@ -129,7 +129,7 @@ export default function Home() {
 
       {/* Promo video */}
       <section className="py-16 px-4 bg-surface">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="aspect-video rounded-2xl bg-gradient-to-br from-brand-700 to-sage-600 flex items-center justify-center relative shadow-lg">
             <button className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg hover:scale-105 transition-transform" aria-label="Play promo video">
               <PlayArrowIcon fontSize="large" className="text-brand-600 ml-1" />
@@ -141,7 +141,7 @@ export default function Home() {
 
       {/* Articles */}
       <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <h2 className="font-heading font-bold text-2xl md:text-3xl text-ink mb-2">Nurturing Knowledge</h2>
           <p className="text-gray-500 mb-8">Expert articles to guide you through every stage.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

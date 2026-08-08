@@ -9,6 +9,7 @@ import { api } from '../lib/api';
 import { ageInMonths } from '../lib/age';
 import { useChildren } from '../context/ChildContext';
 import { PercentileChart } from '../components/PercentileChart';
+import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { GrowthChartPoint, GrowthRecord, ReferenceCurvePoint } from '../types';
 
 function fmtPercentile(p: string | null) {
@@ -142,6 +143,7 @@ export default function GrowthTracking() {
 
   return (
     <div className="flex flex-col gap-6">
+      {selectedChild && <ChildProfileCard child={selectedChild} />}
       <h1 className="text-xl font-semibold text-brand-700">Growth Tracking</h1>
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
