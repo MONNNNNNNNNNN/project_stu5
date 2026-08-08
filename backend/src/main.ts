@@ -1,8 +1,13 @@
+import { setDefaultResultOrder } from 'dns';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { AppModule } from './app.module';
+
+// Render's outbound IPv6 to Gmail SMTP is unreachable (ENETUNREACH); Node resolves
+// smtp.gmail.com's AAAA record first by default. Prefer IPv4 for all outbound connections.
+setDefaultResultOrder('ipv4first');
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
