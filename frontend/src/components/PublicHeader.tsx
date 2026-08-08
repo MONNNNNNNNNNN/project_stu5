@@ -42,12 +42,8 @@ export function PublicHeader() {
               Dashboard
             </Button>
           ) : (
-            <Button
-              variant="outlined"
-              onClick={() => navigate('/login')}
-              sx={{ borderRadius: 999, display: { xs: 'none', sm: 'inline-flex' } }}
-            >
-              Login / Sign In
+            <Button variant="outlined" onClick={() => navigate('/login')} sx={{ borderRadius: 999 }}>
+              Login / Sign Up
             </Button>
           )}
           <ThemeToggleButton />

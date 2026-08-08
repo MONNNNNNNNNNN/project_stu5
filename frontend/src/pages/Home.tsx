@@ -66,7 +66,7 @@ export default function Home() {
           your child's developmental journey.
         </p>
         <div className="flex gap-3 mt-8">
-          <Button variant="contained" size="large" onClick={() => navigate('/register')} sx={{ borderRadius: 999, px: 4 }}>
+          <Button variant="contained" size="large" onClick={() => navigate('/login')} sx={{ borderRadius: 999, px: 4 }}>
             Start Tracking
           </Button>
           <Button variant="outlined" size="large" onClick={() => navigate('/about')} sx={{ borderRadius: 999, px: 4 }}>

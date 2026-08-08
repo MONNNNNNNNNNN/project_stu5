@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
+import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -20,6 +21,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private mail: MailService,
   ) {}
 
   private async issueTokens(user: { id: string; email: string; role: string }) {
@@ -141,9 +143,10 @@ export class AuthService {
       },
     });
 
-    // Email delivery is a follow-up task (no SMTP provider configured yet).
-    // The token is returned directly so the reset flow is testable end-to-end today.
-    return { success: true, resetToken };
+    const sent = await this.mail.sendPasswordResetEmail(user.email, resetToken);
+    // If SMTP isn't configured, fall back to returning the token directly so the
+    // reset flow stays testable in local dev without a mail provider.
+    return sent ? { success: true } : { success: true, resetToken };
   }
 
   async resetPassword(token: string, newPassword: string) {

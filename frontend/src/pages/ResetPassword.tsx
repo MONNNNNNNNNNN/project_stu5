@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, TextField, Alert } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { api } from '../lib/api';
+import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -13,9 +14,15 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
+  const passwordInvalid = newPassword.length > 0 && !PASSWORD_REGEX.test(newPassword);
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!PASSWORD_REGEX.test(newPassword)) {
+      setError(PASSWORD_MESSAGE);
+      return;
+    }
     setLoading(true);
     try {
       await api.post('/auth/reset-password', { token, newPassword });
@@ -58,6 +65,8 @@ export default function ResetPassword() {
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
+                error={passwordInvalid}
+                helperText={passwordInvalid ? PASSWORD_MESSAGE : 'At least 8 characters, with a letter and a number'}
               />
               <Button type="submit" variant="contained" disabled={loading} sx={{ py: 1.2 }}>
                 {loading ? 'Saving…' : 'Reset password'}

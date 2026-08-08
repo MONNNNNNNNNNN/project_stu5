@@ -29,15 +29,15 @@ export default function ForgotPassword() {
       <div className="w-full max-w-sm bg-surface rounded-2xl shadow-sm p-8">
         <h1 className="text-xl font-semibold text-brand-700 mb-1">Reset your password</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Enter your email and we'll generate a reset link.
+          Enter your email and we'll send you a link to reset it.
         </p>
         {submitted ? (
           <div className="flex flex-col gap-3">
             {resetToken ? (
               <>
                 <Alert severity="info">
-                  Email delivery isn't wired up yet (no SMTP provider configured), so here's your
-                  reset token directly — in production this would arrive by email instead.
+                  Email delivery isn't configured on this server, so here's your reset link
+                  directly instead — in production this would arrive by email.
                 </Alert>
                 <Button
                   variant="contained"
@@ -49,7 +49,8 @@ export default function ForgotPassword() {
               </>
             ) : (
               <Alert severity="success">
-                If an account exists for that email, a reset token was generated for it.
+                If an account exists for that email, we've sent a password reset link to it.
+                Check your inbox (and spam folder) — the link expires in 1 hour.
               </Alert>
             )}
           </div>

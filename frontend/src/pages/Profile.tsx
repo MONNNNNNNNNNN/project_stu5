@@ -25,13 +25,13 @@ export default function Profile() {
     mutationFn: async () => (await api.delete('/users/me')).data,
     onSuccess: async () => {
       await logout();
-      navigate('/login');
+      navigate('/');
     },
   });
 
   async function handleLogout() {
     await logout();
-    navigate('/login');
+    navigate('/');
   }
 
   function handleDeleteAccount() {

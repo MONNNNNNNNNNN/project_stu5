@@ -6,11 +6,12 @@ import { z } from 'zod';
 import { Button, TextField, Alert, FormControlLabel, Checkbox, FormHelperText } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { useAuth } from '../context/AuthContext';
+import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
 const schema = z.object({
   fullName: z.string().min(1, 'Name is required'),
   email: z.string().email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().regex(PASSWORD_REGEX, PASSWORD_MESSAGE),
   phoneNumber: z
     .string()
     .min(9, 'Enter a valid phone number')
@@ -78,7 +79,7 @@ export default function Register() {
             fullWidth
             {...register('password')}
             error={!!errors.password}
-            helperText={errors.password?.message}
+            helperText={errors.password?.message ?? 'At least 8 characters, with a letter and a number'}
           />
           <div>
             <Controller

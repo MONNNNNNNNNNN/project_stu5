@@ -4,6 +4,7 @@ import { Avatar, Button, TextField, Alert, IconButton } from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAltOutlined';
 import { api, API_BASE_URL } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
 export default function Settings() {
   const { user, updateUser } = useAuth();
@@ -97,11 +98,16 @@ export default function Settings() {
           fullWidth
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          helperText="At least 8 characters"
+          error={newPassword.length > 0 && !PASSWORD_REGEX.test(newPassword)}
+          helperText={
+            newPassword.length > 0 && !PASSWORD_REGEX.test(newPassword)
+              ? PASSWORD_MESSAGE
+              : 'At least 8 characters, with a letter and a number'
+          }
         />
         <Button
           variant="contained"
-          disabled={passwordMutation.isPending || !currentPassword || newPassword.length < 8}
+          disabled={passwordMutation.isPending || !currentPassword || !PASSWORD_REGEX.test(newPassword)}
           onClick={() => passwordMutation.mutate()}
         >
           {passwordMutation.isPending ? 'Saving…' : 'Update password'}

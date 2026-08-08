@@ -42,7 +42,7 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
   async function handleLogout() {
     setAnchorEl(null);
     await logout();
-    navigate('/login');
+    navigate('/');
   }
 
   return (
