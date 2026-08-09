@@ -26,7 +26,7 @@ export function ChildProfileCard({ child }: { child: Child }) {
   const [switcherOpen, setSwitcherOpen] = useState(false);
 
   return (
-    <section className="relative bg-surface rounded-3xl border border-brand-100 shadow-sm p-6 flex flex-col sm:flex-row items-center sm:items-start gap-5">
+    <section className="relative bg-surface rounded-3xl border border-brand-100 shadow-sm p-6 pb-16 sm:pb-6 flex flex-col sm:flex-row items-center sm:items-start gap-5">
       <ChildAvatar avatarUrl={child.avatarUrl} fallbackLetter={child.fullName[0]?.toUpperCase() ?? '?'} size={88} border />
       <div className="text-center sm:text-left">
         <h1 className="font-heading font-bold text-2xl text-ink mb-0.5">{child.nickname || child.fullName}</h1>
