@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { api, setAccessToken } from '../lib/api';
 import type { User } from '../types';
 
@@ -35,13 +35,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('refreshToken', res.data.refreshToken);
       setUser(res.data.user);
     } catch {
-      localStorage.removeItem('refreshToken');
+      // Refresh tokens rotate server-side, so a second concurrent bootstrap (two tabs sharing
+      // localStorage, or a dev double-mount) can lose the race and 401 on an already-used
+      // token. Only clear it if it's still the one we attempted — otherwise a winning call
+      // already rotated it, and clearing here would wipe out a perfectly valid session.
+      if (localStorage.getItem('refreshToken') === refreshToken) {
+        localStorage.removeItem('refreshToken');
+      }
     } finally {
       setLoading(false);
     }
   }
 
+  const bootstrapped = useRef(false);
+
   useEffect(() => {
+    if (bootstrapped.current) return;
+    bootstrapped.current = true;
     bootstrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

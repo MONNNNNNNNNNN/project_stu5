@@ -44,7 +44,12 @@ api.interceptors.response.use(
           })
           .catch(() => {
             setAccessToken(null);
-            localStorage.removeItem('refreshToken');
+            // See AuthContext.bootstrap for why this check matters: refresh tokens rotate,
+            // so a losing race against a concurrent refresh (another tab, or the initial
+            // bootstrap call) must not wipe out a token that call already rotated to.
+            if (localStorage.getItem('refreshToken') === refreshToken) {
+              localStorage.removeItem('refreshToken');
+            }
             return null;
           })
           .finally(() => {

@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1560" viewBox="0 0 2000 1560" font-family="Verdana, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#00685f"/>
+    </marker>
+    <marker id="arrowGray" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#9aa4b8"/>
+    </marker>
+  </defs>
+
+  <rect width="2000" height="1560" fill="#f8f9ff"/>
+
+  <!-- Title -->
+  <text x="1000" y="50" text-anchor="middle" font-size="32" font-weight="bold" fill="#00685f">GrowTH — App Overview &amp; User Flow</text>
+  <text x="1000" y="90" text-anchor="middle" font-size="15" fill="#6b7280">Child growth tracking · puberty screening</text>
+  <text x="1000" y="110" text-anchor="middle" font-size="15" fill="#6b7280">AI-assisted bone age · web app</text>
+
+  <!-- ============ ENTRY FLOW ============ -->
+  <rect x="120" y="115" width="160" height="60" rx="14" fill="#ffffff" stroke="#00685f" stroke-width="2"/>
+  <text x="200" y="150" text-anchor="middle" font-size="16" fill="#0b1c30">Visitor</text>
+
+  <rect x="330" y="115" width="200" height="60" rx="14" fill="#eefaf8" stroke="#00685f" stroke-width="2"/>
+  <text x="430" y="141" text-anchor="middle" font-size="15" fill="#0b1c30">Home Page</text>
+  <text x="430" y="160" text-anchor="middle" font-size="11" fill="#6b7280">promo · about · articles</text>
+
+  <rect x="620" y="70" width="200" height="55" rx="14" fill="#ffffff" stroke="#00685f" stroke-width="2"/>
+  <text x="720" y="103" text-anchor="middle" font-size="15" fill="#0b1c30">Register</text>
+
+  <rect x="620" y="160" width="200" height="55" rx="14" fill="#ffffff" stroke="#00685f" stroke-width="2"/>
+  <text x="720" y="193" text-anchor="middle" font-size="15" fill="#0b1c30">Login</text>
+
+  <rect x="620" y="250" width="200" height="50" rx="14" fill="#fff8ec" stroke="#c98a3f" stroke-width="1.5"/>
+  <text x="720" y="272" text-anchor="middle" font-size="13" fill="#0b1c30">Forgot Password</text>
+  <text x="720" y="288" text-anchor="middle" font-size="10" fill="#8a6a2a">Resend email -&gt; reset link</text>
+
+  <!-- entry arrows -->
+  <line x1="280" y1="145" x2="325" y2="145" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="530" y1="135" x2="615" y2="100" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="530" y1="155" x2="615" y2="188" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="695" y1="215" x2="695" y2="248" stroke="#c98a3f" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowGray)"/>
+  <path d="M760,250 C 900,250 900,190 826,188" fill="none" stroke="#c98a3f" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowGray)"/>
+
+  <!-- Register/Login -> Hub -->
+  <path d="M820,97 C 950,97 950,300 990,335" fill="none" stroke="#00685f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M820,188 C 900,220 950,280 990,325" fill="none" stroke="#00685f" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- ============ HUB ============ -->
+  <rect x="770" y="335" width="460" height="110" rx="20" fill="#00685f"/>
+  <text x="1000" y="378" text-anchor="middle" font-size="22" font-weight="bold" fill="#ffffff">Dashboard</text>
+  <text x="1000" y="402" text-anchor="middle" font-size="12.5" fill="#d3f3ee">Child profile card · stat cards · growth trend</text>
+  <text x="1000" y="420" text-anchor="middle" font-size="12.5" fill="#d3f3ee">puberty &amp; AI summaries · resources preview</text>
+
+  <!-- ============ 4 MODULE COLUMNS ============ -->
+  <!-- connectors hub -> columns -->
+  <path d="M900,445 C 700,500 400,520 260,600" fill="none" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M960,445 C 900,500 800,540 750,600" fill="none" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1040,445 C 1100,500 1200,540 1250,600" fill="none" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1100,445 C 1300,500 1600,520 1740,600" fill="none" stroke="#00685f" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Column headers -->
+  <rect x="70" y="600" width="380" height="55" rx="12" fill="#005850"/>
+  <text x="260" y="633" text-anchor="middle" font-size="17" font-weight="bold" fill="#ffffff">Child Management</text>
+
+  <rect x="560" y="600" width="380" height="55" rx="12" fill="#005850"/>
+  <text x="750" y="633" text-anchor="middle" font-size="17" font-weight="bold" fill="#ffffff">Growth Tracking</text>
+
+  <rect x="1060" y="600" width="380" height="55" rx="12" fill="#005850"/>
+  <text x="1250" y="633" text-anchor="middle" font-size="17" font-weight="bold" fill="#ffffff">Puberty Screening</text>
+
+  <rect x="1550" y="600" width="380" height="55" rx="12" fill="#8a5a20"/>
+  <text x="1740" y="628" text-anchor="middle" font-size="17" font-weight="bold" fill="#ffffff">AI Bone Age</text>
+  <text x="1740" y="646" text-anchor="middle" font-size="11" fill="#ffe6bf">BETA · model not yet connected</text>
+
+  <!-- Column 1 steps -->
+  <g font-size="13" fill="#0b1c30">
+    <rect x="90" y="675" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="260" y="698" text-anchor="middle" font-weight="bold">Switch child</text>
+    <text x="260" y="716" text-anchor="middle" font-size="11" fill="#6b7280">card-grid dialog, per-child avatar</text>
+
+    <rect x="90" y="748" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="260" y="771" text-anchor="middle" font-weight="bold">Add child</text>
+    <text x="260" y="789" text-anchor="middle" font-size="11" fill="#6b7280">name · sex · DOB · illustrated avatar</text>
+
+    <rect x="90" y="821" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="260" y="844" text-anchor="middle" font-weight="bold">Edit child</text>
+    <text x="260" y="862" text-anchor="middle" font-size="11" fill="#6b7280">saves -&gt; back to Dashboard, fresh data</text>
+
+    <rect x="90" y="894" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="260" y="917" text-anchor="middle" font-weight="bold">Delete child</text>
+    <text x="260" y="935" text-anchor="middle" font-size="11" fill="#6b7280">"Manage" mode + confirm, cascades data</text>
+  </g>
+  <line x1="260" y1="733" x2="260" y2="748" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="260" y1="806" x2="260" y2="821" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="260" y1="879" x2="260" y2="894" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+  <!-- Column 2 steps -->
+  <g font-size="13" fill="#0b1c30">
+    <rect x="580" y="675" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="750" y="698" text-anchor="middle" font-weight="bold">Log measurement</text>
+    <text x="750" y="716" text-anchor="middle" font-size="11" fill="#6b7280">height, weight, date</text>
+
+    <rect x="580" y="748" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="750" y="771" text-anchor="middle" font-weight="bold">Auto-calculate</text>
+    <text x="750" y="789" text-anchor="middle" font-size="11" fill="#6b7280">percentile · SDS · BMI-for-age (5y+)</text>
+
+    <rect x="580" y="821" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="750" y="844" text-anchor="middle" font-weight="bold">Charts vs. reference</text>
+    <text x="750" y="862" text-anchor="middle" font-size="11" fill="#6b7280">hover tooltip: above/within/below range</text>
+
+    <rect x="580" y="894" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="750" y="917" text-anchor="middle" font-weight="bold">Plain-language guidance</text>
+    <text x="750" y="935" text-anchor="middle" font-size="11" fill="#6b7280">flag + message, not a diagnosis</text>
+
+    <rect x="580" y="967" width="340" height="50" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="750" y="997" text-anchor="middle" font-weight="bold">Full history</text>
+  </g>
+  <line x1="750" y1="733" x2="750" y2="748" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="750" y1="806" x2="750" y2="821" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="750" y1="879" x2="750" y2="894" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="750" y1="952" x2="750" y2="967" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+  <!-- Column 3 steps -->
+  <g font-size="13" fill="#0b1c30">
+    <rect x="1080" y="675" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="1250" y="698" text-anchor="middle" font-weight="bold">First-time: questionnaire</text>
+    <text x="1250" y="716" text-anchor="middle" font-size="11" fill="#6b7280">sex-specific signs, ages observed</text>
+
+    <rect x="1080" y="748" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="1250" y="771" text-anchor="middle" font-weight="bold">Compiled result</text>
+    <text x="1250" y="789" text-anchor="middle" font-size="11" fill="#6b7280">plain summary + flag (early/late/normal)</text>
+
+    <rect x="1080" y="821" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="1250" y="844" text-anchor="middle" font-weight="bold">Screening history</text>
+    <text x="1250" y="862" text-anchor="middle" font-size="11" fill="#6b7280">view past rounds</text>
+
+    <rect x="1080" y="894" width="340" height="58" rx="10" fill="#ffffff" stroke="#a8e6dc"/>
+    <text x="1250" y="917" text-anchor="middle" font-weight="bold">Repeat: "Continue Screening"</text>
+    <text x="1250" y="935" text-anchor="middle" font-size="11" fill="#6b7280">summary card -&gt; new round</text>
+  </g>
+  <line x1="1250" y1="733" x2="1250" y2="748" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="1250" y1="806" x2="1250" y2="821" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="1250" y1="879" x2="1250" y2="894" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+  <!-- Column 4 steps -->
+  <g font-size="13" fill="#0b1c30">
+    <rect x="1570" y="675" width="340" height="58" rx="10" fill="#fffaf0" stroke="#e0c290"/>
+    <text x="1740" y="698" text-anchor="middle" font-weight="bold">Upload X-ray</text>
+    <text x="1740" y="716" text-anchor="middle" font-size="11" fill="#8a6a2a">hand-and-wrist, JPEG/PNG</text>
+
+    <rect x="1570" y="748" width="340" height="58" rx="10" fill="#fffaf0" stroke="#e0c290"/>
+    <text x="1740" y="771" text-anchor="middle" font-weight="bold">Validate</text>
+    <text x="1740" y="789" text-anchor="middle" font-size="11" fill="#8a6a2a">file type + size, clear error if rejected</text>
+
+    <rect x="1570" y="821" width="340" height="58" rx="10" fill="#fdeee0" stroke="#c98a3f" stroke-dasharray="4 3"/>
+    <text x="1740" y="844" text-anchor="middle" font-weight="bold">Prediction (pending)</text>
+    <text x="1740" y="862" text-anchor="middle" font-size="11" fill="#8a5a20">honest "not connected yet" notice</text>
+
+    <rect x="1570" y="894" width="340" height="58" rx="10" fill="#fffaf0" stroke="#e0c290"/>
+    <text x="1740" y="917" text-anchor="middle" font-weight="bold">Upload history</text>
+    <text x="1740" y="935" text-anchor="middle" font-size="11" fill="#8a6a2a">linked to child profile</text>
+  </g>
+  <line x1="1740" y1="733" x2="1740" y2="748" stroke="#e0c290" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="1740" y1="806" x2="1740" y2="821" stroke="#e0c290" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="1740" y1="879" x2="1740" y2="894" stroke="#e0c290" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+  <!-- ============ UTILITY ROW ============ -->
+  <text x="1000" y="1058" text-anchor="middle" font-size="15" font-weight="bold" fill="#6b7280">Always available (nav bar)</text>
+
+  <path d="M900,415 C 500,700 300,950 300,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <path d="M960,415 C 800,700 780,950 780,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <path d="M1040,415 C 1200,700 1220,950 1220,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <path d="M1100,415 C 1500,700 1700,950 1700,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <rect x="120" y="1075" width="360" height="60" rx="12" fill="#ffffff" stroke="#9aa4b8"/>
+  <text x="300" y="1100" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b1c30">Notifications</text>
+  <text x="300" y="1119" text-anchor="middle" font-size="11" fill="#6b7280">dropdown, mark-read / delete</text>
+
+  <rect x="600" y="1075" width="360" height="60" rx="12" fill="#ffffff" stroke="#9aa4b8"/>
+  <text x="780" y="1100" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b1c30">Knowledge Center</text>
+  <text x="780" y="1119" text-anchor="middle" font-size="11" fill="#6b7280">articles, categories, search</text>
+
+  <rect x="1040" y="1075" width="360" height="60" rx="12" fill="#ffffff" stroke="#9aa4b8"/>
+  <text x="1220" y="1100" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b1c30">Contact / Support</text>
+  <text x="1220" y="1119" text-anchor="middle" font-size="11" fill="#6b7280">dept info + bug report form</text>
+
+  <rect x="1520" y="1075" width="360" height="60" rx="12" fill="#ffffff" stroke="#9aa4b8"/>
+  <text x="1700" y="1100" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b1c30">Profile / Settings</text>
+  <text x="1700" y="1119" text-anchor="middle" font-size="11" fill="#6b7280">avatar upload, change password</text>
+
+  <!-- ============ TECH STACK STRIP ============ -->
+  <rect x="80" y="1200" width="1840" height="1" fill="#d3f3ee"/>
+  <text x="1000" y="1245" text-anchor="middle" font-size="16" font-weight="bold" fill="#00685f">Under the hood</text>
+
+  <g font-size="13">
+    <rect x="80" y="1270" width="330" height="70" rx="12" fill="#eefaf8" stroke="#a8e6dc"/>
+    <text x="245" y="1298" text-anchor="middle" font-weight="bold" fill="#0b1c30">Frontend</text>
+    <text x="245" y="1318" text-anchor="middle" fill="#6b7280" font-size="11">React 18 · Vite · MUI · Tailwind</text>
+
+    <rect x="450" y="1270" width="330" height="70" rx="12" fill="#eefaf8" stroke="#a8e6dc"/>
+    <text x="615" y="1298" text-anchor="middle" font-weight="bold" fill="#0b1c30">Backend API</text>
+    <text x="615" y="1318" text-anchor="middle" fill="#6b7280" font-size="11">NestJS · JWT auth · role-scoped access</text>
+
+    <rect x="820" y="1270" width="330" height="70" rx="12" fill="#eefaf8" stroke="#a8e6dc"/>
+    <text x="985" y="1298" text-anchor="middle" font-weight="bold" fill="#0b1c30">Database</text>
+    <text x="985" y="1318" text-anchor="middle" fill="#6b7280" font-size="11">PostgreSQL (Neon) · Prisma ORM</text>
+
+    <rect x="1190" y="1270" width="330" height="70" rx="12" fill="#eefaf8" stroke="#a8e6dc"/>
+    <text x="1355" y="1298" text-anchor="middle" font-weight="bold" fill="#0b1c30">Email</text>
+    <text x="1355" y="1318" text-anchor="middle" fill="#6b7280" font-size="11">Resend API (SMTP blocked on host)</text>
+
+    <rect x="1560" y="1270" width="360" height="70" rx="12" fill="#eefaf8" stroke="#a8e6dc"/>
+    <text x="1740" y="1298" text-anchor="middle" font-weight="bold" fill="#0b1c30">Hosting</text>
+    <text x="1740" y="1318" text-anchor="middle" fill="#6b7280" font-size="11">Vercel (frontend) · Render (backend)</text>
+  </g>
+
+  <line x1="410" y1="1305" x2="450" y2="1305" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="780" y1="1305" x2="820" y2="1305" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+  <line x1="1150" y1="1305" x2="1190" y2="1305" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
+
+  <text x="1000" y="1400" text-anchor="middle" font-size="12" fill="#9aa4b8">Privacy: role-scoped access — a parent account can only reach the children linked to it (verified: cross-account access returns 403)</text>
+  <text x="1000" y="1425" text-anchor="middle" font-size="12" fill="#9aa4b8">All clinical/quasi-clinical results shown in plain, parent-friendly language — flagged as screening aids, never presented as a diagnosis</text>
+</svg>
