@@ -29,11 +29,25 @@ export function ChildProvider({ children: reactChildren }: { children: ReactNode
   const list = data ?? [];
 
   useEffect(() => {
-    if (!selectedChildId && list.length > 0) {
+    if (isLoading) return;
+
+    // A stored selectedChildId can go stale (child deleted, account recreated with the same
+    // browser, switched accounts on this device) — if it no longer matches a real child, either
+    // fall back to the first one available or clear it so the "add a child" empty state shows
+    // instead of a half-rendered dashboard with no data and no obvious way to fix it.
+    if (list.length === 0) {
+      if (selectedChildId) {
+        setSelectedChildId(null);
+        localStorage.removeItem('selectedChildId');
+      }
+      return;
+    }
+
+    if (!list.some((c) => c.id === selectedChildId)) {
       selectChild(list[0].id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [list.length]);
+  }, [list, isLoading]);
 
   function selectChild(id: string) {
     setSelectedChildId(id);
