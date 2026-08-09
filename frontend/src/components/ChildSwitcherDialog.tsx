@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import { ChildAvatar } from './ChildAvatar';
+import type { Child } from '../types';
 
 function age(dateOfBirth: string) {
   const years = (Date.now() - new Date(dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
@@ -19,6 +20,7 @@ export function ChildSwitcherDialog({ open, onClose }: { open: boolean; onClose:
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [manageMode, setManageMode] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<Child | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => (await api.delete(`/children/${id}`)).data,
@@ -28,6 +30,7 @@ export function ChildSwitcherDialog({ open, onClose }: { open: boolean; onClose:
         const remaining = children.filter((c) => c.id !== deletedId);
         if (remaining[0]) selectChild(remaining[0].id);
       }
+      setPendingDelete(null);
     },
   });
 
@@ -44,28 +47,40 @@ export function ChildSwitcherDialog({ open, onClose }: { open: boolean; onClose:
           {children.map((child) => {
             const isSelected = child.id === selectedChildId;
             return (
-              <button
+              <div
                 key={child.id}
-                type="button"
-                disabled={manageMode}
-                onClick={() => {
-                  selectChild(child.id);
-                  handleClose();
-                }}
+                role={manageMode ? undefined : 'button'}
+                tabIndex={manageMode ? undefined : 0}
+                onClick={
+                  manageMode
+                    ? undefined
+                    : () => {
+                        selectChild(child.id);
+                        handleClose();
+                      }
+                }
+                onKeyDown={
+                  manageMode
+                    ? undefined
+                    : (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          selectChild(child.id);
+                          handleClose();
+                        }
+                      }
+                }
                 className={`relative flex flex-col items-center gap-2 rounded-2xl border p-4 transition-all ${
                   isSelected
                     ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-500'
                     : 'border-brand-100 bg-surface hover:border-brand-300 hover:-translate-y-0.5'
-                } ${manageMode ? 'cursor-default' : ''}`}
+                } ${manageMode ? 'cursor-default' : 'cursor-pointer'}`}
               >
                 {manageMode ? (
                   <IconButton
                     size="small"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (confirm(`Remove ${child.nickname || child.fullName}? This deletes their growth, screening, and bone age history.`)) {
-                        deleteMutation.mutate(child.id);
-                      }
+                      setPendingDelete(child);
                     }}
                     sx={{
                       position: 'absolute',
@@ -88,7 +103,7 @@ export function ChildSwitcherDialog({ open, onClose }: { open: boolean; onClose:
                   <p className="font-medium text-sm text-ink">{child.nickname || child.fullName}</p>
                   <p className="text-xs text-gray-500">{age(child.dateOfBirth)} old</p>
                 </div>
-              </button>
+              </div>
             );
           })}
 
@@ -112,6 +127,31 @@ export function ChildSwitcherDialog({ open, onClose }: { open: boolean; onClose:
           {manageMode ? 'Done' : 'Manage'}
         </Button>
       </DialogActions>
+
+      <Dialog open={!!pendingDelete} onClose={() => setPendingDelete(null)} maxWidth="xs" fullWidth>
+        <DialogTitle className="font-heading">Remove child?</DialogTitle>
+        <DialogContent>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            This permanently deletes their growth, screening, and bone age history.
+          </Alert>
+          <p className="text-sm text-ink">
+            Remove {pendingDelete?.nickname || pendingDelete?.fullName}? This can't be undone.
+          </p>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setPendingDelete(null)} disabled={deleteMutation.isPending}>
+            Cancel
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            disabled={deleteMutation.isPending}
+            onClick={() => pendingDelete && deleteMutation.mutate(pendingDelete.id)}
+          >
+            {deleteMutation.isPending ? 'Removing…' : 'Remove'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Dialog>
   );
 }
