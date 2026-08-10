@@ -14,28 +14,28 @@
   <text x="60" y="82" font-size="15" fill="#7a7f8c">Child growth tracking · puberty screening · AI-assisted bone age</text>
 
   <!-- ============ GROUP: CLIENT ============ -->
-  <rect x="60" y="120" width="1620" height="560" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
+  <rect x="60" y="120" width="1120" height="560" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
   <text x="90" y="155" font-size="19" font-weight="bold" fill="#ffffff">Client — React 18 SPA</text>
   <text x="90" y="176" font-size="12" fill="#7a7f8c">Vite · MUI · Tailwind · React Query · React Router</text>
 
   <!-- Sub: Public -->
-  <rect x="90" y="200" width="480" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
+  <rect x="90" y="200" width="220" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
   <text x="115" y="232" font-size="15" font-weight="bold" fill="#e8e8ec">Public Pages</text>
 
   <!-- Sub: Auth -->
-  <rect x="590" y="200" width="480" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
-  <text x="615" y="232" font-size="15" font-weight="bold" fill="#e8e8ec">Auth Pages</text>
+  <rect x="340" y="200" width="220" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
+  <text x="365" y="232" font-size="15" font-weight="bold" fill="#e8e8ec">Auth Pages</text>
 
   <!-- Sub: Authenticated App -->
-  <rect x="1090" y="200" width="560" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
-  <text x="1115" y="232" font-size="15" font-weight="bold" fill="#e8e8ec">Authenticated App</text>
+  <rect x="590" y="200" width="560" height="450" rx="8" fill="#1a1a1f" stroke="#333"/>
+  <text x="615" y="232" font-size="15" font-weight="bold" fill="#e8e8ec">Authenticated App</text>
 
   <!-- ============ GROUP: EXTERNAL SERVICES ============ -->
   <rect x="1720" y="120" width="780" height="270" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
   <text x="1750" y="155" font-size="19" font-weight="bold" fill="#ffffff">External Services</text>
 
   <!-- ============ GROUP: BACKEND API ============ -->
-  <rect x="60" y="720" width="1330" height="430" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
+  <rect x="60" y="720" width="600" height="430" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
   <text x="90" y="755" font-size="19" font-weight="bold" fill="#ffffff">Backend API — NestJS</text>
   <text x="90" y="776" font-size="12" fill="#7a7f8c">JWT access + rotating refresh tokens · role-scoped guardian access</text>
 
@@ -72,73 +72,73 @@
 
   <!-- Auth nodes -->
   <g>
-    <rect x="630" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <rect x="648" y="270" width="20" height="26" rx="3" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <circle cx="658" cy="283" r="3" fill="#2dd4bf"/>
-    <text x="658" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Login</text>
+    <rect x="380" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <rect x="398" y="270" width="20" height="26" rx="3" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="408" cy="283" r="3" fill="#2dd4bf"/>
+    <text x="408" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Login</text>
   </g>
   <g>
-    <rect x="630" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <circle cx="652" cy="380" r="8" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <path d="M638,404 Q652,390 666,404" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <path d="M668,378 L676,378 M672,374 L672,382" stroke="#2dd4bf" stroke-width="2"/>
-    <text x="658" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Register</text>
+    <rect x="380" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="402" cy="380" r="8" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <path d="M388,404 Q402,390 416,404" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <path d="M418,378 L426,378 M422,374 L422,382" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="408" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Register</text>
   </g>
   <g>
-    <rect x="630" y="465" width="56" height="56" rx="12" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
-    <circle cx="658" cy="493" r="15" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
-    <path d="M658,485 L658,493 L664,497" stroke="#c98a3f" stroke-width="2"/>
-    <text x="658" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Forgot / Reset</text>
+    <rect x="380" y="465" width="56" height="56" rx="12" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
+    <circle cx="408" cy="493" r="15" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
+    <path d="M408,485 L408,493 L414,497" stroke="#c98a3f" stroke-width="2"/>
+    <text x="408" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Forgot / Reset</text>
   </g>
 
   <!-- Authenticated App nodes: Dashboard, Growth, Puberty, Bone Age, Resources -->
   <g>
-    <rect x="1130" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <rect x="1142" y="267" width="14" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <rect x="1160" y="267" width="14" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <rect x="1142" y="285" width="32" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <text x="1158" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Dashboard</text>
+    <rect x="630" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <rect x="642" y="267" width="14" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <rect x="660" y="267" width="14" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <rect x="642" y="285" width="32" height="14" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="658" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Dashboard</text>
   </g>
   <g>
-    <rect x="1300" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <polyline points="1312,298 1324,278 1336,290 1350,266" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <text x="1328" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Growth</text>
+    <rect x="800" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <polyline points="812,298 824,278 836,290 850,266" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <text x="828" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Growth</text>
   </g>
   <g>
-    <rect x="1470" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <path d="M1490,270 L1490,300 M1490,270 L1510,276 L1490,286" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <text x="1498" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Puberty</text>
+    <rect x="970" y="255" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <path d="M990,270 L990,300 M990,270 L1010,276 L990,286" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <text x="998" y="335" text-anchor="middle" font-size="13" fill="#c7c9d1">Puberty</text>
   </g>
   <g>
-    <rect x="1130" y="360" width="56" height="56" rx="12" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
-    <rect x="1146" y="376" width="24" height="24" rx="4" fill="none" stroke="#c98a3f" stroke-width="2"/>
-    <path d="M1152,388 L1164,388 M1158,382 L1158,394" stroke="#c98a3f" stroke-width="2"/>
-    <text x="1158" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">AI Bone Age</text>
-    <text x="1158" y="456" text-anchor="middle" font-size="10" fill="#c98a3f">BETA</text>
+    <rect x="630" y="360" width="56" height="56" rx="12" fill="none" stroke="#c98a3f" stroke-width="2.5"/>
+    <rect x="646" y="376" width="24" height="24" rx="4" fill="none" stroke="#c98a3f" stroke-width="2"/>
+    <path d="M652,388 L664,388 M658,382 L658,394" stroke="#c98a3f" stroke-width="2"/>
+    <text x="658" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">AI Bone Age</text>
+    <text x="658" y="456" text-anchor="middle" font-size="10" fill="#c98a3f">BETA</text>
   </g>
   <g>
-    <rect x="1300" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <path d="M1314,374 L1314,402 L1342,402 L1342,374 Z M1314,374 L1328,384 L1342,374" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <text x="1328" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Resources</text>
+    <rect x="800" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <path d="M814,374 L814,402 L842,402 L842,374 Z M814,374 L828,384 L842,374" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="828" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Resources</text>
   </g>
   <g>
-    <rect x="1470" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <circle cx="1498" cy="388" r="15" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <path d="M1498,378 L1498,388 L1505,393" stroke="#2dd4bf" stroke-width="2"/>
-    <text x="1498" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Notifications</text>
+    <rect x="970" y="360" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="998" cy="388" r="15" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <path d="M998,378 L998,388 L1005,393" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="998" y="440" text-anchor="middle" font-size="13" fill="#c7c9d1">Notifications</text>
   </g>
   <g>
-    <rect x="1130" y="465" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <circle cx="1158" cy="485" r="9" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <path d="M1144,507 Q1158,494 1172,507" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <text x="1158" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Profile / Settings</text>
+    <rect x="630" y="465" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="658" cy="485" r="9" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <path d="M644,507 Q658,494 672,507" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <text x="658" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Profile / Settings</text>
   </g>
   <g>
-    <rect x="1300" y="465" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <circle cx="1328" cy="490" r="6" fill="none" stroke="#2dd4bf" stroke-width="2"/>
-    <circle cx="1328" cy="490" r="14" fill="none" stroke="#2dd4bf" stroke-width="1.5"/>
-    <path d="M1328,476 L1328,470 M1328,510 L1328,504 M1314,490 L1308,490 M1348,490 L1342,490" stroke="#2dd4bf" stroke-width="1.5"/>
-    <text x="1328" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Child Switcher</text>
+    <rect x="800" y="465" width="56" height="56" rx="12" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="828" cy="490" r="6" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+    <circle cx="828" cy="490" r="14" fill="none" stroke="#2dd4bf" stroke-width="1.5"/>
+    <path d="M828,476 L828,470 M828,510 L828,504 M814,490 L808,490 M848,490 L842,490" stroke="#2dd4bf" stroke-width="1.5"/>
+    <text x="828" y="545" text-anchor="middle" font-size="13" fill="#c7c9d1">Child Switcher</text>
   </g>
 
   <!-- External Services nodes -->
@@ -214,8 +214,8 @@
 
   <!-- Data layer nodes -->
   <g>
-    <path d="M1490,780 a30,10 0 0 1 60,0 v40 a30,10 0 0 1 -60,0 z" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
-    <path d="M1490,780 a30,10 0 0 0 60,0" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <ellipse cx="1520" cy="786" rx="27" ry="9" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <path d="M1493,786 L1493,826 A27,9 0 0 0 1547,826 L1547,786" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
     <text x="1520" y="855" text-anchor="middle" font-size="13" fill="#c7c9d1">PostgreSQL</text>
     <text x="1520" y="871" text-anchor="middle" font-size="10" fill="#7a7f8c">Neon</text>
   </g>
@@ -256,19 +256,19 @@
   <text x="1650" y="1293" font-size="12" fill="#2dd4bf">plain language, not diagnosis</text>
 
   <!-- ================= CROSS-GROUP ARROWS ================= -->
-  <path d="M330,650 C330,690 700,690 690,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
-  <path d="M830,650 C830,685 720,690 700,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
-  <path d="M1370,650 C1370,690 750,690 720,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
-  <rect x="915" y="684" width="172" height="26" rx="5" fill="#0a0a0d"/>
-  <text x="1001" y="702" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">HTTPS · Bearer JWT</text>
+  <path d="M200,650 C200,690 650,690 660,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <path d="M450,650 C450,685 680,690 690,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <path d="M870,650 C870,690 400,690 350,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <rect x="465" y="684" width="172" height="26" rx="5" fill="#0a0a0d"/>
+  <text x="551" y="702" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">HTTPS · Bearer JWT</text>
 
-  <path d="M1390,900 C1420,900 1420,850 1455,850" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
-  <rect x="1388" y="906" width="76" height="24" rx="5" fill="#0a0a0d"/>
-  <text x="1426" y="923" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">Prisma</text>
+  <path d="M660,900 C1000,900 1200,850 1455,850" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <rect x="1000" y="878" width="76" height="24" rx="5" fill="#0a0a0d"/>
+  <text x="1038" y="895" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">Prisma</text>
 
-  <path d="M1390,1000 C1550,1000 1550,700 1660,395" fill="none" stroke="#e0a552" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arwDash)"/>
+  <path d="M660,1000 C1000,1000 1400,700 1660,395" fill="none" stroke="#e0a552" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arwDash)"/>
   <rect x="1563" y="675" width="120" height="24" rx="5" fill="#0a0a0d"/>
   <text x="1623" y="692" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffd9a8">reset emails</text>
 
-  <text x="1290" y="1414" text-anchor="middle" font-size="13" fill="#9096a3">Every guardian-scoped request is verified server-side — a parent can only reach children linked to their own account.</text>
+  <text x="1290" y="1414" text-anchor="middle" font-size="16" font-weight="bold" fill="#e8e8ec">Every guardian-scoped request is verified server-side — a parent can only reach children linked to their own account.</text>
 </svg>
