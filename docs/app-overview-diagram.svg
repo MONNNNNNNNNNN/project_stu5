@@ -164,12 +164,13 @@
   <line x1="1740" y1="879" x2="1740" y2="894" stroke="#e0c290" stroke-width="2" marker-end="url(#arrowGray)"/>
 
   <!-- ============ UTILITY ROW ============ -->
-  <text x="1000" y="1058" text-anchor="middle" font-size="15" font-weight="bold" fill="#6b7280">Always available (nav bar)</text>
-
   <path d="M900,415 C 500,700 300,950 300,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
   <path d="M960,415 C 800,700 780,950 780,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
   <path d="M1040,415 C 1200,700 1220,950 1220,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
   <path d="M1100,415 C 1500,700 1700,950 1700,1075" fill="none" stroke="#9aa4b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <rect x="860" y="1038" width="280" height="30" rx="6" fill="#f8f9ff"/>
+  <text x="1000" y="1059" text-anchor="middle" font-size="16" font-weight="bold" fill="#374151">Always available (nav bar)</text>
 
   <rect x="120" y="1075" width="360" height="60" rx="12" fill="#ffffff" stroke="#9aa4b8"/>
   <text x="300" y="1100" text-anchor="middle" font-size="14" font-weight="bold" fill="#0b1c30">Notifications</text>
@@ -217,6 +218,6 @@
   <line x1="780" y1="1305" x2="820" y2="1305" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
   <line x1="1150" y1="1305" x2="1190" y2="1305" stroke="#a8e6dc" stroke-width="2" marker-end="url(#arrowGray)"/>
 
-  <text x="1000" y="1400" text-anchor="middle" font-size="12" fill="#9aa4b8">Privacy: role-scoped access — a parent account can only reach the children linked to it (verified: cross-account access returns 403)</text>
-  <text x="1000" y="1425" text-anchor="middle" font-size="12" fill="#9aa4b8">All clinical/quasi-clinical results shown in plain, parent-friendly language — flagged as screening aids, never presented as a diagnosis</text>
+  <text x="1000" y="1400" text-anchor="middle" font-size="13" fill="#4b5563">Privacy: role-scoped access — a parent account can only reach the children linked to it (verified: cross-account access returns 403)</text>
+  <text x="1000" y="1425" text-anchor="middle" font-size="13" fill="#4b5563">All clinical/quasi-clinical results shown in plain, parent-friendly language — flagged as screening aids, never presented as a diagnosis</text>
 </svg>

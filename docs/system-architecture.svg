@@ -35,7 +35,7 @@
   <text x="1750" y="155" font-size="19" font-weight="bold" fill="#ffffff">External Services</text>
 
   <!-- ============ GROUP: BACKEND API ============ -->
-  <rect x="60" y="720" width="1330" height="600" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
+  <rect x="60" y="720" width="1330" height="430" rx="10" fill="#141417" stroke="#2a2a30" stroke-width="1.5"/>
   <text x="90" y="755" font-size="19" font-weight="bold" fill="#ffffff">Backend API — NestJS</text>
   <text x="90" y="776" font-size="12" fill="#7a7f8c">JWT access + rotating refresh tokens · role-scoped guardian access</text>
 
@@ -256,16 +256,19 @@
   <text x="1650" y="1293" font-size="12" fill="#2dd4bf">plain language, not diagnosis</text>
 
   <!-- ================= CROSS-GROUP ARROWS ================= -->
-  <path d="M330,650 C330,690 700,690 690,718" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#arw)"/>
-  <path d="M830,650 C830,685 720,690 700,718" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#arw)"/>
-  <path d="M1370,650 C1370,690 750,690 720,718" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#arw)"/>
-  <text x="1000" y="700" text-anchor="middle" font-size="12" fill="#7a7f8c">HTTPS · Bearer JWT</text>
+  <path d="M330,650 C330,690 700,690 690,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <path d="M830,650 C830,685 720,690 700,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <path d="M1370,650 C1370,690 750,690 720,718" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <rect x="915" y="684" width="172" height="26" rx="5" fill="#0a0a0d"/>
+  <text x="1001" y="702" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">HTTPS · Bearer JWT</text>
 
-  <path d="M1390,900 C1420,900 1420,850 1455,850" fill="none" stroke="#2dd4bf" stroke-width="2" marker-end="url(#arw)"/>
-  <text x="1396" y="920" font-size="11" fill="#7a7f8c">Prisma</text>
+  <path d="M1390,900 C1420,900 1420,850 1455,850" fill="none" stroke="#2dd4bf" stroke-width="3" marker-end="url(#arw)"/>
+  <rect x="1388" y="906" width="76" height="24" rx="5" fill="#0a0a0d"/>
+  <text x="1426" y="923" text-anchor="middle" font-size="14" font-weight="bold" fill="#d8f5f0">Prisma</text>
 
-  <path d="M1390,1000 C1550,1000 1550,700 1660,395" fill="none" stroke="#c98a3f" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arwDash)"/>
-  <text x="1570" y="690" font-size="11" fill="#c98a3f">reset emails</text>
+  <path d="M1390,1000 C1550,1000 1550,700 1660,395" fill="none" stroke="#e0a552" stroke-width="3" stroke-dasharray="6 4" marker-end="url(#arwDash)"/>
+  <rect x="1563" y="675" width="120" height="24" rx="5" fill="#0a0a0d"/>
+  <text x="1623" y="692" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffd9a8">reset emails</text>
 
-  <text x="1290" y="1414" text-anchor="middle" font-size="12" fill="#5b5f6b">Every guardian-scoped request is verified server-side — a parent can only reach children linked to their own account.</text>
+  <text x="1290" y="1414" text-anchor="middle" font-size="13" fill="#9096a3">Every guardian-scoped request is verified server-side — a parent can only reach children linked to their own account.</text>
 </svg>
