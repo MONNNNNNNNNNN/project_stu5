@@ -65,9 +65,21 @@ export class ChildrenService {
     });
   }
 
+  /**
+   * A real delete, not a soft delete: the UI's confirm dialog promises this permanently
+   * removes the child's growth/screening/bone-age history, so it has to actually do that
+   * (growthRecords/pubertyScreenings/boneAgePredictions all cascade via the Child relation).
+   * If this user is the sole guardian, the child itself is removed; if shared with another
+   * guardian, only this user's guardian link is removed and the child stays for the other.
+   */
   async remove(userId: string, childId: string) {
     await this.assertGuardian(childId, userId);
-    await this.prisma.child.update({ where: { id: childId }, data: { deletedAt: new Date() } });
+    const guardianCount = await this.prisma.childGuardian.count({ where: { childId } });
+    if (guardianCount <= 1) {
+      await this.prisma.child.delete({ where: { id: childId } });
+    } else {
+      await this.prisma.childGuardian.delete({ where: { childId_userId: { childId, userId } } });
+    }
     return { success: true };
   }
 }
