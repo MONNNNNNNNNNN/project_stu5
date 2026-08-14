@@ -18,6 +18,11 @@ export class PubertyController {
     return this.pubertyService.history(user.userId, childId);
   }
 
+  @Get('plan')
+  plan(@CurrentUser() user: AuthUser, @Query('childId') childId: string) {
+    return this.pubertyService.plan(user.userId, childId);
+  }
+
   @Get(':id')
   findOne(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.pubertyService.findOne(user.userId, id);
