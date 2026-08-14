@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { understandingBoneAge, nutritionForPreTeens, navigatingGrowthSpurts } from './articles-content';
 
 const prisma = new PrismaClient();
 
@@ -17,49 +18,49 @@ async function main() {
   const nutrition = await prisma.category.findUniqueOrThrow({ where: { slug: 'nutrition' } });
   const boneAge = await prisma.category.findUniqueOrThrow({ where: { slug: 'bone-age' } });
 
-  await prisma.article.upsert({
-    where: { slug: 'navigating-growth-spurts' },
-    update: {},
-    create: {
+  const articles = [
+    {
       categoryId: growth.id,
       title: 'Navigating Growth Spurts',
       slug: 'navigating-growth-spurts',
-      summary: 'Learn to identify the signs of peak height velocity and what to expect during this rapid growth phase.',
-      contentMd: '# Navigating Growth Spurts\n\nGrowth spurts are periods of rapid physical growth...',
+      summary:
+        'When the pubertal growth spurt happens, how fast it goes, and which changes are worth a doctor’s attention.',
+      contentMd: navigatingGrowthSpurts,
       tag: 'Article',
-      publishedAt: new Date(),
     },
-  });
-
-  await prisma.article.upsert({
-    where: { slug: 'nutrition-for-pre-teens' },
-    update: {},
-    create: {
+    {
       categoryId: nutrition.id,
       title: 'Nutrition for Pre-teens',
       slug: 'nutrition-for-pre-teens',
-      summary: 'Essential macronutrients and vitamins required to support optimal bone density and healthy development.',
-      contentMd: '# Nutrition for Pre-teens\n\nBalanced nutrition during pre-adolescence...',
+      summary:
+        'Calcium, vitamin D, iron and protein targets for ages 9–13 — and the everyday habits that matter more than any single nutrient.',
+      contentMd: nutritionForPreTeens,
       tag: 'Guide',
-      publishedAt: new Date(),
     },
-  });
-
-  await prisma.article.upsert({
-    where: { slug: 'understanding-bone-age' },
-    update: {},
-    create: {
+    {
       categoryId: boneAge.id,
       title: 'Understanding Bone Age',
       slug: 'understanding-bone-age',
-      summary: 'How skeletal maturity differs from chronological age and why it matters for final height prediction.',
-      contentMd: '# Understanding Bone Age\n\nBone age is a measure of skeletal maturity...',
+      summary:
+        'How skeletal maturity is read from a hand X-ray, why a doctor would order one, and the limits of what it can tell you.',
+      contentMd: understandingBoneAge,
       tag: 'Explainer',
-      publishedAt: new Date(),
     },
-  });
+  ];
 
-  console.log('Seed complete.');
+  for (const article of articles) {
+    // `update` carries the same fields as `create` on purpose: the seed is the source of
+    // truth for this content, so re-running it after an edit actually republishes the
+    // article. An empty `update` would silently leave the old body in place.
+    const { slug, ...fields } = article;
+    await prisma.article.upsert({
+      where: { slug },
+      update: fields,
+      create: { ...fields, slug, publishedAt: new Date() },
+    });
+  }
+
+  console.log(`Seed complete: ${categories.length} categories, ${articles.length} articles.`);
 }
 
 main()

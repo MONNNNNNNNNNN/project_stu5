@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -6,6 +6,7 @@ import MonitoringIcon from '@mui/icons-material/InsightsOutlined';
 import PsychologyIcon from '@mui/icons-material/PsychologyOutlined';
 import { PublicHeader } from '../components/PublicHeader';
 import { Footer } from '../components/Footer';
+import { ArticleCard } from '../components/ArticleCard';
 import { api } from '../lib/api';
 import type { Article } from '../types';
 
@@ -146,15 +147,7 @@ export default function Home() {
           <p className="text-gray-500 mb-8">Expert articles to guide you through every stage.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {(articles ?? []).slice(0, 3).map((article) => (
-              <Link
-                key={article.id}
-                to={`/learn/${article.id}`}
-                className="bg-surface rounded-2xl border border-brand-100 overflow-hidden hover:border-brand-400 transition-colors shadow-sm block p-4"
-              >
-                <span className="text-xs font-mono uppercase tracking-widest text-sage-500 font-semibold">{article.tag}</span>
-                <h3 className="font-semibold text-ink mt-1 mb-1">{article.title}</h3>
-                <p className="text-sm text-gray-500 line-clamp-2">{article.summary}</p>
-              </Link>
+              <ArticleCard key={article.id} article={article} />
             ))}
             {(articles ?? []).length === 0 && (
               <p className="text-sm text-gray-500 col-span-3">Articles coming soon.</p>

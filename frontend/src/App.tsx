@@ -41,6 +41,11 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/privacy" element={<PrivacyNotice />} />
+      {/* Public: the landing page advertises these articles, so sending a signed-out
+          visitor who clicks one back to the home page made them look broken. Both pages
+          render the app's nav instead of the public one when there is a session. */}
+      <Route path="/learn" element={<KnowledgeCenter />} />
+      <Route path="/learn/:id" element={<ArticleDetail />} />
 
       <Route element={<ProtectedRoute />}>
         <Route path="/children/new" element={<AddChild />} />
@@ -52,8 +57,6 @@ export default function App() {
           <Route path="/growth/add" element={<GrowthTracking />} />
           <Route path="/puberty" element={<PubertyQuestionnaire />} />
           <Route path="/bone-age" element={<BoneAgeUpload />} />
-          <Route path="/learn" element={<KnowledgeCenter />} />
-          <Route path="/learn/:id" element={<ArticleDetail />} />
           <Route path="/milestones" element={<Placeholder title="Milestones" />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
