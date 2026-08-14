@@ -10,7 +10,11 @@ services:
     # migrate deploy` there cost 10-20s of package resolution + a DB round trip on each
     # one, for a migration set that hasn't changed since the build. Building it in means a
     # wake is just "boot Node", which is what the user actually waits on at the login form.
-    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
+    # `prisma db seed` runs here too. The Parenting Resources articles are content the repo
+    # owns — nothing in the app can create or edit an article, so the seed is their only
+    # source. It's upsert-only and idempotent, so re-running it on every deploy just
+    # republishes whatever prisma/articles-content.ts currently says.
+    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /health
     envVars:
