@@ -1,7 +1,20 @@
-version: "3.9"
+# Runs GrowTH as separate containers rather than one process: nginx serving the built SPA
+# and fronting the API, the NestJS API itself, a one-shot migration job, and Postgres.
+#
+# The split mirrors how the hosted deploy is already divided (Vercel serves the frontend,
+# Render runs the API, Neon holds the database) — this just makes that boundary explicit
+# and runnable on one machine.
+#
+#   docker compose up --build     start everything (app on http://localhost:8080)
+#   docker compose down           stop, keeping the database and uploads
+#   docker compose down -v        stop and delete the database and uploaded files
+#
+# The API's secrets come from backend/.env; copy backend/.env.example if you don't have one.
+# DATABASE_URL is overridden below to point at this compose's Postgres, so a .env aimed at
+# the hosted Neon database won't be used by accident.
 
 services:
-  postgres:
+  db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
@@ -9,6 +22,7 @@ services:
       POSTGRES_PASSWORD: growth_dev_pw
       POSTGRES_DB: growth
     ports:
+      # Exposed so you can still point a local `npm run start:dev` or a SQL client at it.
       - "5432:5432"
     volumes:
       - growth_postgres_data:/var/lib/postgresql/data
@@ -18,11 +32,71 @@ services:
       timeout: 5s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
+  # Migrations run as their own short-lived container that exits when it's done, instead of
+  # being tacked onto the API's startup. Two reasons: the Prisma CLI is a devDependency and
+  # so only exists in the builder stage, and scaling the API to more than one replica would
+  # otherwise mean several containers racing to migrate the same database at once.
+  migrate:
+    build:
+      context: ./backend
+      target: builder
+    command: npx prisma migrate deploy
+    environment:
+      DATABASE_URL: postgresql://growth:growth_dev_pw@db:5432/growth?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: ./backend
+      target: runtime
+    restart: unless-stopped
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://growth:growth_dev_pw@db:5432/growth?schema=public
+      # The browser only ever talks to nginx, so requests reach the API same-origin and
+      # never trip CORS. This is set anyway for anyone calling port 3001 directly.
+      CORS_ORIGIN: http://localhost:8080
+      FRONTEND_URL: http://localhost:8080
+    ports:
+      # Direct access for curl/Postman. The frontend does not use this — it goes via nginx.
+      - "3001:3001"
+    volumes:
+      # Uploaded avatars and X-rays live on the container filesystem; without this they'd
+      # be lost every time the image is rebuilt.
+      - growth_uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        # Same-origin path: nginx proxies /api through to the api service. See
+        # frontend/nginx.conf.
+        VITE_API_URL: /api
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
 
 volumes:
   growth_postgres_data:
+  growth_uploads:
