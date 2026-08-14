@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, IconButton } from '@mui/material';
@@ -7,6 +8,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import { ChildAvatar } from '../components/ChildAvatar';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import type { Child } from '../types';
 
 function age(dateOfBirth: string) {
   const dob = new Date(dateOfBirth);
@@ -20,6 +23,7 @@ export default function ChildList() {
   const { children, isLoading, selectedChildId, selectChild } = useChildren();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [pendingDelete, setPendingDelete] = useState<Child | null>(null);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => (await api.delete(`/children/${id}`)).data,
@@ -62,12 +66,7 @@ export default function ChildList() {
             <IconButton size="small" component={Link} to={`/children/${child.id}/edit`}>
               <EditIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => {
-                if (confirm(`Remove ${child.nickname || child.fullName}?`)) deleteMutation.mutate(child.id);
-              }}
-            >
+            <IconButton size="small" onClick={() => setPendingDelete(child)}>
               <DeleteIcon fontSize="small" />
             </IconButton>
           </div>
@@ -76,6 +75,20 @@ export default function ChildList() {
       {!isLoading && children.length === 0 && (
         <p className="text-sm text-gray-500 mt-4">No children added yet.</p>
       )}
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Remove child?"
+        warning="This permanently deletes their growth, screening, and bone age history."
+        message={`Remove ${pendingDelete?.nickname || pendingDelete?.fullName}? This can't be undone.`}
+        confirmLabel="Remove"
+        busy={deleteMutation.isPending}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) deleteMutation.mutate(pendingDelete.id);
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }

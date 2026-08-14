@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { api, API_BASE_URL } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import { ChildProfileCard } from '../components/ChildProfileCard';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { BoneAgePrediction } from '../types';
 
 export default function BoneAgeUpload() {
@@ -13,6 +14,7 @@ export default function BoneAgeUpload() {
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   const { data: history } = useQuery({
     queryKey: ['bone-age-history', selectedChildId],
@@ -107,12 +109,7 @@ export default function BoneAgeUpload() {
                     : 'Awaiting AI model integration'}
                 </p>
               </div>
-              <IconButton
-                size="small"
-                onClick={() => {
-                  if (confirm('Delete this upload?')) deleteMutation.mutate(p.id);
-                }}
-              >
+              <IconButton size="small" onClick={() => setPendingDelete(p.id)}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </div>
@@ -120,6 +117,18 @@ export default function BoneAgeUpload() {
           {(history ?? []).length === 0 && <p className="text-sm text-gray-500">No uploads yet.</p>}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Delete upload?"
+        message="This removes the X-ray and its analysis from the child's history."
+        busy={deleteMutation.isPending}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) deleteMutation.mutate(pendingDelete);
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }

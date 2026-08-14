@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../lib/api';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ageInMonths } from '../lib/age';
 import { useChildren } from '../context/ChildContext';
 import { PercentileChart } from '../components/PercentileChart';
@@ -71,6 +72,7 @@ export default function GrowthTracking() {
     enabled: !!selectedChildId,
   });
 
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editHeight, setEditHeight] = useState('');
   const [editWeight, setEditWeight] = useState('');
@@ -229,12 +231,7 @@ export default function GrowthTracking() {
                     <IconButton size="small" onClick={() => startEdit(record)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => {
-                        if (confirm('Delete this measurement?')) deleteMutation.mutate(record.id);
-                      }}
-                    >
+                    <IconButton size="small" onClick={() => setPendingDelete(record.id)}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </span>
@@ -248,6 +245,18 @@ export default function GrowthTracking() {
           {(history ?? []).length === 0 && <p className="text-sm text-gray-500 py-4">No measurements yet.</p>}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        title="Delete measurement?"
+        message="This removes the entry from the growth chart and history."
+        busy={deleteMutation.isPending}
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) deleteMutation.mutate(pendingDelete);
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }
