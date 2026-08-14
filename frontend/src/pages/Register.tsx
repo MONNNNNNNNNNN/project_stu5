@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, TextField, Alert, FormControlLabel, Checkbox, FormHelperText } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
+import { ColdStartNotice } from '../components/ColdStartNotice';
 import { useAuth } from '../context/AuthContext';
 import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
@@ -37,7 +38,12 @@ export default function Register() {
       await registerUser(values.email, values.password, values.fullName, values.phoneNumber, values.acceptedTerms);
       navigate('/children/new');
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'Could not create account.');
+      setError(
+        err?.response?.data?.message ??
+          (err?.response
+            ? 'Could not create account.'
+            : 'Could not reach the server. It may still be starting up — please try again.'),
+      );
     }
   }
 
@@ -50,6 +56,7 @@ export default function Register() {
           <h1 className="text-xl font-semibold text-brand-700">Create your account</h1>
           <p className="text-sm text-gray-500">Start tracking your child's growth journey</p>
         </div>
+        <ColdStartNotice active={isSubmitting} />
         {error && <Alert severity="error" className="mb-4">{error}</Alert>}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <TextField

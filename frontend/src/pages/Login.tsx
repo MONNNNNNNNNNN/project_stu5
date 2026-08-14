@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button, TextField, Alert } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
+import { ColdStartNotice } from '../components/ColdStartNotice';
 import { useAuth } from '../context/AuthContext';
 
 const schema = z.object({
@@ -28,8 +29,15 @@ export default function Login() {
     try {
       await login(values.email, values.password);
       navigate('/dashboard');
-    } catch {
-      setError('Invalid email or password.');
+    } catch (err: any) {
+      // A timed-out cold start isn't a credential problem — telling someone their password
+      // is wrong when the server simply never answered sends them off resetting a password
+      // that was fine all along.
+      setError(
+        err?.response
+          ? 'Invalid email or password.'
+          : 'Could not reach the server. It may still be starting up — please try again.',
+      );
     }
   }
 
@@ -42,6 +50,7 @@ export default function Login() {
           <h1 className="text-xl font-semibold text-brand-700">Welcome back</h1>
           <p className="text-sm text-gray-500">Log in to track your child's growth</p>
         </div>
+        <ColdStartNotice active={isSubmitting} />
         {error && <Alert severity="error" className="mb-4">{error}</Alert>}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <TextField

@@ -7,7 +7,26 @@ export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:30
 // hanging the UI (e.g. auth bootstrap on app load) forever.
 const REQUEST_TIMEOUT_MS = 20000;
 
+// A cold wake (container boot + Nest bootstrap + Neon waking from autosuspend) regularly
+// runs past 20s, and login/register are exactly the calls a returning user makes first —
+// so those got their own, much longer budget. Everything else keeps the short one: by the
+// time you're inside the app the backend is warm, and a fast failure is the better UX.
+export const COLD_START_TIMEOUT_MS = 60000;
+
 export const api = axios.create({ baseURL: API_BASE_URL, timeout: REQUEST_TIMEOUT_MS });
+
+/**
+ * Fire-and-forget ping to start the backend waking up. Called as soon as the app loads, so
+ * the spin-up overlaps with the user reading the page / typing credentials instead of
+ * starting only once they hit Log In. Deliberately swallows errors — it's an optimization,
+ * never a gate on rendering.
+ */
+let warmed = false;
+export function warmUpBackend() {
+  if (warmed) return;
+  warmed = true;
+  axios.get(`${API_BASE_URL}/health`, { timeout: COLD_START_TIMEOUT_MS }).catch(() => {});
+}
 
 let accessToken: string | null = null;
 export function setAccessToken(token: string | null) {

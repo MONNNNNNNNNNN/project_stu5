@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
-import { api, setAccessToken } from '../lib/api';
+import { api, setAccessToken, warmUpBackend, COLD_START_TIMEOUT_MS } from '../lib/api';
 import type { User } from '../types';
 
 interface AuthContextValue {
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const res = await api.post('/auth/refresh', { refreshToken });
+      const res = await api.post('/auth/refresh', { refreshToken }, { timeout: COLD_START_TIMEOUT_MS });
       setAccessToken(res.data.accessToken);
       localStorage.setItem('refreshToken', res.data.refreshToken);
       setUser(res.data.user);
@@ -52,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (bootstrapped.current) return;
     bootstrapped.current = true;
+    warmUpBackend();
     bootstrap();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -63,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function login(email: string, password: string) {
-    const res = await api.post('/auth/login', { email, password });
+    const res = await api.post('/auth/login', { email, password }, { timeout: COLD_START_TIMEOUT_MS });
     await applySession(res.data);
   }
 
@@ -74,7 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     phoneNumber: string,
     acceptedTerms: boolean,
   ) {
-    const res = await api.post('/auth/register', { email, password, fullName, phoneNumber, acceptedTerms });
+    const res = await api.post(
+      '/auth/register',
+      { email, password, fullName, phoneNumber, acceptedTerms },
+      { timeout: COLD_START_TIMEOUT_MS },
+    );
     await applySession(res.data);
   }
 

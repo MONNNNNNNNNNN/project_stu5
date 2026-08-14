@@ -5,8 +5,13 @@ services:
     plan: free
     region: singapore
     rootDir: backend
-    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
-    startCommand: npx prisma migrate deploy && npm run start:prod
+    # Migrations run at build time, not start time. The free plan spins the service down
+    # after ~15 min idle, so startCommand runs again on every cold wake — and `npx prisma
+    # migrate deploy` there cost 10-20s of package resolution + a DB round trip on each
+    # one, for a migration set that hasn't changed since the build. Building it in means a
+    # wake is just "boot Node", which is what the user actually waits on at the login form.
+    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm run start:prod
     healthCheckPath: /health
     envVars:
       - key: NODE_VERSION
