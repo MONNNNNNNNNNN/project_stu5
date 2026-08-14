@@ -12,8 +12,8 @@ import { api } from '../lib/api';
 import { ageInMonths } from '../lib/age';
 import { useChildren } from '../context/ChildContext';
 import { ChildProfileCard } from '../components/ChildProfileCard';
-import { StatDetailDialog } from '../components/StatDetailDialog';
 import { PercentileChart } from '../components/PercentileChart';
+import { ArticleCard } from '../components/ArticleCard';
 import type {
   Article,
   BoneAgePrediction,
@@ -24,7 +24,7 @@ import type {
 } from '../types';
 
 interface PubertyScreeningWithResult extends PubertyScreening {
-  result: { summary: string; flagged: boolean };
+  result: { title: string; summary: string; flagged: boolean };
 }
 
 function fmt(n: number | string | null | undefined, unit: string) {
@@ -35,9 +35,59 @@ function fmt(n: number | string | null | undefined, unit: string) {
 
 type Measure = 'height' | 'weight' | 'bmi';
 
+/** Everything that varies between the three chart tabs, in one place. */
+const MEASURES: {
+  key: Measure;
+  label: string;
+  icon: ReactNode;
+  title: string;
+  unit: string;
+  color: string;
+  point: 'heightCm' | 'weightKg' | 'bmi';
+  percentile: 'heightPercentile' | 'weightPercentile' | 'bmiPercentile';
+}[] = [
+  {
+    key: 'height',
+    label: 'Height',
+    icon: <HeightIcon fontSize="small" />,
+    title: 'Height-for-age',
+    unit: 'cm',
+    color: '#46897a',
+    point: 'heightCm',
+    percentile: 'heightPercentile',
+  },
+  {
+    key: 'weight',
+    label: 'Weight',
+    icon: <MonitorWeightIcon fontSize="small" />,
+    title: 'Weight-for-age',
+    unit: 'kg',
+    color: '#87a480',
+    point: 'weightKg',
+    percentile: 'weightPercentile',
+  },
+  {
+    key: 'bmi',
+    label: 'BMI',
+    icon: <AccessibilityNewIcon fontSize="small" />,
+    title: 'BMI-for-age',
+    unit: '',
+    color: '#c98a3f',
+    point: 'bmi',
+    percentile: 'bmiPercentile',
+  },
+];
+
+function describePercentile(p: number | null) {
+  if (p === null) return null;
+  if (p < 3) return { label: `P${Math.round(p)} · below typical`, tone: 'text-amber-700 dark:text-amber-400' };
+  if (p > 97) return { label: `P${Math.round(p)} · above typical`, tone: 'text-amber-700 dark:text-amber-400' };
+  return { label: `P${Math.round(p)} · typical range`, tone: 'text-brand-600' };
+}
+
 export default function Dashboard() {
   const { selectedChild, selectedChildId } = useChildren();
-  const [statDialog, setStatDialog] = useState<Measure | null>(null);
+  const [measure, setMeasure] = useState<Measure>('height');
 
   const { data: stats } = useQuery({
     queryKey: ['growth-statistics', selectedChildId],
@@ -53,12 +103,12 @@ export default function Dashboard() {
     enabled: !!selectedChildId,
   });
 
-  const { data: heightCurve } = useQuery({
-    queryKey: ['growth-reference-curve', selectedChildId, 'height'],
+  const { data: curve } = useQuery({
+    queryKey: ['growth-reference-curve', selectedChildId, measure],
     queryFn: async () =>
       (
         await api.get<ReferenceCurvePoint[]>('/growth/reference-curve', {
-          params: { childId: selectedChildId, measure: 'height' },
+          params: { childId: selectedChildId, measure },
         })
       ).data,
     enabled: !!selectedChildId,
@@ -101,42 +151,15 @@ export default function Dashboard() {
     );
   }
 
-  const heightPoints = (chart ?? []).map((c) => ({
+  const active = MEASURES.find((m) => m.key === measure)!;
+  const points = (chart ?? []).map((c) => ({
     ageMonths: selectedChild ? ageInMonths(selectedChild.dateOfBirth, c.date) : 0,
-    value: c.heightCm,
+    value: c[active.point],
   }));
 
   return (
     <div className="flex flex-col gap-6">
       {selectedChild && <ChildProfileCard child={selectedChild} />}
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
-          icon={<HeightIcon fontSize="small" />}
-          label="HEIGHT"
-          value={fmt(stats?.latest?.heightCm, ' cm')}
-          delta={stats?.heightDeltaCm ? `+${stats.heightDeltaCm}cm` : null}
-          sub={stats?.latest?.heightPercentile ? `P${Math.round(Number(stats.latest.heightPercentile))}` : undefined}
-          onClick={() => setStatDialog('height')}
-        />
-        <StatCard
-          icon={<MonitorWeightIcon fontSize="small" />}
-          label="WEIGHT"
-          value={fmt(stats?.latest?.weightKg, ' kg')}
-          delta={stats?.weightDeltaKg ? `+${stats.weightDeltaKg}kg` : null}
-          sub={stats?.latest?.weightPercentile ? `P${Math.round(Number(stats.latest.weightPercentile))}` : undefined}
-          onClick={() => setStatDialog('weight')}
-        />
-        <StatCard
-          icon={<AccessibilityNewIcon fontSize="small" />}
-          label="BMI"
-          value={fmt(stats?.latest?.bmi, '')}
-          delta={null}
-          sub={stats?.latest?.guidance?.nutritionalStatus ?? undefined}
-          onClick={() => setStatDialog('bmi')}
-        />
-        <StatCard label="RECORDS" value={String(chart?.length ?? 0)} delta={null} />
-      </div>
 
       {stats?.latest?.guidance?.flagged && (
         <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
@@ -144,56 +167,86 @@ export default function Dashboard() {
         </div>
       )}
 
-      {statDialog && (
-        <StatDetailDialog
-          open={!!statDialog}
-          onClose={() => setStatDialog(null)}
-          measure={statDialog}
-          title={statDialog === 'height' ? 'Height-for-age' : statDialog === 'weight' ? 'Weight-for-age' : 'BMI-for-age'}
-          unit={statDialog === 'height' ? 'cm' : statDialog === 'weight' ? 'kg' : ''}
-          color={statDialog === 'height' ? '#46897a' : statDialog === 'weight' ? '#87a480' : '#c98a3f'}
-          percentile={
-            statDialog === 'height'
-              ? stats?.latest?.heightPercentile
-                ? Number(stats.latest.heightPercentile)
-                : null
-              : statDialog === 'weight'
-                ? stats?.latest?.weightPercentile
-                  ? Number(stats.latest.weightPercentile)
-                  : null
-                : stats?.latest?.bmiPercentile
-                  ? Number(stats.latest.bmiPercentile)
-                  : null
-          }
-        />
-      )}
-
       <div className="grid md:grid-cols-3 gap-4">
         <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-ink">Growth Trajectory</h2>
             <Button component={Link} to="/growth" size="small" startIcon={<AddIcon fontSize="small" />} variant="outlined">
               Add Measurement
             </Button>
           </div>
+
+          {/* The three measures used to be separate stat cards above the chart that each
+              opened their own dialog. As tabs they stay just as glanceable — the current
+              value is still on the face of each — but selecting one now swaps the chart
+              below instead of covering it with a modal. */}
+          <div className="grid grid-cols-3 gap-2 mb-4" role="tablist" aria-label="Growth measure">
+            {MEASURES.map((m) => {
+              const isActive = m.key === measure;
+              const value =
+                m.key === 'height'
+                  ? fmt(stats?.latest?.heightCm, ' cm')
+                  : m.key === 'weight'
+                    ? fmt(stats?.latest?.weightKg, ' kg')
+                    : fmt(stats?.latest?.bmi, '');
+              const raw = stats?.latest?.[m.percentile];
+              const status = describePercentile(raw !== null && raw !== undefined ? Number(raw) : null);
+              return (
+                <button
+                  key={m.key}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setMeasure(m.key)}
+                  className={`rounded-2xl border p-3 text-left transition-all ${
+                    isActive
+                      ? 'border-brand-400 bg-brand-50 ring-1 ring-brand-400'
+                      : 'border-brand-100 hover:border-brand-300 hover:-translate-y-0.5'
+                  }`}
+                >
+                  <span className="text-[10px] font-semibold text-gray-400 tracking-wide flex items-center gap-1 uppercase">
+                    {m.icon}
+                    {m.label}
+                  </span>
+                  <span className="block text-xl font-semibold text-ink mt-0.5">{value}</span>
+                  {status && <span className={`block text-[11px] mt-0.5 ${status.tone}`}>{status.label}</span>}
+                </button>
+              );
+            })}
+          </div>
+
           {stats?.latest?.guidance && (
             <p className={`text-xs mb-2 ${stats.latest.guidance.flagged ? 'text-amber-700' : 'text-brand-600'}`}>
               {stats.latest.guidance.message}
             </p>
           )}
-          <PercentileChart title="Height vs. Reference" unit="cm" curve={heightCurve ?? []} points={heightPoints} color="#46897a" />
+          <PercentileChart
+            title={`${active.title} vs. Reference`}
+            unit={active.unit}
+            curve={curve ?? []}
+            points={points}
+            color={active.color}
+          />
         </div>
 
-        <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400 flex flex-col">
+        {/* self-start so the card sizes to its content. As a grid item it stretched to
+            match the chart beside it, leaving a tall empty gap above the button. */}
+        <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400 flex flex-col self-start">
           <div className="flex items-center gap-2 mb-2">
             <PsychologyIcon fontSize="small" className="text-brand-600" />
             <h2 className="font-semibold text-ink">Puberty Screening</h2>
           </div>
           {latestScreening ? (
             <>
-              <p className="text-sm text-gray-600 flex-1">{latestScreening.result.summary}</p>
+              <p
+                className={`text-sm font-medium ${
+                  latestScreening.result.flagged ? 'text-amber-700 dark:text-amber-400' : 'text-brand-600'
+                }`}
+              >
+                {latestScreening.result.title}
+              </p>
+              <p className="text-sm text-gray-600 mt-1 line-clamp-3">{latestScreening.result.summary}</p>
               <Button component={Link} to="/puberty" variant="outlined" size="small" fullWidth sx={{ mt: 2 }}>
-                Continue Screening
+                {latestScreening.result.flagged ? 'View result and plan' : 'View result'}
               </Button>
             </>
           ) : (
@@ -247,57 +300,10 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {(articles ?? []).slice(0, 3).map((article) => (
-            <Link
-              key={article.id}
-              to={`/learn/${article.id}`}
-              className="bg-surface rounded-2xl shadow-sm overflow-hidden border border-transparent hover:border-brand-300 hover:shadow-md transition-all"
-            >
-              <div className="h-24 bg-sage-100" />
-              <div className="p-4">
-                <span className="font-mono text-[10px] font-semibold uppercase tracking-wide text-brand-600">
-                  {article.tag}
-                </span>
-                <h3 className="font-medium text-sm mt-1 text-ink">{article.title}</h3>
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">{article.summary}</p>
-              </div>
-            </Link>
+            <ArticleCard key={article.id} article={article} height="h-24" />
           ))}
         </div>
       </div>
     </div>
-  );
-}
-
-function StatCard({
-  icon,
-  label,
-  value,
-  delta,
-  sub,
-  onClick,
-}: {
-  icon?: ReactNode;
-  label: string;
-  value: string;
-  delta: string | null;
-  sub?: string;
-  onClick?: () => void;
-}) {
-  const Comp = onClick ? 'button' : 'div';
-  return (
-    <Comp
-      onClick={onClick}
-      className={`bg-surface rounded-2xl shadow-sm p-4 border-l-4 border-brand-400 text-left w-full ${
-        onClick ? 'cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition-all' : ''
-      }`}
-    >
-      <p className="text-[10px] font-semibold text-gray-400 tracking-wide flex items-center gap-1">
-        {icon}
-        {label}
-      </p>
-      <p className="text-2xl font-semibold text-ink">{value}</p>
-      {delta && <p className="text-xs text-brand-600 mt-1">↑ {delta} since last</p>}
-      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
-    </Comp>
   );
 }
