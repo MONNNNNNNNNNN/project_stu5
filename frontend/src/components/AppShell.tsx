@@ -97,7 +97,10 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
 function Logo({ imgClass }: { imgClass: string }) {
   return (
     <NavLink to="/dashboard" className="shrink-0 flex items-center transition-transform hover:scale-[1.02] active:scale-95">
-      <img src="/logo.png" alt="GrowTH" className={`${imgClass} w-auto object-contain`} />
+      {/* The horizontal lockup, not the stacked logo.png: stacked art is ~3:1 tall, so
+          fitting it into a nav bar shrank "GrowTH" to about 15px and made it unreadable.
+          Side by side, the wordmark gets roughly half the bar's height instead. */}
+      <img src="/logo-horizontal.png" alt="GrowTH" className={`${imgClass} w-auto object-contain`} />
     </NavLink>
   );
 }
@@ -109,7 +112,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
       {/* Desktop top nav */}
       <header className="hidden md:flex items-center justify-between px-8 py-3 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
-          <Logo imgClass="h-14" />
+          <Logo imgClass="h-16" />
           <nav className="flex items-center gap-5">
             {childNavItems.map((item) => (
               <NavLink
@@ -145,7 +148,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
 
       {/* Mobile top bar */}
       <header className="flex md:hidden items-center justify-between px-4 py-2.5 bg-surface border-b border-brand-100 sticky top-0 z-20">
-        <Logo imgClass="h-12" />
+        <Logo imgClass="h-14" />
         <div className="flex items-center gap-1">
           <ThemeToggleButton />
           <NotificationsMenu size="small" />

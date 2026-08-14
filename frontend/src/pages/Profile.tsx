@@ -5,6 +5,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, API_BASE_URL } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -34,11 +35,7 @@ export default function Profile() {
     navigate('/');
   }
 
-  function handleDeleteAccount() {
-    if (confirm('Delete your account? This cannot be undone.')) {
-      deleteAccountMutation.mutate();
-    }
-  }
+  const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(false);
 
   if (!user) return null;
 
@@ -50,7 +47,7 @@ export default function Profile() {
         <Avatar src={avatarSrc} sx={{ width: 72, height: 72, bgcolor: '#006b5f', fontSize: 28 }}>
           {user.fullName[0]?.toUpperCase()}
         </Avatar>
-        <h1 className="text-xl font-heading font-semibold text-brand-600">{user.fullName}</h1>
+        <h1 className="text-xl font-semibold text-brand-700">{user.fullName}</h1>
         <p className="text-sm text-gray-500">{user.email}</p>
         <Button component={Link} to="/settings" size="small" startIcon={<SettingsOutlinedIcon />} sx={{ mt: 0.5 }}>
           Photo &amp; password settings
@@ -84,11 +81,22 @@ export default function Profile() {
           color="error"
           fullWidth
           disabled={deleteAccountMutation.isPending}
-          onClick={handleDeleteAccount}
+          onClick={() => setConfirmDeleteAccount(true)}
         >
           {deleteAccountMutation.isPending ? 'Deleting…' : 'Delete account'}
         </Button>
       </div>
+
+      <ConfirmDialog
+        open={confirmDeleteAccount}
+        title="Delete your account?"
+        warning="Every child profile, growth record, screening, and bone age upload is deleted with it."
+        message="This cannot be undone. You'll be signed out immediately."
+        confirmLabel="Delete account"
+        busy={deleteAccountMutation.isPending}
+        onCancel={() => setConfirmDeleteAccount(false)}
+        onConfirm={() => deleteAccountMutation.mutate()}
+      />
     </div>
   );
 }

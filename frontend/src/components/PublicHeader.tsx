@@ -18,7 +18,8 @@ export function PublicHeader() {
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center shrink-0">
-            <img src="/logo.png" alt="GrowTH" className="h-12 w-auto object-contain" />
+            {/* Horizontal lockup — see the Logo component in AppShell for why. */}
+            <img src="/logo-horizontal.png" alt="GrowTH" className="h-14 w-auto object-contain" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (

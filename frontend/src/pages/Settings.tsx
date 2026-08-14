@@ -47,7 +47,7 @@ export default function Settings() {
 
   return (
     <div className="max-w-md mx-auto flex flex-col gap-6">
-      <h1 className="text-xl font-heading font-semibold text-brand-600">Settings</h1>
+      <h1 className="text-xl font-semibold text-brand-700">Settings</h1>
 
       <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col items-center gap-3">
         <h2 className="font-semibold text-ink self-start mb-1">Profile photo</h2>
