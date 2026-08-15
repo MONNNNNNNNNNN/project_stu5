@@ -108,7 +108,7 @@ function Logo({ imgClass }: { imgClass: string }) {
 export function AppChrome({ children }: { children: ReactNode }) {
   const location = useLocation();
   return (
-    <div className="min-h-screen bg-cream flex flex-col">
+    <div className="min-h-svh bg-cream flex flex-col">
       {/* Desktop top nav */}
       <header className="hidden md:flex items-center justify-between px-8 py-3 border-b border-brand-100 bg-surface sticky top-0 z-20">
         <div className="flex items-center gap-10">
@@ -156,7 +156,9 @@ export function AppChrome({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-10 flex-1">
+      {/* Bottom padding clears the fixed mobile nav *and* the iPhone home indicator —
+          without the safe-area term the last card sits under the nav on a notched device. */}
+      <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-10 flex-1">
         <div key={location.pathname} className="page-fade-in">
           {children}
         </div>
@@ -167,7 +169,10 @@ export function AppChrome({ children }: { children: ReactNode }) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed bottom-0 inset-x-0 md:hidden bg-surface border-t border-brand-100 flex items-center justify-around py-2 z-20">
+      <nav
+        className="fixed bottom-0 inset-x-0 md:hidden bg-surface border-t border-brand-100 flex items-center justify-around py-2 z-20"
+        style={{ paddingBottom: 'calc(0.5rem + env(safe-area-inset-bottom))' }}
+      >
         {mobileNavItems.map((item) => (
           <NavLink
             key={item.to}

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function PrivacyNotice() {
   return (
-    <div className="min-h-screen bg-cream px-4 py-10">
+    <div className="min-h-svh bg-cream px-4 py-10">
       <div className="max-w-2xl mx-auto bg-surface rounded-2xl shadow-sm p-8 flex flex-col gap-4 text-sm text-ink leading-relaxed">
         <h1 className="text-xl font-semibold text-brand-700 mb-2">Privacy Notice</h1>
 
