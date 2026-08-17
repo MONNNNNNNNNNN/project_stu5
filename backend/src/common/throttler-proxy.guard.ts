@@ -3,17 +3,21 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import type { Request } from 'express';
 
 /**
- * Rate-limit key that survives Render's edge.
+ * Rate-limit key for requests arriving through Render's proxy.
  *
- * `app.set('trust proxy', 1)` was not enough: behind Render the counter kept resetting
- * mid-window (x-ratelimit-remaining ran 7 … 2 … 1 … 6), because requests resolved to more
- * than one key and each stayed under the limit. Thirteen consecutive login attempts never
- * produced a 429 — a limiter that advertises a limit but does not enforce one is worse than
- * none, because it reads as protection.
+ * Two earlier attempts got this wrong, both visible in production as two interleaved
+ * counters (x-ratelimit-remaining running 9,8,7… and 9,9,8… at the same time) and a limit
+ * of 10 that only tripped around attempt 19 of 30:
  *
- * X-Forwarded-For is `client, proxy1, proxy2…`. The *last* entry is the address the edge
- * itself observed, so it is stable across connections and cannot be set by the caller —
- * unlike the leftmost entry, which a client can forge to win a fresh bucket per request.
+ *   - `app.set('trust proxy', 1)` — Express then fell back to the socket address, which is
+ *     Render's internal proxy and differs per instance.
+ *   - the *last* X-Forwarded-For hop — also Render-internal, and likewise per-instance.
+ *
+ * Render sets the real client as the *first* entry of X-Forwarded-For, so that is what is
+ * used here. The trade-off is that a caller can prepend their own X-Forwarded-For and win a
+ * fresh bucket per request. That is a deliberate act, and it does not get them past the
+ * password check behind this guard; the limit exists to stop naive credential stuffing and
+ * accidental floods, which it now actually does.
  */
 @Injectable()
 export class ProxyAwareThrottlerGuard extends ThrottlerGuard {
@@ -22,11 +26,8 @@ export class ProxyAwareThrottlerGuard extends ThrottlerGuard {
     const chain = Array.isArray(header) ? header.join(',') : header;
 
     if (typeof chain === 'string' && chain.trim()) {
-      const hops = chain
-        .split(',')
-        .map((h) => h.trim())
-        .filter(Boolean);
-      if (hops.length) return Promise.resolve(hops[hops.length - 1]);
+      const first = chain.split(',')[0]?.trim();
+      if (first) return Promise.resolve(first);
     }
 
     return Promise.resolve(req.ip ?? req.socket.remoteAddress ?? 'unknown');
