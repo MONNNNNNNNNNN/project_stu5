@@ -7,7 +7,7 @@ export function Footer() {
         <div className="flex flex-col gap-1.5">
           <span className="font-heading font-bold text-brand-500">GrowTH</span>
           <p className="text-xs text-gray-500 max-w-lg">Faculty of Engineering, Khon Kaen University — Digital Media Engineering Department</p>
-          <p className="text-xs text-gray-400 mt-1 max-w-lg">
+          <p className="text-xs text-gray-500 mt-1 max-w-lg">
             © {new Date().getFullYear()} GrowTH. Medical Disclaimer: this platform is for tracking purposes only and does not replace professional medical advice.
           </p>
         </div>

@@ -10,6 +10,9 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../context/AuthContext';
+import { ownAvatarPath, useAuthedImage } from '../lib/useAuthedImage';
+import { avatarSx } from '../lib/chartTheme';
+import { useThemeMode } from '../context/ThemeModeContext';
 import { ThemeToggleButton } from './ThemeToggleButton';
 import { Footer } from './Footer';
 import { NotificationsMenu } from './NotificationsMenu';
@@ -37,6 +40,8 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const avatarSrc = useAuthedImage(ownAvatarPath(user?.avatarUrl));
+  const { mode } = useThemeMode();
 
   async function handleLogout() {
     setAnchorEl(null);
@@ -52,8 +57,8 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
         aria-label="Account menu"
       >
         <Avatar
-          src={user?.avatarUrl ?? undefined}
-          sx={{ width: avatarSize, height: avatarSize, bgcolor: '#006b5f', fontSize: avatarSize * 0.42 }}
+          src={avatarSrc ?? undefined}
+          sx={{ width: avatarSize, height: avatarSize, ...avatarSx(mode), fontSize: avatarSize * 0.42 }}
         >
           {user?.fullName?.[0]?.toUpperCase()}
         </Avatar>
@@ -178,7 +183,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 text-[11px] transition-colors duration-150 active:scale-95 ${isActive ? 'text-brand-500' : 'text-gray-400'}`
+              `flex flex-col items-center gap-0.5 text-[11px] transition-colors duration-150 active:scale-95 ${isActive ? 'text-brand-500' : 'text-gray-500'}`
             }
           >
             <item.icon fontSize="small" />

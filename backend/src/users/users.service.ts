@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateProfileDto } from '../auth/dto/update-profile.dto';
+import { streamUpload } from '../common/uploads';
 
 @Injectable()
 export class UsersService {
@@ -16,22 +17,57 @@ export class UsersService {
     isVerified: boolean;
     createdAt: Date;
   }) {
-    const { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt } = user;
-    return { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt };
+    const {
+      id,
+      email,
+      fullName,
+      phoneNumber,
+      role,
+      avatarUrl,
+      isVerified,
+      createdAt,
+    } = user;
+    return {
+      id,
+      email,
+      fullName,
+      phoneNumber,
+      role,
+      avatarUrl,
+      isVerified,
+      createdAt,
+    };
   }
 
   async me(userId: string) {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     return this.sanitize(user);
   }
 
   async updateMe(userId: string, dto: UpdateProfileDto) {
-    const user = await this.prisma.user.update({ where: { id: userId }, data: dto });
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: dto,
+    });
     return this.sanitize(user);
   }
 
+  /** Own avatar bytes. Streamed rather than served statically for the same reason as the
+   * bone-age scans — `uploads/` is not a public directory. */
+  async avatar(userId: string) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+    return streamUpload('avatars', user.avatarUrl);
+  }
+
   async uploadAvatar(userId: string, avatarUrl: string) {
-    const user = await this.prisma.user.update({ where: { id: userId }, data: { avatarUrl } });
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+    });
     return this.sanitize(user);
   }
 
@@ -58,7 +94,9 @@ export class UsersService {
         .filter((c) => c._count.userId === 1)
         .map((c) => c.childId);
       if (soleGuardianChildIds.length > 0) {
-        await this.prisma.child.deleteMany({ where: { id: { in: soleGuardianChildIds } } });
+        await this.prisma.child.deleteMany({
+          where: { id: { in: soleGuardianChildIds } },
+        });
       }
     }
 

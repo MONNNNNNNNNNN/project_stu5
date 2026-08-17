@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -11,16 +20,31 @@ import { Public } from '../common/decorators/public.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { AuthUser } from '../common/decorators/current-user.decorator';
 
+const MINUTE = 60_000;
+
+/**
+ * These are the endpoints worth attacking: unauthenticated, and each one either verifies a
+ * credential or sends mail. The limits are deliberately far below what a real person hits —
+ * a human mistyping a password a few times stays well inside ten attempts a minute — but
+ * far above nothing, which is what was here before.
+ */
+const LOGIN_THROTTLE = { default: { limit: 10, ttl: MINUTE } };
+const REGISTER_THROTTLE = { default: { limit: 5, ttl: 10 * MINUTE } };
+const FORGOT_PASSWORD_THROTTLE = { default: { limit: 3, ttl: 5 * MINUTE } };
+const RESET_PASSWORD_THROTTLE = { default: { limit: 10, ttl: MINUTE } };
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle(REGISTER_THROTTLE)
   @Public()
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @Throttle(LOGIN_THROTTLE)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -42,6 +66,7 @@ export class AuthController {
     return this.authService.refresh(dto.refreshToken);
   }
 
+  @Throttle(FORGOT_PASSWORD_THROTTLE)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('forgot-password')
@@ -49,6 +74,7 @@ export class AuthController {
     return this.authService.forgotPassword(dto.email);
   }
 
+  @Throttle(RESET_PASSWORD_THROTTLE)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('reset-password')
@@ -68,7 +94,14 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('change-password')
-  changePassword(@CurrentUser() user: AuthUser, @Body() dto: ChangePasswordDto) {
-    return this.authService.changePassword(user.userId, dto.currentPassword, dto.newPassword);
+  changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(
+      user.userId,
+      dto.currentPassword,
+      dto.newPassword,
+    );
   }
 }

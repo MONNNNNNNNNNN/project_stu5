@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -18,6 +19,10 @@ import { SupportModule } from './support/support.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // Baseline ceiling for ordinary API traffic. The routes that actually need
+    // protecting — login, register, forgot-password, the public contact form — carry
+    // their own much tighter @Throttle on top of this.
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
     PrismaModule,
     AuthModule,
     UsersModule,
@@ -32,6 +37,13 @@ import { SupportModule } from './support/support.module';
   controllers: [AppController],
   providers: [
     AppService,
+    // Order matters: APP_GUARD providers run in registration order, and throttling first
+    // means a credential-stuffing flood is rejected before it costs a passport verify and
+    // a bcrypt compare each.
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

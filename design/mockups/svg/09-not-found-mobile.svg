@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="390" height="844" viewBox="0 0 390 844">
+  <title>GrowTH — 404 Not found — mobile 390px</title>
+  <desc>Route /nope. High-fidelity vector export for Figma. Text is editable; icons are vector paths.</desc>
+  <defs></defs>
+  <rect width="390" height="844" fill="#ffffff"/>
+<g data-name="body"><rect x="0.0" y="0.0" width="390.0" height="844.0" fill="#f8f9ff"/><g data-name="div"><g data-name="min-h-svh"><g data-name="text-4xl"><text x="195.0" y="385.8" font-family="Manrope" font-size="36" font-weight="700" fill="#004640" text-anchor="middle" textLength="68.0" lengthAdjust="spacingAndGlyphs">404</text></g><g data-name="text-gray-500"><text x="195.0" y="424.8" font-family="Inter" font-size="16" font-weight="400" fill="#6a7282" text-anchor="middle" textLength="121.0" lengthAdjust="spacingAndGlyphs">Page not found.</text></g><g data-name="text-brand-600"><text x="195.0" y="472.8" font-family="Inter" font-size="16" font-weight="500" fill="#005850" text-anchor="middle" textLength="144.0" lengthAdjust="spacingAndGlyphs">Back to dashboard</text></g></g></g></g>
+</svg>

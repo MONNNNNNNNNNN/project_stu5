@@ -31,7 +31,7 @@ export function ChildProfileCard({ child }: { child: Child }) {
       <div className="text-center sm:text-left">
         <h1 className="font-heading font-bold text-2xl text-ink mb-0.5">{child.nickname || child.fullName}</h1>
         {child.nickname && child.nickname !== child.fullName && (
-          <p className="text-sm text-gray-400 -mt-0.5">{child.fullName}</p>
+          <p className="text-sm text-gray-500 -mt-0.5">{child.fullName}</p>
         )}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
           <Chip label={child.sex === 'MALE' ? 'Boy' : 'Girl'} size="small" color="secondary" variant="outlined" />

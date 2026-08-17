@@ -8,6 +8,7 @@ import { api } from '../lib/api';
 import { useChildren } from '../context/ChildContext';
 import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { PubertyScreening } from '../types';
+import { formatDate } from '../lib/formatDate';
 
 interface Answers {
   breastDevelopment?: boolean;
@@ -99,7 +100,7 @@ function SignQuestion({
 
 function ResultCard({ result }: { result: ScreeningResult }) {
   return (
-    <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400 flex flex-col gap-3">
+    <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
       <Alert severity={OUTCOME_SEVERITY[result.outcome]}>
         <span className="font-semibold">{result.title}</span>
         <p className="text-sm mt-1">{result.summary}</p>
@@ -125,7 +126,7 @@ function ResultCard({ result }: { result: ScreeningResult }) {
         </ul>
       </div>
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-500">
         This is a screening aid, not a diagnosis. Only a clinical examination can confirm what stage
         of puberty a child is in.
       </p>
@@ -135,7 +136,7 @@ function ResultCard({ result }: { result: ScreeningResult }) {
 
 function MonitoringPlanCard({ plan }: { plan: MonitoringPlan }) {
   return (
-    <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-amber-400 flex flex-col gap-3">
+    <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <EventRepeatIcon fontSize="small" className="text-amber-600" />
         <h2 className="font-semibold text-ink">Follow-up plan</h2>
@@ -153,9 +154,9 @@ function MonitoringPlanCard({ plan }: { plan: MonitoringPlan }) {
             <StepLabel>
               <span className="text-xs">
                 {step.completedAt
-                  ? new Date(step.completedAt).toLocaleDateString()
+                  ? formatDate(step.completedAt)
                   : step.dueAt
-                    ? `Due ${new Date(step.dueAt).toLocaleDateString()}`
+                    ? `Due ${formatDate(step.dueAt)}`
                     : 'Scheduled'}
               </span>
             </StepLabel>
@@ -251,7 +252,7 @@ export default function PubertyQuestionnaire() {
           people to start answering questions about their child's body with no explanation of
           what the screening does or what happens to the answers. */}
       {!historyLoading && !hasHistory && !formOpen && (
-        <div className="bg-surface rounded-2xl shadow-sm p-6 border-t-4 border-brand-400 flex flex-col gap-4">
+        <div className="bg-surface rounded-2xl shadow-sm p-6 flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <PsychologyIcon className="text-brand-600" />
             <h2 className="font-semibold text-ink">Before you start</h2>
@@ -295,8 +296,8 @@ export default function PubertyQuestionnaire() {
       {hasHistory && !formOpen && !lastResult && latestScreening && (
         <>
           <ResultCard result={latestScreening.result} />
-          <p className="text-xs text-gray-400 -mt-3">
-            From the screening on {new Date(latestScreening.assessedAt).toLocaleDateString()}.
+          <p className="text-xs text-gray-500 -mt-3">
+            From the screening on {formatDate(latestScreening.assessedAt)}.
           </p>
         </>
       )}
@@ -434,7 +435,7 @@ export default function PubertyQuestionnaire() {
             {(history ?? []).map((h) => (
               <div key={h.id} className="py-2 flex flex-col gap-1 text-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500">{new Date(h.assessedAt).toLocaleDateString()}</span>
+                  <span className="text-gray-500">{formatDate(h.assessedAt)}</span>
                   <span
                     className={`text-xs font-medium ${
                       h.result.flagged ? 'text-amber-700 dark:text-amber-400' : 'text-brand-600'

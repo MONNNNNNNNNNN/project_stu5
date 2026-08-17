@@ -3,7 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Avatar, Button, TextField, Alert } from '@mui/material';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { api, API_BASE_URL } from '../lib/api';
+import { api } from '../lib/api';
+import { ownAvatarPath, useAuthedImage } from '../lib/useAuthedImage';
+import { avatarSx } from '../lib/chartTheme';
+import { useThemeMode } from '../context/ThemeModeContext';
 import { useAuth } from '../context/AuthContext';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 
@@ -36,15 +39,15 @@ export default function Profile() {
   }
 
   const [confirmDeleteAccount, setConfirmDeleteAccount] = useState(false);
+  const avatarSrc = useAuthedImage(ownAvatarPath(user?.avatarUrl)) ?? undefined;
+  const { mode } = useThemeMode();
 
   if (!user) return null;
-
-  const avatarSrc = user.avatarUrl ? `${API_BASE_URL}${user.avatarUrl}` : undefined;
 
   return (
     <div className="max-w-md mx-auto flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2">
-        <Avatar src={avatarSrc} sx={{ width: 72, height: 72, bgcolor: '#006b5f', fontSize: 28 }}>
+        <Avatar src={avatarSrc} sx={{ width: 72, height: 72, ...avatarSx(mode), fontSize: 28 }}>
           {user.fullName[0]?.toUpperCase()}
         </Avatar>
         <h1 className="text-xl font-semibold text-brand-700">{user.fullName}</h1>

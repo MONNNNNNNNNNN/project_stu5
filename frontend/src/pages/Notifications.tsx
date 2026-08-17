@@ -3,6 +3,7 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { api } from '../lib/api';
 import type { Notification } from '../types';
+import { formatDateTime } from '../lib/formatDate';
 
 export default function Notifications() {
   const queryClient = useQueryClient();
@@ -37,7 +38,7 @@ export default function Notifications() {
             <div>
               <p className="font-medium text-sm text-ink">{n.title}</p>
               <p className="text-xs text-gray-500 mt-0.5">{n.body}</p>
-              <p className="text-[11px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+              <p className="text-[11px] text-gray-500 mt-1">{formatDateTime(n.createdAt)}</p>
             </div>
             <IconButton
               size="small"

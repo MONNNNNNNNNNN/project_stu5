@@ -42,7 +42,6 @@ const MEASURES: {
   icon: ReactNode;
   title: string;
   unit: string;
-  color: string;
   point: 'heightCm' | 'weightKg' | 'bmi';
   percentile: 'heightPercentile' | 'weightPercentile' | 'bmiPercentile';
 }[] = [
@@ -52,7 +51,6 @@ const MEASURES: {
     icon: <HeightIcon fontSize="small" />,
     title: 'Height-for-age',
     unit: 'cm',
-    color: '#46897a',
     point: 'heightCm',
     percentile: 'heightPercentile',
   },
@@ -62,7 +60,6 @@ const MEASURES: {
     icon: <MonitorWeightIcon fontSize="small" />,
     title: 'Weight-for-age',
     unit: 'kg',
-    color: '#87a480',
     point: 'weightKg',
     percentile: 'weightPercentile',
   },
@@ -72,7 +69,6 @@ const MEASURES: {
     icon: <AccessibilityNewIcon fontSize="small" />,
     title: 'BMI-for-age',
     unit: '',
-    color: '#c98a3f',
     point: 'bmi',
     percentile: 'bmiPercentile',
   },
@@ -168,7 +164,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid md:grid-cols-3 gap-4">
-        <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400">
+        <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-ink">Growth Trajectory</h2>
             <Button component={Link} to="/growth" size="small" startIcon={<AddIcon fontSize="small" />} variant="outlined">
@@ -203,11 +199,13 @@ export default function Dashboard() {
                       : 'border-brand-100 hover:border-brand-300 hover:-translate-y-0.5'
                   }`}
                 >
-                  <span className="text-[10px] font-semibold text-gray-400 tracking-wide flex items-center gap-1 uppercase">
+                  <span className="text-[10px] font-semibold text-gray-500 tracking-wide flex items-center gap-1 uppercase">
                     {m.icon}
                     {m.label}
                   </span>
-                  <span className="block text-xl font-semibold text-ink mt-0.5">{value}</span>
+                  <span className="block text-lg sm:text-xl font-semibold text-ink mt-0.5 tabular-nums whitespace-nowrap">
+                    {value}
+                  </span>
                   {status && <span className={`block text-[11px] mt-0.5 ${status.tone}`}>{status.label}</span>}
                 </button>
               );
@@ -217,6 +215,9 @@ export default function Dashboard() {
           {stats?.latest?.guidance && (
             <p className={`text-xs mb-2 ${stats.latest.guidance.flagged ? 'text-amber-700' : 'text-brand-600'}`}>
               {stats.latest.guidance.message}
+              {measure === 'bmi' && stats.latest.guidance.nutritionalStatus && (
+                <> Nutritional status: <span className="font-semibold">{stats.latest.guidance.nutritionalStatus}</span>.</>
+              )}
             </p>
           )}
           <PercentileChart
@@ -224,13 +225,13 @@ export default function Dashboard() {
             unit={active.unit}
             curve={curve ?? []}
             points={points}
-            color={active.color}
+            measure={active.key}
           />
         </div>
 
         {/* self-start so the card sizes to its content. As a grid item it stretched to
             match the chart beside it, leaving a tall empty gap above the button. */}
-        <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400 flex flex-col self-start">
+        <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col self-start">
           <div className="flex items-center gap-2 mb-2">
             <PsychologyIcon fontSize="small" className="text-brand-600" />
             <h2 className="font-semibold text-ink">Puberty Screening</h2>
@@ -262,7 +263,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="bg-surface rounded-2xl shadow-sm p-5 border-t-4 border-brand-400">
+      <div className="bg-surface rounded-2xl shadow-sm p-5">
         <div className="flex items-center gap-2 mb-2">
           <MedicalServicesIcon fontSize="small" className="text-brand-600" />
           <h2 className="font-semibold text-ink">AI Bone Age Analysis</h2>

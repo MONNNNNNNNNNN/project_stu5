@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  NotImplementedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChildrenService } from '../children/children.service';
+import { streamUpload } from '../common/uploads';
 
 @Injectable()
 export class BoneAgeService {
@@ -36,7 +41,9 @@ export class BoneAgeService {
   }
 
   async findOne(userId: string, id: string) {
-    const prediction = await this.prisma.boneAgePrediction.findUnique({ where: { id } });
+    const prediction = await this.prisma.boneAgePrediction.findUnique({
+      where: { id },
+    });
     if (!prediction) {
       throw new NotFoundException('Bone age prediction not found');
     }
@@ -44,9 +51,21 @@ export class BoneAgeService {
     return prediction;
   }
 
+  /**
+   * The image bytes for a prediction. These are radiographs of a child, so they are read
+   * through this guardian-checked route rather than served as static files — `findOne`
+   * already enforces that the caller is a guardian of the child the scan belongs to.
+   */
+  async image(userId: string, id: string) {
+    const prediction = await this.findOne(userId, id);
+    return streamUpload('bone-age', prediction.imageUrl);
+  }
+
   async remove(userId: string, id: string) {
     const prediction = await this.findOne(userId, id);
-    await this.prisma.boneAgePrediction.delete({ where: { id: prediction.id } });
+    await this.prisma.boneAgePrediction.delete({
+      where: { id: prediction.id },
+    });
     return { success: true };
   }
 }

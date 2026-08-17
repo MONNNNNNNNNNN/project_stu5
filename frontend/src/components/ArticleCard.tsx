@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import StraightenIcon from '@mui/icons-material/StraightenOutlined';
 import RestaurantIcon from '@mui/icons-material/RestaurantOutlined';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServicesOutlined';
@@ -23,10 +23,13 @@ const FALLBACK_ART = { icon: MenuBookIcon, panel: 'bg-brand-50', tint: 'text-bra
 export function ArticleCard({ article, height = 'h-28' }: { article: Article; height?: string }) {
   const art = CATEGORY_ART[article.category?.slug] ?? FALLBACK_ART;
   const Icon = art.icon;
+  // So the article page can send the reader back where they actually came from.
+  const { pathname } = useLocation();
 
   return (
     <Link
       to={`/learn/${article.id}`}
+      state={{ from: pathname }}
       className="bg-surface rounded-2xl shadow-sm overflow-hidden border border-transparent hover:border-brand-300 hover:shadow-md transition-all flex flex-col"
     >
       <div className={`${height} ${art.panel} flex items-center justify-center`}>

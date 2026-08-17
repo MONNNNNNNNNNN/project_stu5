@@ -2,7 +2,10 @@ import { useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Avatar, Button, TextField, Alert, IconButton } from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAltOutlined';
-import { api, API_BASE_URL } from '../lib/api';
+import { api } from '../lib/api';
+import { ownAvatarPath, useAuthedImage } from '../lib/useAuthedImage';
+import { avatarSx } from '../lib/chartTheme';
+import { useThemeMode } from '../context/ThemeModeContext';
 import { useAuth } from '../context/AuthContext';
 import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
@@ -41,9 +44,10 @@ export default function Settings() {
     onError: () => setPasswordError('Current password is incorrect.'),
   });
 
-  if (!user) return null;
+  const avatarSrc = useAuthedImage(ownAvatarPath(user?.avatarUrl)) ?? undefined;
+  const { mode } = useThemeMode();
 
-  const avatarSrc = user.avatarUrl ? `${API_BASE_URL}${user.avatarUrl}` : undefined;
+  if (!user) return null;
 
   return (
     <div className="max-w-md mx-auto flex flex-col gap-6">
@@ -52,7 +56,7 @@ export default function Settings() {
       <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col items-center gap-3">
         <h2 className="font-semibold text-ink self-start mb-1">Profile photo</h2>
         <div className="relative">
-          <Avatar src={avatarSrc} sx={{ width: 96, height: 96, bgcolor: '#006b5f', fontSize: 36 }}>
+          <Avatar src={avatarSrc} sx={{ width: 96, height: 96, ...avatarSx(mode), fontSize: 36 }}>
             {user.fullName[0]?.toUpperCase()}
           </Avatar>
           <IconButton

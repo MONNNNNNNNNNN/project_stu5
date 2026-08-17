@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -17,6 +22,8 @@ function hashToken(token: string): string {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
@@ -29,12 +36,15 @@ export class AuthService {
       { sub: user.id, email: user.email, role: user.role },
       {
         secret: this.config.getOrThrow<string>('JWT_ACCESS_SECRET'),
-        expiresIn: this.config.getOrThrow<string>('JWT_ACCESS_EXPIRES_IN') as any,
+        expiresIn: this.config.getOrThrow<string>(
+          'JWT_ACCESS_EXPIRES_IN',
+        ) as any,
       },
     );
 
     const refreshToken = randomBytes(REFRESH_TOKEN_BYTES).toString('hex');
-    const refreshExpiresIn = this.config.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
+    const refreshExpiresIn =
+      this.config.get<string>('JWT_REFRESH_EXPIRES_IN') ?? '7d';
     const days = parseInt(refreshExpiresIn.replace(/[^0-9]/g, ''), 10) || 7;
     const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
@@ -59,12 +69,32 @@ export class AuthService {
     isVerified: boolean;
     createdAt: Date;
   }) {
-    const { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt } = user;
-    return { id, email, fullName, phoneNumber, role, avatarUrl, isVerified, createdAt };
+    const {
+      id,
+      email,
+      fullName,
+      phoneNumber,
+      role,
+      avatarUrl,
+      isVerified,
+      createdAt,
+    } = user;
+    return {
+      id,
+      email,
+      fullName,
+      phoneNumber,
+      role,
+      avatarUrl,
+      isVerified,
+      createdAt,
+    };
   }
 
   async register(dto: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const existing = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (existing) {
       throw new ConflictException('Email already registered');
     }
@@ -85,7 +115,9 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
     if (!user || user.deletedAt) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -144,9 +176,24 @@ export class AuthService {
     });
 
     const sent = await this.mail.sendPasswordResetEmail(user.email, resetToken);
-    // If SMTP isn't configured, fall back to returning the token directly so the
-    // reset flow stays testable in local dev without a mail provider.
-    return sent ? { success: true } : { success: true, resetToken };
+    if (sent) {
+      return { success: true };
+    }
+
+    // Outside production, hand the token straight back so the reset flow stays testable
+    // without a mail provider. Never in production: this endpoint is unauthenticated, so a
+    // live token in the response body turns "I know this email address" into full account
+    // takeover the moment mail is misconfigured or the provider has an outage — which is
+    // precisely when this branch runs.
+    if (this.config.get<string>('NODE_ENV') === 'production') {
+      this.logger.error(
+        `Password reset requested for ${user.email} but no mail transport is configured — ` +
+          'the user received nothing. Set RESEND_API_KEY (or SMTP_HOST/PORT/USER/PASS).',
+      );
+      return { success: true };
+    }
+
+    return { success: true, resetToken };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -154,7 +201,11 @@ export class AuthService {
       where: { resetTokenHash: hashToken(token) },
     });
 
-    if (!user || !user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
+    if (
+      !user ||
+      !user.resetTokenExpiresAt ||
+      user.resetTokenExpiresAt < new Date()
+    ) {
       throw new UnauthorizedException('Invalid or expired reset token');
     }
 
@@ -167,24 +218,38 @@ export class AuthService {
     return { success: true };
   }
 
-  async changePassword(userId: string, currentPassword: string, newPassword: string) {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     const valid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Current password is incorrect');
     }
     const passwordHash = await bcrypt.hash(newPassword, 10);
-    await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
     return { success: true };
   }
 
   async getProfile(userId: string) {
-    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
     return this.sanitizeUser(user);
   }
 
   async updateProfile(userId: string, dto: UpdateProfileDto) {
-    const user = await this.prisma.user.update({ where: { id: userId }, data: dto });
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: dto,
+    });
     return this.sanitizeUser(user);
   }
 }

@@ -1,4 +1,14 @@
-import { BadRequestException, Body, Controller, Delete, Get, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -18,6 +28,11 @@ export class UsersController {
     return this.usersService.me(user.userId);
   }
 
+  @Get('me/avatar')
+  avatar(@CurrentUser() user: AuthUser) {
+    return this.usersService.avatar(user.userId);
+  }
+
   @Patch('me')
   updateMe(@CurrentUser() user: AuthUser, @Body() dto: UpdateProfileDto) {
     return this.usersService.updateMe(user.userId, dto);
@@ -29,7 +44,10 @@ export class UsersController {
       storage: diskStorage({
         destination: './uploads/avatars',
         filename: (_req, file, cb) => {
-          cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`);
+          cb(
+            null,
+            `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`,
+          );
         },
       }),
       limits: { fileSize: 5 * 1024 * 1024 },
@@ -38,11 +56,19 @@ export class UsersController {
       },
     }),
   )
-  uploadAvatar(@CurrentUser() user: AuthUser, @UploadedFile() file: Express.Multer.File) {
+  uploadAvatar(
+    @CurrentUser() user: AuthUser,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     if (!file) {
-      throw new BadRequestException('Image file is required (JPEG, PNG, or WebP, max 5MB)');
+      throw new BadRequestException(
+        'Image file is required (JPEG, PNG, or WebP, max 5MB)',
+      );
     }
-    return this.usersService.uploadAvatar(user.userId, `/uploads/avatars/${file.filename}`);
+    return this.usersService.uploadAvatar(
+      user.userId,
+      `/uploads/avatars/${file.filename}`,
+    );
   }
 
   @Delete('me')

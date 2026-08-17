@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -143,8 +143,18 @@ export default function Home() {
       {/* Articles */}
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading font-bold text-2xl md:text-3xl text-ink mb-2">Nurturing Knowledge</h2>
-          <p className="text-gray-500 mb-8">Expert articles to guide you through every stage.</p>
+          <div className="flex items-end justify-between mb-8 gap-4">
+            <div>
+              <h2 className="font-heading font-bold text-2xl md:text-3xl text-ink mb-2">Nurturing Knowledge</h2>
+              <p className="text-gray-500">Expert articles to guide you through every stage.</p>
+            </div>
+            {/* Without this the landing page had no route into the Knowledge Center at all —
+                the only way in was the article page's back link, which is what made the
+                Resources navigation feel broken. */}
+            <Link to="/learn" className="text-sm font-medium text-brand-600 shrink-0 hover:underline">
+              View all
+            </Link>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {(articles ?? []).slice(0, 3).map((article) => (
               <ArticleCard key={article.id} article={article} />

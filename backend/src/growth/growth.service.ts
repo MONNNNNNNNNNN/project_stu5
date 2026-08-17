@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChildrenService } from '../children/children.service';
 import { GrowthReferenceService } from './growth-reference.service';
@@ -8,7 +12,10 @@ import { UpdateGrowthRecordDto } from './dto/update-growth-record.dto';
 const BMI_FOR_AGE_MIN_MONTHS = 60; // FR-8: BMI-for-age applies to children aged 5 years and above.
 const NOTABLE_Z_THRESHOLD = 2; // roughly outside the ~2.3rd-97.7th percentile band.
 
-function computeBmi(heightCm?: number | null, weightKg?: number | null): number | null {
+function computeBmi(
+  heightCm?: number | null,
+  weightKg?: number | null,
+): number | null {
   if (!heightCm || !weightKg) return null;
   const heightM = heightCm / 100;
   return Math.round((weightKg / (heightM * heightM)) * 100) / 100;
@@ -30,13 +37,24 @@ export class GrowthService {
   ) {}
 
   /** FR-7/FR-8: percentile + SDS for height/weight-for-age, and BMI-for-age for children 5y+. */
-  private async computeMetrics(childId: string, measuredAt: Date, heightCm?: number | null, weightKg?: number | null) {
-    const child = await this.prisma.child.findUniqueOrThrow({ where: { id: childId } });
+  private async computeMetrics(
+    childId: string,
+    measuredAt: Date,
+    heightCm?: number | null,
+    weightKg?: number | null,
+  ) {
+    const child = await this.prisma.child.findUniqueOrThrow({
+      where: { id: childId },
+    });
     const ageMonths = this.reference.ageInMonths(child.dateOfBirth, measuredAt);
     const bmi = computeBmi(heightCm, weightKg);
 
-    const height = heightCm ? this.reference.compute('height', child.sex, ageMonths, heightCm) : null;
-    const weight = weightKg ? this.reference.compute('weight', child.sex, ageMonths, weightKg) : null;
+    const height = heightCm
+      ? this.reference.compute('height', child.sex, ageMonths, heightCm)
+      : null;
+    const weight = weightKg
+      ? this.reference.compute('weight', child.sex, ageMonths, weightKg)
+      : null;
     // Round before comparing: ageInMonths uses an average days-per-month divisor, which can land
     // a hair under an exact-year threshold (e.g. 59.99 instead of 60) purely from leap-year timing.
     const bmiMetric =
@@ -61,15 +79,19 @@ export class GrowthService {
     weightSds: unknown;
     bmiPercentile: unknown;
   }): { message: string; flagged: boolean; nutritionalStatus: string | null } {
-    const heightSds = record.heightSds !== null ? Number(record.heightSds) : null;
-    const weightSds = record.weightSds !== null ? Number(record.weightSds) : null;
-    const bmiPercentile = record.bmiPercentile !== null ? Number(record.bmiPercentile) : null;
+    const heightSds =
+      record.heightSds !== null ? Number(record.heightSds) : null;
+    const weightSds =
+      record.weightSds !== null ? Number(record.weightSds) : null;
+    const bmiPercentile =
+      record.bmiPercentile !== null ? Number(record.bmiPercentile) : null;
 
     const flagged =
       (heightSds !== null && Math.abs(heightSds) > NOTABLE_Z_THRESHOLD) ||
       (weightSds !== null && Math.abs(weightSds) > NOTABLE_Z_THRESHOLD);
 
-    const status = bmiPercentile !== null ? nutritionalStatus(bmiPercentile) : null;
+    const status =
+      bmiPercentile !== null ? nutritionalStatus(bmiPercentile) : null;
 
     const message = flagged
       ? "This measurement falls notably outside the typical range for the child's age and sex. This is a screening signal, not a diagnosis — consider discussing it with a pediatrician."
@@ -78,16 +100,31 @@ export class GrowthService {
     return { message, flagged, nutritionalStatus: status };
   }
 
-  private attachGuidance<T extends { heightSds: unknown; weightSds: unknown; bmiPercentile: unknown }>(
-    record: T,
-  ) {
+  private attachGuidance<
+    T extends {
+      heightSds: unknown;
+      weightSds: unknown;
+      bmiPercentile: unknown;
+    },
+  >(record: T) {
     return { ...record, guidance: this.guidance(record) };
   }
 
   async create(userId: string, dto: CreateGrowthRecordDto) {
     await this.childrenService.assertGuardianAccess(dto.childId, userId);
+    // FR-6 asks for height and weight; both are optional on the DTO so a parent can log
+    // just one. Neither, though, stores a dated row with nothing in it — it shows up as a
+    // blank line in the history and a gap in every chart.
+    if (dto.heightCm === undefined && dto.weightKg === undefined) {
+      throw new BadRequestException('Record at least one of height or weight');
+    }
     const measuredAt = dto.measuredAt ? new Date(dto.measuredAt) : new Date();
-    const metrics = await this.computeMetrics(dto.childId, measuredAt, dto.heightCm, dto.weightKg);
+    const metrics = await this.computeMetrics(
+      dto.childId,
+      measuredAt,
+      dto.heightCm,
+      dto.weightKg,
+    );
 
     const record = await this.prisma.growthRecord.create({
       data: {
@@ -122,10 +159,19 @@ export class GrowthService {
 
   async update(userId: string, id: string, dto: UpdateGrowthRecordDto) {
     const record = await this.findOne(userId, id);
-    const heightCm = dto.heightCm ?? (record.heightCm ? Number(record.heightCm) : undefined);
-    const weightKg = dto.weightKg ?? (record.weightKg ? Number(record.weightKg) : undefined);
-    const measuredAt = dto.measuredAt ? new Date(dto.measuredAt) : record.measuredAt;
-    const metrics = await this.computeMetrics(record.childId, measuredAt, heightCm, weightKg);
+    const heightCm =
+      dto.heightCm ?? (record.heightCm ? Number(record.heightCm) : undefined);
+    const weightKg =
+      dto.weightKg ?? (record.weightKg ? Number(record.weightKg) : undefined);
+    const measuredAt = dto.measuredAt
+      ? new Date(dto.measuredAt)
+      : record.measuredAt;
+    const metrics = await this.computeMetrics(
+      record.childId,
+      measuredAt,
+      heightCm,
+      weightKg,
+    );
 
     const updated = await this.prisma.growthRecord.update({
       where: { id },
@@ -176,9 +222,15 @@ export class GrowthService {
   }
 
   /** FR-9: reference percentile curves (P3/P50/P97) for the child's sex, to plot alongside chart(). */
-  async referenceCurve(userId: string, childId: string, measure: 'height' | 'weight' | 'bmi') {
+  async referenceCurve(
+    userId: string,
+    childId: string,
+    measure: 'height' | 'weight' | 'bmi',
+  ) {
     await this.childrenService.assertGuardianAccess(childId, userId);
-    const child = await this.prisma.child.findUniqueOrThrow({ where: { id: childId } });
+    const child = await this.prisma.child.findUniqueOrThrow({
+      where: { id: childId },
+    });
     const maxMonths = measure === 'bmi' ? 240 : 240;
     const minMonths = measure === 'bmi' ? BMI_FOR_AGE_MIN_MONTHS : 0;
     return this.reference.curve(measure, child.sex, minMonths, maxMonths);
@@ -197,7 +249,12 @@ export class GrowthService {
     });
 
     if (!latest) {
-      return { latest: null, heightDeltaCm: null, weightDeltaKg: null, since: null };
+      return {
+        latest: null,
+        heightDeltaCm: null,
+        weightDeltaKg: null,
+        since: null,
+      };
     }
 
     const heightDeltaCm =
@@ -219,22 +276,47 @@ export class GrowthService {
 
   bmi(heightCm: number, weightKg: number) {
     if (!heightCm || !weightKg) {
-      throw new BadRequestException('heightCm and weightKg query params are required');
+      throw new BadRequestException(
+        'heightCm and weightKg query params are required',
+      );
     }
     return { bmi: computeBmi(heightCm, weightKg) };
   }
 
   /** Ad-hoc calculator (no saved record required): sex, ageMonths, and the measured value. */
-  percentile(sex: 'MALE' | 'FEMALE', ageMonths: number, measure: 'height' | 'weight' | 'bmi', value: number) {
-    if (!sex || !ageMonths || !measure || !value) {
-      throw new BadRequestException('sex, ageMonths, measure, and value query params are required');
+  percentile(
+    sex: 'MALE' | 'FEMALE',
+    ageMonths: number,
+    measure: 'height' | 'weight' | 'bmi',
+    value: number,
+  ) {
+    // Number.isFinite rather than truthiness: ageMonths is 0 for a newborn, so `!ageMonths`
+    // rejected exactly the youngest children this calculator exists to cover — and did it
+    // with a "params are required" message for a param that had been supplied.
+    if (
+      !sex ||
+      !measure ||
+      !Number.isFinite(ageMonths) ||
+      !Number.isFinite(value)
+    ) {
+      throw new BadRequestException(
+        'sex, ageMonths, measure, and value query params are required',
+      );
     }
     const result = this.reference.compute(measure, sex, ageMonths, value);
-    if (!result) throw new BadRequestException('Unable to compute percentile for the given inputs');
+    if (!result)
+      throw new BadRequestException(
+        'Unable to compute percentile for the given inputs',
+      );
     return result;
   }
 
-  sds(sex: 'MALE' | 'FEMALE', ageMonths: number, measure: 'height' | 'weight' | 'bmi', value: number) {
+  sds(
+    sex: 'MALE' | 'FEMALE',
+    ageMonths: number,
+    measure: 'height' | 'weight' | 'bmi',
+    value: number,
+  ) {
     return this.percentile(sex, ageMonths, measure, value);
   }
 }

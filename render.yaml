@@ -36,3 +36,12 @@ services:
         value: 7d
       - key: CORS_ORIGIN
         sync: false
+      # Password reset links are built from this. Unset, MailService falls back to
+      # http://localhost:5173 and every reset email points at the recipient's own machine.
+      - key: FRONTEND_URL
+        sync: false
+      # Reset-email delivery. Render blocks outbound SMTP, so this is the only transport
+      # that works here. Declared (rather than left implicit) because with it unset the
+      # forgot-password request still returns 200 and the user simply receives nothing.
+      - key: RESEND_API_KEY
+        sync: false

@@ -3,11 +3,27 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Alert, LinearProgress, IconButton } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFileOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import { api, API_BASE_URL } from '../lib/api';
+import { api } from '../lib/api';
+import { useAuthedImage } from '../lib/useAuthedImage';
 import { useChildren } from '../context/ChildContext';
 import { ChildProfileCard } from '../components/ChildProfileCard';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import type { BoneAgePrediction } from '../types';
+import { formatDate } from '../lib/formatDate';
+
+/**
+ * Thumbnail for one uploaded scan. A component rather than an inline <img> because the
+ * bytes now come from a guardian-checked route, and that needs a hook — which can't be
+ * called inside the history loop.
+ */
+function XrayThumb({ id }: { id: string }) {
+  const src = useAuthedImage(`/bone-age/${id}/image`);
+
+  if (!src) {
+    return <div className="w-12 h-12 rounded-lg bg-gray-100 shrink-0" />;
+  }
+  return <img src={src} alt="X-ray" className="w-12 h-12 object-cover rounded-lg bg-gray-100" />;
+}
 
 export default function BoneAgeUpload() {
   const { selectedChildId, selectedChild } = useChildren();
@@ -23,6 +39,8 @@ export default function BoneAgeUpload() {
     enabled: !!selectedChildId,
   });
 
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
       const form = new FormData();
@@ -30,7 +48,17 @@ export default function BoneAgeUpload() {
       form.append('childId', selectedChildId!);
       return (await api.post('/bone-age/upload', form, { headers: { 'Content-Type': 'multipart/form-data' } })).data;
     },
+    // FR-16: show the API's actual reason (wrong type, too large) rather than failing silently.
+    onError: (err: unknown) => {
+      const res = (err as { response?: { status?: number; data?: { message?: string } } }).response;
+      setUploadError(
+        res?.status === 413
+          ? 'That image is larger than 10MB. Try a smaller export.'
+          : res?.data?.message ?? 'Could not upload that image. Use a JPEG or PNG under 10MB.',
+      );
+    },
     onSuccess: async () => {
+      setUploadError(null);
       await queryClient.invalidateQueries({ queryKey: ['bone-age-history', selectedChildId] });
       setNotice(
         'Image uploaded. AI bone age prediction is not connected yet — the model is being trained separately and will be wired in soon.',
@@ -45,6 +73,12 @@ export default function BoneAgeUpload() {
 
   function handleFile(file: File | undefined) {
     if (!file) return;
+    // Checked here too so an oversized file is rejected before it goes over the wire.
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('That image is larger than 10MB. Try a smaller export.');
+      return;
+    }
+    setUploadError(null);
     uploadMutation.mutate(file);
   }
 
@@ -62,6 +96,7 @@ export default function BoneAgeUpload() {
         </p>
       </div>
 
+      {uploadError && <Alert severity="error" onClose={() => setUploadError(null)}>{uploadError}</Alert>}
       {notice && <Alert severity="info" onClose={() => setNotice(null)}>{notice}</Alert>}
       {uploadMutation.isPending && <LinearProgress />}
 
@@ -74,9 +109,9 @@ export default function BoneAgeUpload() {
           handleFile(e.dataTransfer.files?.[0]);
         }}
       >
-        <UploadFileIcon fontSize="large" className="text-gray-400 mb-2" />
+        <UploadFileIcon fontSize="large" className="text-gray-500 mb-2" />
         <p className="font-medium text-ink">Drag and drop X-ray image here</p>
-        <p className="text-xs text-gray-400 mb-4">Supports JPEG or PNG, max 10MB</p>
+        <p className="text-xs text-gray-500 mb-4">Supports JPEG or PNG, max 10MB</p>
         <Button variant="contained" color="secondary" onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}>
           Browse Files
         </Button>
@@ -89,7 +124,7 @@ export default function BoneAgeUpload() {
         />
       </div>
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-500">
         Disclaimer: The AI Bone Age Prediction is an investigational tool for educational
         tracking purposes only. It is not intended for primary medical diagnosis. Always consult
         a pediatric endocrinologist for clinical evaluations.
@@ -100,9 +135,9 @@ export default function BoneAgeUpload() {
         <div className="flex flex-col gap-3">
           {(history ?? []).map((p) => (
             <div key={p.id} className="flex items-center gap-3 text-sm border-b border-gray-100 pb-3 last:border-0">
-              <img src={`${API_BASE_URL}${p.imageUrl}`} alt="X-ray" className="w-12 h-12 object-cover rounded-lg bg-gray-100" />
+              <XrayThumb id={p.id} />
               <div className="flex-1">
-                <p className="text-gray-500">{new Date(p.createdAt).toLocaleDateString()}</p>
+                <p className="text-gray-500">{formatDate(p.createdAt)}</p>
                 <p className="font-medium">
                   {p.status === 'COMPLETED' && p.predictedAgeMonths
                     ? `Predicted: ${p.predictedAgeMonths} months`

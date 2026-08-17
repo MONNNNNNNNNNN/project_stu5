@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { api } from '../lib/api';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ageInMonths } from '../lib/age';
+import { formatDate } from '../lib/formatDate';
 import { useChildren } from '../context/ChildContext';
 import { PercentileChart } from '../components/PercentileChart';
 import { ChildProfileCard } from '../components/ChildProfileCard';
@@ -178,12 +179,16 @@ export default function GrowthTracking() {
         </form>
       </div>
 
-      <PercentileChart title="Height-for-age" unit="cm" curve={heightCurve ?? []} points={heightPoints} color="#46897a" />
-      <PercentileChart title="Weight-for-age" unit="kg" curve={weightCurve ?? []} points={weightPoints} color="#87a480" />
-      <div>
-        <PercentileChart title="BMI-for-age" unit="" curve={bmiCurve ?? []} points={bmiPoints} color="#c98a3f" />
-        <p className="text-xs text-gray-400 -mt-2 px-1">BMI-for-age applies to children aged 5 years and above.</p>
-      </div>
+      <PercentileChart title="Height-for-age" unit="cm" curve={heightCurve ?? []} points={heightPoints} measure="height" />
+      <PercentileChart title="Weight-for-age" unit="kg" curve={weightCurve ?? []} points={weightPoints} measure="weight" />
+      <PercentileChart
+        title="BMI-for-age"
+        unit=""
+        curve={bmiCurve ?? []}
+        points={bmiPoints}
+        measure="bmi"
+        footnote="BMI-for-age applies to children aged 5 years and above."
+      />
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">
         <h2 className="font-semibold text-ink mb-4">History</h2>
@@ -191,7 +196,7 @@ export default function GrowthTracking() {
           {(history ?? []).map((record) =>
             editingId === record.id ? (
               <div key={record.id} className="py-2 flex flex-wrap items-center gap-2 text-sm">
-                <span className="text-gray-500 w-24 shrink-0">{new Date(record.measuredAt).toLocaleDateString()}</span>
+                <span className="text-gray-500 w-24 shrink-0">{formatDate(record.measuredAt)}</span>
                 <TextField
                   size="small"
                   label="Height (cm)"
@@ -223,10 +228,10 @@ export default function GrowthTracking() {
             ) : (
               <div key={record.id} className="py-3 flex flex-col gap-1 text-sm">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <span className="text-gray-500">{new Date(record.measuredAt).toLocaleDateString()}</span>
+                  <span className="text-gray-500">{formatDate(record.measuredAt)}</span>
                   <span>{record.heightCm ? `${record.heightCm} cm (${fmtPercentile(record.heightPercentile)})` : '—'}</span>
                   <span>{record.weightKg ? `${record.weightKg} kg (${fmtPercentile(record.weightPercentile)})` : '—'}</span>
-                  <span className="text-gray-400">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
+                  <span className="text-gray-500">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
                   <span className="flex items-center gap-1 ml-auto">
                     <IconButton size="small" onClick={() => startEdit(record)}>
                       <EditIcon fontSize="small" />
