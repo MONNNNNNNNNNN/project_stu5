@@ -282,3 +282,19 @@ model SupportMessage {
   @@index([createdAt])
   @@map("support_messages")
 }
+
+// ---------------------------------------------------------------------------
+// Rate limiting
+// ---------------------------------------------------------------------------
+
+/// Shared throttle counters. In-process storage under-counts whenever more than one
+/// instance is serving, which is exactly what happened on Render — see PrismaThrottlerStorage.
+model RateLimit {
+  key          String    @id
+  hits         Int       @default(0)
+  expiresAt    DateTime  @db.Timestamptz(3)
+  blockedUntil DateTime? @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("rate_limits")
+}

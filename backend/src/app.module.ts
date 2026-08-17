@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { PrismaThrottlerStorage } from './common/prisma-throttler.storage';
 import { ProxyAwareThrottlerGuard } from './common/throttler-proxy.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { PrismaService } from './prisma/prisma.service';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -23,7 +25,17 @@ import { SupportModule } from './support/support.module';
     // Baseline ceiling for ordinary API traffic. The routes that actually need
     // protecting — login, register, forgot-password, the public contact form — carry
     // their own much tighter @Throttle on top of this.
-    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 120 }]),
+    //
+    // Counters live in Postgres, not in the process: Render serves more than one instance
+    // and per-process tallies multiplied every limit by the instance count.
+    ThrottlerModule.forRootAsync({
+      imports: [PrismaModule],
+      inject: [PrismaService],
+      useFactory: (prisma: PrismaService) => ({
+        throttlers: [{ ttl: 60_000, limit: 120 }],
+        storage: new PrismaThrottlerStorage(prisma),
+      }),
+    }),
     PrismaModule,
     AuthModule,
     UsersModule,
