@@ -12,6 +12,18 @@ go stale the moment the UI changes.
 | `png/` | **Low-fidelity** | PNG @2× | **Sketch of every page.** Greyscale wireframes — boxes, placeholder text bars, no brand colour. For presentation and design review. |
 | `svg/` | **High-fidelity** | SVG | **The real web, every page.** Actual palette and copy, editable text layers, vector icons, nested layer tree. For Figma import. |
 
+## Download
+
+GitHub does not offer a "download this folder" button, so both sets are also committed as
+archives — open the file on GitHub and press **Download**, or use the raw link:
+
+| Archive | Contents |
+| --- | --- |
+| `growth-mockups-lowfidelity-png.zip` | all 46 low-fidelity PNG sketches (1.8 MB) |
+| `growth-mockups-hifidelity-svg.zip` | all 46 high-fidelity SVG exports (2.2 MB) |
+
+Both are regenerated whenever the screens are, so they stay in step with `png/` and `svg/`.
+
 ## Importing `svg/` into Figma
 
 Drag the files onto a Figma canvas, or **File → Import**. Notes:
