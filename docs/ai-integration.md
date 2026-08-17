@@ -4,9 +4,15 @@ How the EfficientNet-B0 bone age model gets from the ML team's notebook into Gro
 
 Covers TOR **FR-17**, **FR-18**, **FR-19**, **§3.4**, **§6.3**, deliverable **D4**.
 
-**Status:** not implemented. `BoneAgeService.predict()` currently throws
-`NotImplementedException` on purpose — it does not fabricate a number. This document is the
-plan the implementation follows once the weights land.
+**Status:** contract agreed, service scaffolded, backend not yet wired.
+
+- `ai-service/` exists and runs — see `ai-service/README.md`. `/predict` answers **503**
+  until a checkpoint is dropped into `ai-service/models/`, so the stack runs without it.
+- Checkpoints are **not** committed. `.gitignore` blocks `*.pt`/`*.pth`/`*.onnx` and
+  `ai-service/models/*`; weights are distributed as GitHub Release assets. Reasoning is in
+  the service README.
+- `BoneAgeService.predict()` still throws `NotImplementedException` on purpose — it does not
+  fabricate a number. Section 4 below is the backend change that replaces it.
 
 ---
 

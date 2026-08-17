@@ -1,0 +1,8 @@
+# Pinned loosely on purpose: the ML team owns the torch version that matches their training
+# run. If a checkpoint fails to load, the torch minor version is the first thing to check.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
+pillow>=11.0
+torch>=2.4
+torchvision>=0.19

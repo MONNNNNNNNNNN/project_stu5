@@ -1,0 +1,22 @@
+# Model weights are never committed. An EfficientNet-B0 checkpoint is ~20 MB of binary that
+# git cannot diff or compress, every clone would pay for it forever, and each retrain would
+# add another copy. Weights are distributed as GitHub Release assets instead — see
+# ai-service/README.md.
+*.pt
+*.pth
+*.onnx
+*.h5
+*.ckpt
+*.safetensors
+ai-service/models/*
+!ai-service/models/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Local env
+.env
