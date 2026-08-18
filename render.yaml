@@ -45,3 +45,50 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      # Where the backend reaches the bone-age model. Unset is a supported state: uploads
+      # still store and list, predictions stay PENDING, nothing errors.
+      - key: BONE_AGE_SERVICE_URL
+        sync: false
+      - key: BONE_AGE_TIMEOUT_MS
+        value: 30000
+
+  - type: web
+    name: growth-ai
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: ai-service
+    # The model is a Release asset, not a repo file. A 16 MB binary in git would be carried
+    # by every clone forever and duplicated on each retrain; Releases are built for this and
+    # do not consume the account's Git LFS quota.
+    #
+    # Runtime is ONNX Runtime, not torch. torch needs 635 MB on disk and 374 MB resident,
+    # which does not fit this 512 MB instance alongside uvicorn. ONNX is ~100 MB resident at
+    # ~24 ms per inference and matches torch to 3e-06. Conversion happens locally, once —
+    # see ai-service/convert_to_onnx.py.
+    buildCommand: >-
+      pip install -r requirements.txt &&
+      mkdir -p models &&
+      curl -fsSL -o models/bone_age.onnx
+      https://github.com/MONNNNNNNNNNN/project_stu5/releases/download/model-v1/bone_age.onnx
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: MODEL_PATH
+        value: models/bone_age.onnx
+      - key: MODEL_VERSION
+        value: effnetb0-v1-rsna
+      # ⚠ Both required before /predict will answer. The checkpoint's training target was
+      # normalised — it emits ~2.4, not ~120 — so months = raw * AGE_STD + AGE_MEAN. Until
+      # the ML team supplies the training-run values, /health reports "uncalibrated" and
+      # /predict returns 503. It refuses rather than inventing a bone age.
+      - key: AGE_MEAN
+        sync: false
+      - key: AGE_STD
+        sync: false
+      # Mean absolute error in months on the held-out test set. FR-18 shows this as the "±"
+      # margin beside the estimate, so it has to be the real measured figure.
+      - key: MAE_MONTHS
+        sync: false

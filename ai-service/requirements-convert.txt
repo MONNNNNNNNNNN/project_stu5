@@ -1,0 +1,7 @@
+# Only needed to run convert_to_onnx.py locally, once per trained model.
+# Never installed on the server.
+torch>=2.4
+torchvision>=0.19
+onnx>=1.17
+onnxscript>=0.1
+onnxruntime>=1.20

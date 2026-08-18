@@ -2,12 +2,22 @@
 Bone-age inference service.
 
 Owns the trained EfficientNet-B0 and nothing else: no database, no auth, no notion of
-children. It takes an image and a sex, and returns a number. The NestJS backend does the
-authorisation and the record-keeping — see docs/ai-integration.md for the contract.
+children. Takes an image and a sex, returns a number. The NestJS backend does the
+authorisation and record-keeping — contract in docs/ai-integration.md.
 
-Starts successfully even with no checkpoint present, so the rest of the team can run the
-stack before the weights land. In that state /predict answers 503 rather than inventing a
-number.
+Runs the model through ONNX Runtime, not torch. See convert_to_onnx.py for the reasoning;
+briefly, torch does not fit in a 512 MB Render instance alongside a web server.
+
+The service starts even when it cannot serve, and says why on /health. Two states matter:
+
+  - no model file        -> /predict 503, "no checkpoint"
+  - no calibration       -> /predict 503, "AGE_MEAN/AGE_STD not set"
+
+That second one is deliberate and is the whole reason this file refuses to guess. The
+handed-over checkpoint emits values around 2.4, not around 120, so its training target was
+normalised. Turning 2.4 into months needs the mean and standard deviation used in training,
+and those did not come with the weights. Inventing them would produce a confident, wrong bone
+age on a medical screen, which is worse than an outage.
 """
 
 from __future__ import annotations
@@ -16,134 +26,128 @@ import io
 import os
 import time
 
-import torch
+import numpy as np
+import onnxruntime as ort
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from PIL import Image
-from torchvision import transforms
 
 # ---------------------------------------------------------------------------------------
-# Handover constants — the ML team must confirm every one of these.
-#
-# Guessing any of them produces a plausible-looking number that is simply wrong, with no
-# error anywhere. They are listed as items 4, 5 and 6 of the handover checklist in
-# docs/ai-integration.md.
+# Preprocessing — must match training exactly. Confirm each of these with the ML team.
 # ---------------------------------------------------------------------------------------
 
-IMG_SIZE = 224
+IMG_SIZE = int(os.getenv("IMG_SIZE", "224"))
 
-# Preprocessing normalisation used during *training*. ImageNet defaults are the common
-# choice but must be confirmed, not assumed.
-NORM_MEAN = [0.485, 0.456, 0.406]
-NORM_STD = [0.229, 0.224, 0.225]
+# ImageNet statistics. Standard for a torchvision EfficientNet-B0, but standard is not the
+# same as confirmed.
+NORM_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+NORM_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
-# If the age target was normalised during training, these are that mean/std in months.
-# Leave as (0.0, 1.0) when the model already outputs raw months.
-#
-# This is the classic RSNA integration bug: get it wrong and the model returns something
-# like 0.3, which is reported to a parent as "0 months" and looks like a broken model
-# rather than an un-denormalised output. A bounds check below refuses to emit a value
-# outside a plausible range so this fails loudly instead.
-AGE_MEAN = 0.0
-AGE_STD = 1.0
+# Sex encoding fed to the model's second input. The checkpoint gives no clue which value
+# meant male, and a flip degrades accuracy quietly rather than crashing.
+SEX_MALE = float(os.getenv("SEX_MALE", "1"))
+SEX_FEMALE = float(os.getenv("SEX_FEMALE", "0"))
 
-# How the model encodes sex. Confirm which value means male, and whether it is concatenated
-# to the CNN features or fed through its own branch.
-SEX_MALE = 1.0
-SEX_FEMALE = 0.0
+# Target denormalisation: months = raw * AGE_STD + AGE_MEAN. Unset means "unknown", and the
+# service refuses to predict rather than guessing. Set both from the training run.
+_age_mean = os.getenv("AGE_MEAN")
+_age_std = os.getenv("AGE_STD")
+AGE_MEAN = float(_age_mean) if _age_mean else None
+AGE_STD = float(_age_std) if _age_std else None
 
-# A prediction outside this range means something upstream is wrong, not that a child is
-# unusual. 0-300 months spans birth to 25 years.
+# A result outside this band means something upstream is wrong, not that a child is unusual.
 MIN_PLAUSIBLE_MONTHS = 0.0
 MAX_PLAUSIBLE_MONTHS = 300.0
 
-MODEL_PATH = os.getenv("MODEL_PATH", "models/bone_age_effnetb0.pt")
+MODEL_PATH = os.getenv("MODEL_PATH", "models/bone_age.onnx")
 MODEL_VERSION = os.getenv("MODEL_VERSION", "unset")
 MAE_MONTHS = float(os.getenv("MAE_MONTHS", "0"))
 
 app = FastAPI(title="GrowTH bone-age inference", version=MODEL_VERSION)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-_preprocess = transforms.Compose(
-    [
-        transforms.Resize((IMG_SIZE, IMG_SIZE)),
-        transforms.ToTensor(),
-        transforms.Normalize(NORM_MEAN, NORM_STD),
-    ]
-)
-
-_model: torch.nn.Module | None = None
+_session: ort.InferenceSession | None = None
 _load_error: str | None = None
 
 
-def _load_model() -> None:
-    """
-    Load the checkpoint if it is there. A missing file is not fatal — the service still
-    starts so the backend has something to talk to, and reports the reason on /health.
-    """
-    global _model, _load_error
-
+def _load() -> None:
+    global _session, _load_error
     if not os.path.exists(MODEL_PATH):
-        _load_error = f"no checkpoint at {MODEL_PATH}"
+        _load_error = f"no model at {MODEL_PATH}"
         return
-
     try:
-        # TorchScript archive: loads with no model class needed. For a bare state_dict,
-        # import the ML team's nn.Module here, instantiate it, and load_state_dict instead.
-        _model = torch.jit.load(MODEL_PATH, map_location=device).eval()
+        _session = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
         _load_error = None
-    except Exception as exc:  # noqa: BLE001 - surfaced verbatim on /health
+    except Exception as exc:  # noqa: BLE001 — surfaced verbatim on /health
         _load_error = f"{type(exc).__name__}: {exc}"
 
 
-_load_model()
+_load()
+
+
+def _calibrated() -> bool:
+    return AGE_MEAN is not None and AGE_STD is not None
 
 
 @app.get("/health")
 def health() -> dict:
+    if _session is None:
+        status = "model_unavailable"
+    elif not _calibrated():
+        status = "uncalibrated"
+    else:
+        status = "ok"
     return {
-        "status": "ok" if _model is not None else "model_unavailable",
+        "status": status,
         "modelVersion": MODEL_VERSION,
         "maeMonths": MAE_MONTHS,
-        "detail": _load_error,
+        "detail": _load_error
+        or (None if _calibrated() else "AGE_MEAN/AGE_STD not set; refusing to guess months"),
     }
+
+
+def _preprocess(img: Image.Image) -> np.ndarray:
+    img = img.convert("RGB").resize((IMG_SIZE, IMG_SIZE), Image.BILINEAR)
+    arr = np.asarray(img, dtype=np.float32) / 255.0
+    arr = (arr - NORM_MEAN) / NORM_STD
+    return np.transpose(arr, (2, 0, 1))[None, ...].astype(np.float32)
 
 
 @app.post("/predict")
 async def predict(image: UploadFile = File(...), sex: str = Form(...)) -> dict:
-    if _model is None:
+    if _session is None:
         raise HTTPException(503, f"Model is not loaded ({_load_error}).")
-
+    if not _calibrated():
+        raise HTTPException(
+            503,
+            "Model is loaded but not calibrated: AGE_MEAN and AGE_STD are unset, so a raw "
+            "output cannot be converted to months. Set them from the training run.",
+        )
     if sex not in ("MALE", "FEMALE"):
         raise HTTPException(422, "sex must be MALE or FEMALE")
 
-    raw = await image.read()
+    raw_bytes = await image.read()
     try:
-        img = Image.open(io.BytesIO(raw)).convert("RGB")
+        img = Image.open(io.BytesIO(raw_bytes))
+        img.load()
     except Exception:  # noqa: BLE001
         raise HTTPException(422, "Could not decode the uploaded file as an image.") from None
 
     started = time.perf_counter()
-    tensor = _preprocess(img).unsqueeze(0).to(device)
-    sex_tensor = torch.tensor(
-        [[SEX_MALE if sex == "MALE" else SEX_FEMALE]], dtype=torch.float32, device=device
-    )
-
-    with torch.no_grad():
-        out = _model(tensor, sex_tensor)
-
-    months = float(out.squeeze().item()) * AGE_STD + AGE_MEAN
+    sex_value = np.array([[SEX_MALE if sex == "MALE" else SEX_FEMALE]], dtype=np.float32)
+    raw = float(_session.run(None, {"image": _preprocess(img), "sex": sex_value})[0].item())
+    months = raw * AGE_STD + AGE_MEAN
 
     if not (MIN_PLAUSIBLE_MONTHS <= months <= MAX_PLAUSIBLE_MONTHS):
         raise HTTPException(
             500,
             f"Model returned {months:.1f} months, outside the plausible range. "
-            "AGE_MEAN/AGE_STD are the usual cause — check them against the training run.",
+            f"Raw output was {raw:.4f}; AGE_MEAN/AGE_STD are the usual cause.",
         )
 
     return {
         "boneAgeMonths": round(months, 1),
-        # Null unless the model produces a genuine uncertainty estimate. Do not synthesise
-        # one: a fabricated confidence percentage on a medical screen is worse than none.
+        # Null unless the model produces a genuine uncertainty estimate. This one is a plain
+        # regression head with a single scalar output, so it does not. Do not synthesise a
+        # confidence percentage for a medical screen.
         "confidence": None,
         "modelVersion": MODEL_VERSION,
         "inferenceMs": int((time.perf_counter() - started) * 1000),

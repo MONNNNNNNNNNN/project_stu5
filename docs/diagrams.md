@@ -1,12 +1,24 @@
 # GrowTH — System Diagrams
 
 Mermaid source for the three project diagrams. These describe the system **as built**
-(reviewed 2026-08-17), not the original proposal — where the two differ, the difference is
+(updated 2026-08-18), not the original proposal — where the two differ, the difference is
 called out.
 
-> The older exported assets in this folder (`app-overview-diagram.svg/png`,
-> `system-architecture.svg/png`) predate the current build and are superseded by the
-> diagrams below. They have been left in place rather than deleted.
+Rendered exports, regenerated from this file:
+
+| Diagram | SVG |
+| --- | --- |
+| System architecture | [`diagram-system-architecture.svg`](./diagram-system-architecture.svg) |
+| App structure | [`diagram-app-structure.svg`](./diagram-app-structure.svg) |
+| User flow | [`diagram-user-flow.svg`](./diagram-user-flow.svg) |
+
+```bash
+npx -y @mermaid-js/mermaid-cli -i docs/diagrams.md -o docs/diagram.svg -b white
+```
+
+> The earlier exports `app-overview-diagram.svg/png` and `system-architecture.svg/png` were
+> deleted on 2026-08-18. They pre-dated the ai-service, the rate limiter and the auth changes,
+> and a stale architecture diagram is worse than none — someone reads it and believes it.
 
 ---
 
@@ -24,30 +36,34 @@ flowchart TB
         BUNDLE["SPA bundle<br/>single chunk, ~1.30 MB"]
     end
 
-    subgraph render["Render — free tier, sleeps after 15 min idle"]
-        subgraph api["NestJS 11 API"]
-            GUARD["Global guards, in order<br/>1 ThrottlerGuard<br/>2 JwtAuthGuard"]
+    subgraph render["Render — free tier, both services sleep after 15 min idle"]
+        subgraph api["growth-backend · NestJS 11"]
+            GUARD["Global guards, in order<br/>1 ProxyAwareThrottlerGuard<br/>2 JwtAuthGuard"]
             MOD["Modules<br/>auth · users · children · growth<br/>puberty · bone-age · articles<br/>notifications · support"]
-            LMS["GrowthReferenceService<br/>LMS tables — WHO 0-2y, CDC 2-20y<br/>percentile + SDS, in-process"]
+            LMS["GrowthReferenceService<br/>LMS tables — CDC 2000, in-process<br/>Thai reference pending"]
             GUARD --> MOD
             MOD --> LMS
+        end
+        subgraph ai["growth-ai · FastAPI"]
+            ORT["ONNX Runtime<br/>EfficientNet-B0 + sex input<br/>~100 MB RSS · ~24 ms"]
         end
         DISK[("uploads/ on local disk<br/>EPHEMERAL — lost on redeploy")]
     end
 
-    NEON[("Neon Postgres<br/>via Prisma 5")]
+    NEON[("Neon Postgres<br/>via Prisma 5<br/>+ rate_limits, shared throttle counters")]
     RESEND["Resend HTTP API<br/>password-reset mail"]
-    AI["Python FastAPI<br/>EfficientNet-B0 bone age<br/>LOCAL ONLY — not deployed"]
+    REL[("GitHub Release model-v1<br/>bone_age.onnx, 16 MB<br/>fetched at build")]
 
     UI -- "HTTPS · Bearer JWT" --> GUARD
     BUNDLE -.-> UI
     MOD --> NEON
     MOD --> DISK
     MOD -- "outbound HTTPS<br/>SMTP ports are blocked here" --> RESEND
-    MOD -. "BONE_AGE_SERVICE_URL<br/>planned, see ai-integration.md" .-> AI
+    MOD -- "BONE_AGE_SERVICE_URL<br/>image + sex, async" --> ORT
+    REL -.-> ORT
 
     classDef gap stroke-dasharray: 5 4
-    class AI,DISK gap
+    class DISK,ORT gap
 ```
 
 **Notes on what this shows**
@@ -55,12 +71,23 @@ flowchart TB
 - **Auth** — 15-minute access JWT in memory; refresh token is 48 random bytes, stored
   SHA-256-hashed in `sessions`, and rotated on every use. Only the refresh token touches
   `localStorage`.
-- **Guard order matters.** `ThrottlerGuard` runs before `JwtAuthGuard`, so a credential
-  flood is rejected before it costs a passport verify and a bcrypt compare.
+- **Guard order matters.** The throttler runs before `JwtAuthGuard`, so a credential flood is
+  rejected before it costs a passport verify and a bcrypt compare. Its counters live in
+  Postgres, not in the process — Render serves more than one instance, and per-process tallies
+  multiplied the limit by the instance count.
 - **Percentile maths runs in-process**, not in the database and not in a service — the LMS
-  tables are JSON bundled with the API.
-- **Two dashed boxes are the known gaps**: the inference service is designed but not built,
-  and Render's disk does not survive a redeploy, so uploaded X-rays outlive their files.
+  tables are JSON bundled with the API. They are currently **CDC 2000 (US)**; the Thai
+  reference swap is pending (see `research-checklist.md` §D1).
+- **The model is not in the repo.** `bone_age.onnx` is a GitHub Release asset that
+  `growth-ai` fetches at build time. A 16 MB binary in git would be carried by every clone
+  forever and duplicated on each retrain.
+- **ONNX, not torch.** torch needs 635 MB on disk and 374 MB resident, which does not fit a
+  512 MB instance alongside uvicorn. ONNX Runtime is ~100 MB at ~24 ms per inference and
+  matches torch to 3e-06.
+- **Two dashed boxes are the remaining gaps**: `growth-ai` is deployed but **uncalibrated** —
+  the checkpoint's training target was normalised, so it needs `AGE_MEAN`/`AGE_STD` from the
+  training run before it will return months, and refuses to guess until then. And Render's
+  disk does not survive a redeploy, so uploaded X-rays outlive their files.
 
 ---
 
@@ -159,7 +186,7 @@ flowchart TD
 
     C --> C1["Validated: JPEG/PNG, ≤10 MB"]
     C1 --> C2["Row saved as PENDING"]
-    C2 -.->|"not built yet"| C3["Inference → COMPLETED<br/>bone age ± MAE months"]
+    C2 -.->|"backend not wired yet"| C3["Inference → COMPLETED<br/>bone age ± MAE months"]
     C3 -.-> C4["Shown beside chronological age<br/>'screening aid, not a diagnosis'"]
 
     E --> DASH
@@ -175,9 +202,11 @@ flowchart TD
   in the form — FR-2.
 - Every clinical-looking output is worded as a screening signal. No path in this flow
   produces anything phrased as a diagnosis.
-- The dashed branch is the bone-age prediction: upload, validation and history all work
-  today; the prediction itself is unimplemented and deliberately does not fabricate a value.
-  See `ai-integration.md`.
+- The dashed branch is the bone-age prediction. Upload, validation and history all work today,
+  and the `growth-ai` service is deployed and serving. Two things remain: the backend does not
+  yet call it (`BONE_AGE_SERVICE_URL` unset), and the model is uncalibrated — it cannot convert
+  its raw output to months until `AGE_MEAN`/`AGE_STD` arrive from the training run. It returns
+  503 rather than fabricating a value. See `ai-integration.md`.
 
 ---
 

@@ -1,8 +1,13 @@
 # Running GrowTH as separate services
 
-The hosted deploy is already split across three providers — Vercel serves the built
-frontend, Render runs the NestJS API, Neon holds Postgres. `docker-compose.yml` makes that
-same boundary explicit and runnable on one machine.
+The hosted deploy is split across three providers — Vercel serves the built frontend, Render
+runs the NestJS API **and the bone-age service**, Neon holds Postgres. `docker-compose.yml`
+makes that same boundary explicit and runnable on one machine.
+
+> **Not covered here:** the `growth-ai` inference service. It is a separate Render service and
+> is not in `docker-compose.yml`, because it needs a model file that is not in the repo — see
+> [`../ai-service/README.md`](../ai-service/README.md). Run it directly with uvicorn alongside
+> compose if you need it locally.
 
 ```
 browser ──▶ web (nginx :8080) ──┬──▶ static SPA bundle
