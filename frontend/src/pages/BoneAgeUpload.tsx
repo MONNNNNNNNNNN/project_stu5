@@ -8,7 +8,8 @@ import { useAuthedImage } from '../lib/useAuthedImage';
 import { useChildren } from '../context/ChildContext';
 import { ChildProfileCard } from '../components/ChildProfileCard';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import type { BoneAgePrediction } from '../types';
+import type { BoneAgeModelStatus, BoneAgePrediction } from '../types';
+import { ageInMonths } from '../lib/age';
 import { formatDate } from '../lib/formatDate';
 
 /**
@@ -25,6 +26,21 @@ function XrayThumb({ id }: { id: string }) {
   return <img src={src} alt="X-ray" className="w-12 h-12 object-cover rounded-lg bg-gray-100" />;
 }
 
+/** 138 -> "11 y 6 m" — months alone is not how a parent thinks about a child's age. */
+function describeMonths(months: number) {
+  const y = Math.floor(months / 12);
+  const m = Math.round(months % 12);
+  return m ? `${y} y ${m} m` : `${y} y`;
+}
+
+/** The gap is the clinically interesting quantity; a bone age alone says very little. */
+function describeGap(boneMonths: number, chronoMonths: number) {
+  const diff = Math.round(boneMonths - chronoMonths);
+  if (Math.abs(diff) < 6) return 'close to their actual age';
+  const amount = describeMonths(Math.abs(diff));
+  return diff > 0 ? `about ${amount} ahead of their age` : `about ${amount} behind their age`;
+}
+
 export default function BoneAgeUpload() {
   const { selectedChildId, selectedChild } = useChildren();
   const queryClient = useQueryClient();
@@ -37,6 +53,14 @@ export default function BoneAgeUpload() {
     queryFn: async () =>
       (await api.get<BoneAgePrediction[]>('/bone-age/history', { params: { childId: selectedChildId } })).data,
     enabled: !!selectedChildId,
+    // Poll only while something is still being analysed. An unconditional interval would be
+    // a permanent background request loop against a free-tier backend.
+    refetchInterval: (q) => (q.state.data?.some((p) => p.status === 'PENDING') ? 2500 : false),
+  });
+
+  const { data: model } = useQuery({
+    queryKey: ['bone-age-model-status'],
+    queryFn: async () => (await api.get<BoneAgeModelStatus>('/bone-age/model-status')).data,
   });
 
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -86,16 +110,32 @@ export default function BoneAgeUpload() {
     return <p className="text-gray-500">Select or add a child first.</p>;
   }
 
+  const chronologicalMonths = selectedChild
+    ? Math.round(ageInMonths(selectedChild.dateOfBirth, new Date()))
+    : null;
+
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
       {selectedChild && <ChildProfileCard child={selectedChild} />}
       <div>
         <h1 className="text-xl font-semibold text-brand-700">AI Bone Age Analysis</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Upload a left-hand radiograph for an instant automated bone age estimation.
+          Already have a hand X-ray? Upload it here for an automated bone age estimate. This
+          does not replace the X-ray or the appointment — it gives you a reading while you wait
+          for one.
         </p>
       </div>
 
+      {model?.calibration === 'provisional' && (
+        <Alert severity="warning">
+          <span className="font-semibold">Demo calibration.</span> The conversion from the
+          model's raw output to months has not been confirmed by the team that trained it, so
+          the ages below are indicative only and must not be relied on.
+        </Alert>
+      )}
+      {model && !model.ready && (
+        <Alert severity="info">Bone age analysis is unavailable right now. Your image is still saved.</Alert>
+      )}
       {uploadError && <Alert severity="error" onClose={() => setUploadError(null)}>{uploadError}</Alert>}
       {notice && <Alert severity="info" onClose={() => setNotice(null)}>{notice}</Alert>}
       {uploadMutation.isPending && <LinearProgress />}
@@ -138,11 +178,37 @@ export default function BoneAgeUpload() {
               <XrayThumb id={p.id} />
               <div className="flex-1">
                 <p className="text-gray-500">{formatDate(p.createdAt)}</p>
-                <p className="font-medium">
-                  {p.status === 'COMPLETED' && p.predictedAgeMonths
-                    ? `Predicted: ${p.predictedAgeMonths} months`
-                    : 'Awaiting AI model integration'}
-                </p>
+                {p.status === 'COMPLETED' && p.predictedAgeMonths ? (
+                  <>
+                    <p className="font-medium">
+                      Bone age {describeMonths(p.predictedAgeMonths)}
+                      {chronologicalMonths !== null && (
+                        <span className="font-normal text-gray-500">
+                          {' · '}
+                          {describeGap(p.predictedAgeMonths, chronologicalMonths)}
+                        </span>
+                      )}
+                    </p>
+                    {model && (
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Typical error about {Math.round(model.maeMonths)} months; roughly{' '}
+                        {Math.round((1 - model.accuracyWithin12Months) * 100)}% of estimates are
+                        out by more than a year.
+                      </p>
+                    )}
+                  </>
+                ) : p.status === 'FAILED' ? (
+                  <p className="font-medium text-amber-700 dark:text-amber-400">
+                    Could not be analysed
+                    {p.failureReason && (
+                      <span className="block font-normal text-xs text-gray-500">
+                        {p.failureReason}
+                      </span>
+                    )}
+                  </p>
+                ) : (
+                  <p className="font-medium text-gray-500">Analysing…</p>
+                )}
               </div>
               <IconButton size="small" onClick={() => setPendingDelete(p.id)}>
                 <DeleteIcon fontSize="small" />

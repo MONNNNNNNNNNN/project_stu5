@@ -4,15 +4,18 @@ How the EfficientNet-B0 bone age model gets from the ML team's notebook into Gro
 
 Covers TOR **FR-17**, **FR-18**, **FR-19**, **§3.4**, **§6.3**, deliverable **D4**.
 
-**Status:** contract agreed, service scaffolded, backend not yet wired.
+**Status:** wired and running end to end, on **provisional calibration**.
 
-- `ai-service/` exists and runs — see `ai-service/README.md`. `/predict` answers **503**
-  until a checkpoint is dropped into `ai-service/models/`, so the stack runs without it.
-- Checkpoints are **not** committed. `.gitignore` blocks `*.pt`/`*.pth`/`*.onnx` and
-  `ai-service/models/*`; weights are distributed as GitHub Release assets. Reasoning is in
-  the service README.
-- `BoneAgeService.predict()` still throws `NotImplementedException` on purpose — it does not
-  fabricate a number. Section 4 below is the backend change that replaces it.
+- Inference runs **in the NestJS backend** via `onnxruntime-node`, not as a separate service.
+  Render bills 750 instance hours per *workspace*, so a second service halves the quota and
+  chains a second cold start onto the first request. Node and Python ONNX Runtime were
+  compared on identical input and agree to the last decimal.
+- Model is a GitHub Release asset fetched at build time; never committed.
+- `ai-service/` is kept for local experimentation and the one-off `.pt` → `.onnx` conversion.
+- Updating the model: [`model-updates.md`](./model-updates.md).
+- **Calibration is inferred, not supplied.** `AGE_MEAN`/`AGE_STD` did not come with the
+  weights, so results carry a `provisional` flag through the API into a visible banner. See
+  model-updates.md §Calibration.
 
 ---
 
@@ -53,6 +56,13 @@ when they are missing or guessed.
 ---
 
 ## 3. Inference service — API contract
+
+> **Superseded.** Sections 3, 4 and 7 describe the original two-service design, where a
+> FastAPI sidecar was called over HTTP. Inference now runs **inside the backend** via
+> `onnxruntime-node` — see `backend/src/bone-age/bone-age.inference.ts` and
+> [`model-updates.md`](./model-updates.md). They are kept because `ai-service/` still
+> implements this contract for local experimentation, and because the reasoning about
+> preprocessing and the handover items applies either way.
 
 A small FastAPI app that owns the model. It knows nothing about GrowTH: no database, no
 auth, no children. It takes an image and a sex, and returns a number.

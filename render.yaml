@@ -14,7 +14,15 @@ services:
     # owns — nothing in the app can create or edit an article, so the seed is their only
     # source. It's upsert-only and idempotent, so re-running it on every deploy just
     # republishes whatever prisma/articles-content.ts currently says.
-    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run build
+    buildCommand: >-
+      npm ci --include=dev &&
+      npx prisma generate &&
+      npx prisma migrate deploy &&
+      npx prisma db seed &&
+      npm run build &&
+      mkdir -p models &&
+      curl -fsSL -o models/bone_age.onnx
+      https://github.com/MONNNNNNNNNNN/project_stu5/releases/download/model-v1/bone_age.onnx
     startCommand: npm run start:prod
     healthCheckPath: /health
     envVars:
@@ -45,54 +53,31 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
-      # Where the backend reaches the bone-age model. Unset is a supported state: uploads
-      # still store and list, predictions stay PENDING, nothing errors.
-      - key: BONE_AGE_SERVICE_URL
-        sync: false
-      - key: BONE_AGE_TIMEOUT_MS
-        value: 30000
-
-  - type: web
-    name: growth-ai
-    runtime: python
-    plan: free
-    region: singapore
-    rootDir: ai-service
-    # The model is a Release asset, not a repo file. A 16 MB binary in git would be carried
-    # by every clone forever and duplicated on each retrain; Releases are built for this and
-    # do not consume the account's Git LFS quota.
-    #
-    # Runtime is ONNX Runtime, not torch. torch needs 635 MB on disk and 374 MB resident,
-    # which does not fit this 512 MB instance alongside uvicorn. ONNX is ~100 MB resident at
-    # ~24 ms per inference and matches torch to 3e-06. Conversion happens locally, once —
-    # see ai-service/convert_to_onnx.py.
-    buildCommand: >-
-      pip install -r requirements.txt &&
-      mkdir -p models &&
-      curl -fsSL -o models/bone_age.onnx
-      https://github.com/MONNNNNNNNNNN/project_stu5/releases/download/model-v1/bone_age.onnx
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    healthCheckPath: /health
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.7
-      - key: MODEL_PATH
+      # --- bone age, in-process -------------------------------------------------------
+      # Deliberately NOT a second Render service. The free tier bills 750 instance hours per
+      # *workspace* per month, not per service, so two always-waking services burn the quota
+      # twice as fast and get everything suspended mid-month. It would also chain two ~1-minute
+      # cold starts onto the first request of a demo. Node and Python ONNX Runtime were checked
+      # against each other on identical input and agree to the last decimal.
+      - key: BONE_AGE_MODEL_PATH
         value: models/bone_age.onnx
-      - key: MODEL_VERSION
+      - key: BONE_AGE_MODEL_VERSION
         value: effnetb0-v1-rsna
-      # ⚠ Both required before /predict will answer. The checkpoint's training target was
-      # normalised — it emits ~2.4, not ~120 — so months = raw * AGE_STD + AGE_MEAN. Until
-      # the ML team supplies the training-run values, /health reports "uncalibrated" and
-      # /predict returns 503. It refuses rather than inventing a bone age.
-      - key: AGE_MEAN
-        sync: false
-      - key: AGE_STD
-        sync: false
-      # Measured on the held-out test set, reported by the ML team 2026-08-18.
-      # MAE 8.78 mo · MSE 135.91 · R² 0.9219 · within ±12 mo 73.1%
-      - key: MAE_MONTHS
+      # Measured on the held-out test set, 2026-08-18.
+      - key: BONE_AGE_MAE_MONTHS
         value: "8.78"
-      # The mean hides the spread: roughly one estimate in four is out by more than a year.
-      # FR-18 has to say that rather than quoting ±8.78 as if it were a bound.
-      - key: ACCURACY_WITHIN_12M
+      # 73.1% within a year — i.e. about one estimate in four is out by more than 12 months.
+      # Shown next to the MAE so the UI cannot imply a bound the model does not have.
+      - key: BONE_AGE_ACCURACY_12M
         value: "0.731"
+      # The checkpoint's training target was normalised, and the constants did not come with
+      # the weights. These are inferred: MSE and R2 give Var(y) = MSE/(1-R2), so the test set
+      # SD is ~41.7 months, and the RSNA training mean is ~127.3. Every result computed from
+      # them is flagged "provisional" all the way to the UI. Set BONE_AGE_CALIBRATION=confirmed
+      # only once the ML team supplies the real values.
+      - key: BONE_AGE_AGE_MEAN
+        value: "127.3"
+      - key: BONE_AGE_AGE_STD
+        value: "41.7"
+      - key: BONE_AGE_CALIBRATION
+        value: provisional

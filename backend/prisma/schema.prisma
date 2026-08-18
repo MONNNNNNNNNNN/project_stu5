@@ -180,6 +180,9 @@ model BoneAgePrediction {
   predictedAgeMonths Int?
   confidenceScore    Decimal?                @db.Decimal(4, 3)
   modelVersion       String?
+  /// Why a FAILED prediction failed. Distinguishes "that image was unreadable" from "the
+  /// model is offline", which need different things from the parent.
+  failureReason      String?
   createdAt          DateTime                @default(now())
   completedAt        DateTime?
 

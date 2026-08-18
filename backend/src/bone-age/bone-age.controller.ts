@@ -73,9 +73,10 @@ export class BoneAgeController {
     );
   }
 
-  @Post('predict')
-  predict() {
-    return this.boneAgeService.predict();
+  /** Model availability + measured accuracy, so the UI can caveat a result honestly. */
+  @Get('model-status')
+  modelStatus() {
+    return this.boneAgeService.modelStatus();
   }
 
   @Get('history')

@@ -81,7 +81,24 @@ export interface BoneAgePrediction {
   imageUrl: string;
   status: 'PENDING' | 'COMPLETED' | 'FAILED';
   predictedAgeMonths: number | null;
+  modelVersion: string | null;
+  /** Why a FAILED prediction failed — "unreadable image" needs a different response from the
+   *  parent than "the model is offline". */
+  failureReason: string | null;
   createdAt: string;
+  completedAt: string | null;
+}
+
+export interface BoneAgeModelStatus {
+  ready: boolean;
+  modelVersion: string;
+  /** Mean absolute error in months on the held-out test set. */
+  maeMonths: number;
+  /** Share of test predictions within a year. Shown with the MAE so the margin is not read
+   *  as a hard bound — at 0.731, roughly one estimate in four is out by over 12 months. */
+  accuracyWithin12Months: number;
+  calibration: 'provisional' | 'confirmed';
+  detail: string | null;
 }
 
 export interface Category {
