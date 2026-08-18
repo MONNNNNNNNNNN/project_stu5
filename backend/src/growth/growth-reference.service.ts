@@ -16,6 +16,15 @@ interface LmsRow {
 type Measure = 'weight' | 'height' | 'bmi';
 type Sex = 'MALE' | 'FEMALE';
 
+/**
+ * Where the infant table hands over to the child table. Also where CDC switches from
+ * recumbent length to standing stature.
+ *
+ * All five LMS tables are CDC 2000 (United States) — see reference-data/README.md, which
+ * also records the two open questions: TOR §2A.2 requires the reference dataset to be
+ * confirmed with the Client Representative, and a US reference applied to Thai children is
+ * a decision worth making deliberately rather than by default.
+ */
 const INFANT_CUTOVER_MONTHS = 24;
 
 function sexCode(sex: Sex): 1 | 2 {
