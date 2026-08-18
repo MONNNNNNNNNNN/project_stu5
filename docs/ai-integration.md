@@ -377,10 +377,20 @@ TOR §6.3 requires the screening-aid framing **in the interface**, not only in t
 
 Suggested wording:
 
-> Estimated bone age: **11 y 6 m** (±6 months)
+> Estimated bone age: **11 y 6 m**
 > Chronological age: 10 y 4 m — about 14 months ahead
+> Typical error is about 9 months, and roughly 1 estimate in 4 is out by more than a year.
 > This is an automated screening aid, not a diagnosis. Only a doctor can interpret what this
 > means for your child.
+
+**Do not print "±8.78 months" on its own.** The measured figures (2026-08-18) are MAE 8.78
+months *and* 73.1% within ±12 months — which is the same as saying **about one estimate in
+four is wrong by more than a year**. A lone "±9 months" reads as a bound, and this model does
+not have one that tight. Both numbers are exposed on `/health` (`maeMonths`,
+`accuracyWithin12Months`) precisely so the UI can say it honestly.
+
+This also feeds the value question in §Q4: an estimate this wide is a *triage signal* — "worth
+showing a doctor" — not a measurement. The copy should match that.
 
 ---
 

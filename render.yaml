@@ -88,7 +88,11 @@ services:
         sync: false
       - key: AGE_STD
         sync: false
-      # Mean absolute error in months on the held-out test set. FR-18 shows this as the "±"
-      # margin beside the estimate, so it has to be the real measured figure.
+      # Measured on the held-out test set, reported by the ML team 2026-08-18.
+      # MAE 8.78 mo · MSE 135.91 · R² 0.9219 · within ±12 mo 73.1%
       - key: MAE_MONTHS
-        sync: false
+        value: "8.78"
+      # The mean hides the spread: roughly one estimate in four is out by more than a year.
+      # FR-18 has to say that rather than quoting ±8.78 as if it were a bound.
+      - key: ACCURACY_WITHIN_12M
+        value: "0.731"

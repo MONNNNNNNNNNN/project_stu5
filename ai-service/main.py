@@ -60,7 +60,20 @@ MAX_PLAUSIBLE_MONTHS = 300.0
 
 MODEL_PATH = os.getenv("MODEL_PATH", "models/bone_age.onnx")
 MODEL_VERSION = os.getenv("MODEL_VERSION", "unset")
+
+# Measured on the held-out test set (TOR §6.3). MAE is the headline, but it is a *mean* —
+# roughly a quarter of estimates land further out than a year, which is what the UI has to
+# say rather than implying a tight bound. See ACCURACY_WITHIN_12M.
 MAE_MONTHS = float(os.getenv("MAE_MONTHS", "0"))
+ACCURACY_WITHIN_12M = float(os.getenv("ACCURACY_WITHIN_12M", "0"))
+
+# The reported MSE and R² pin the spread of the test set's true bone ages:
+#   Var(y) = MSE / (1 - R²) = 135.91 / 0.0781  ->  SD ≈ 41.7 months
+# If the training target was normalised by the dataset's own standard deviation — the usual
+# choice — then AGE_STD should land near this. It is only a cross-check, because a team may
+# normalise by something else, so a mismatch warns rather than refuses.
+EXPECTED_AGE_STD = 41.7
+AGE_STD_TOLERANCE = 10.0
 
 app = FastAPI(title="GrowTH bone-age inference", version=MODEL_VERSION)
 
@@ -87,6 +100,18 @@ def _calibrated() -> bool:
     return AGE_MEAN is not None and AGE_STD is not None
 
 
+def _calibration_warning() -> str | None:
+    """Flag an AGE_STD that disagrees with what the reported metrics imply."""
+    if AGE_STD is None:
+        return None
+    if abs(AGE_STD - EXPECTED_AGE_STD) > AGE_STD_TOLERANCE:
+        return (
+            f"AGE_STD={AGE_STD} is far from the ~{EXPECTED_AGE_STD} months implied by the "
+            f"reported MSE and R². Predictions will be scaled wrongly if this is a mistake."
+        )
+    return None
+
+
 @app.get("/health")
 def health() -> dict:
     if _session is None:
@@ -99,8 +124,12 @@ def health() -> dict:
         "status": status,
         "modelVersion": MODEL_VERSION,
         "maeMonths": MAE_MONTHS,
+        # Shared so the UI can be honest about spread rather than quoting the mean alone.
+        "accuracyWithin12Months": ACCURACY_WITHIN_12M,
         "detail": _load_error
-        or (None if _calibrated() else "AGE_MEAN/AGE_STD not set; refusing to guess months"),
+        or (None if _calibrated() else "AGE_MEAN/AGE_STD not set; refusing to guess months")
+        or _calibration_warning(),
+        "warning": _calibration_warning(),
     }
 
 

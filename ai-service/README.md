@@ -28,6 +28,35 @@ That is why `forward` takes two arguments.
 
 4.21 M parameters, ~16 MB.
 
+## Measured performance
+
+Reported by the ML team, 2026-08-18, on the held-out test set:
+
+| Metric | Value |
+| --- | --- |
+| MAE | **8.78 months** |
+| MSE | 135.91 (RMSE 11.66 months) |
+| R² | 0.9219 |
+| Within ±12 months | **73.1%** |
+
+**Internally consistent.** RMSE/MAE = 1.33, about what a roughly Gaussian error distribution
+gives. And `Var(y) = MSE / (1 − R²)` puts the spread of the test set's true bone ages at
+**SD ≈ 41.7 months**, which matches the RSNA dataset's published ~41.2. Nothing here looks
+mis-reported.
+
+That derived 41.7 is also a free cross-check on the calibration constants: if the target was
+normalised by the dataset SD, `AGE_STD` should land near it. `/health` warns when it does not.
+
+**Against the benchmark (TOR §6.3).** Leading RSNA Bone Age Challenge entries reach roughly
+4.2–4.5 months MAE. At 8.78 we are about **2× that** — reasonable for a student project on
+free compute, and TOR §13 anticipates exactly this outcome, asking for performance to be
+*"documented transparently rather than overstating accuracy"*.
+
+**What this means for the UI, and it matters.** 73.1% within ±12 months is the same as saying
+**about one estimate in four is wrong by more than a year**. Showing a parent "±8.78 months"
+implies a tightness the model does not have. FR-18 wording should carry both numbers — see
+`../docs/ai-integration.md` §8.
+
 ## Why the server runs ONNX and not PyTorch
 
 |  | torch | ONNX Runtime |
@@ -92,10 +121,15 @@ Needed from the ML team, in order of how badly each breaks things:
 | --- | --- | --- |
 | 1 | **`AGE_MEAN` / `AGE_STD`** from the training run | **blocking** — no prediction at all |
 | 2 | **Sex encoding** — which value meant male | quietly worse for one sex, no error |
-| 3 | **`MAE_MONTHS`** on the held-out test set | the "±" shown to parents is fiction (TOR FR-18, §6.3) |
+| 3 | ~~`MAE_MONTHS`~~ | ✅ supplied 2026-08-18 — 8.78 months |
 | 4 | Input resolution, if not 224 | silently degraded accuracy |
 | 5 | Normalisation mean/std, if not ImageNet | silently degraded accuracy |
 | 6 | 2–3 sample images with expected outputs | without these we can confirm it returns *a* number, not the *right* one |
+
+Item 6 matters more now than before. With MAE known, a single labelled sample would confirm
+items 1, 2, 4 and 5 all at once: if a known 120-month hand comes back near 120, the whole
+preprocessing and denormalisation chain is right. If it comes back at 2.4 or at 300, it is not.
+**One labelled image closes almost everything left.**
 
 A bounds check rejects any result outside 0–300 months, so a wrong denormalisation fails loudly
 instead of reaching a parent. That is a backstop, not a substitute for item 1.
