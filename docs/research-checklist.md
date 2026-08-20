@@ -183,6 +183,53 @@ colour the BMI chart (C1) until this is settled.
 
 ---
 
+### D3 🔴 No accuracy target has been set for the bone-age model
+
+The model's measured performance is known — MAE **8.78** months, RMSE **11.66**, R² 0.9219,
+**73.1%** within a year. What is *not* known is whether that is good enough, because nobody has
+written down what decision the number drives.
+
+Published comparators, for context:
+
+| System | Error | Source |
+| --- | --- | --- |
+| RSNA 2017 challenge, best entry | MAD **4.27** months | [Radiology 2019](https://pubs.rsna.org/doi/abs/10.1148/radiol.2018180736) |
+| RSNA 2017, top five | MAD 4.2–4.5 months | same |
+| BoneXpert 3 vs manual GP | RMSE **0.68 y** boys, **0.52 y** girls | [Front Endocrinol 2023](https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2023.1130580/full) |
+| BoneXpert vs mean of six raters | MAD **4.1** months | same |
+| **GrowTH v1** | **MAE 8.78 / RMSE 11.66 months** | measured 2026-08-18 |
+
+So GrowTH sits at roughly **twice** the error of the published leaders, and worse than the
+commercial clinical tool.
+
+**What we still need a citation for:** the bone-age-versus-chronological-age gap at which a
+referral is actually warranted. The conventional figure used in paediatric endocrinology is
+around **2 years**, but *this repo has no source for it* and the app does not currently act on
+a gap threshold at all — it only displays the gap. Until that number is cited, "how accurate is
+accurate enough" cannot be answered, because the tolerance is defined by the threshold.
+
+Rough sizing, assuming errors are normally distributed (they are not exactly — RMSE/MAE is
+1.33 against 1.25 for a normal, so there is a tail of larger misses): at a 2-year threshold the
+current model would show a spurious ≥2-year gap in about **3–4%** of children whose true gap is
+zero. Holding that under 1% needs MAE ≤ ~7.4 months; under 0.5%, ≤ ~6.8 months.
+
+**Tasks:**
+- [ ] Find and cite the clinical gap threshold — Royal College of Paediatricians of Thailand
+      guidance, or a paediatric endocrinology reference. Owner: ___
+- [ ] Put the target to the Client Representative: is a triage aid at MAE ~9 months acceptable,
+      or must it reach published parity (~4.5) before launch? See `client-questions.md`.
+- [ ] Confirm what TOR §6.3 actually requires — reporting the MAE transparently, or meeting a
+      stated figure. The TOR is a scan; read §6.3 directly rather than relying on notes.
+
+⚠️ **Before any of the above matters:** the 8.78 figure describes the *checkpoint*, measured by
+the ML team with the real normalisation constants. The deployed service uses **inferred**
+`AGE_MEAN`/`AGE_STD`, so the accuracy of what is actually in production is unmeasured. Getting
+those constants confirmed outranks every row above. See `model-updates.md`.
+
+**Owner:** ___ **Due:** ___
+
+---
+
 ## E. New scope (client points 7, 13)
 
 ### E1 ⚪ Google OAuth login
