@@ -85,7 +85,7 @@ export default function BoneAgeUpload() {
       setUploadError(null);
       await queryClient.invalidateQueries({ queryKey: ['bone-age-history', selectedChildId] });
       setNotice(
-        'Image uploaded. AI bone age prediction is not connected yet — the model is being trained separately and will be wired in soon.',
+        'Image uploaded. It is being analysed now — the estimate appears in History below, usually within a few seconds.',
       );
     },
   });
@@ -206,6 +206,8 @@ export default function BoneAgeUpload() {
                       </span>
                     )}
                   </p>
+                ) : model && !model.ready ? (
+                  <p className="font-medium text-gray-500">Saved — not analysed</p>
                 ) : (
                   <p className="font-medium text-gray-500">Analysing…</p>
                 )}

@@ -120,7 +120,7 @@ you glossing over it will trust the rest of the demo less.
 | --- | --- | --- |
 | First request hangs ~1 min | cold start | expected — warm it beforehand |
 | Login says "could not reach the server" | still waking | wait, retry; the app says this rather than "wrong password" on purpose |
-| Bone age stays PENDING | model not loaded | uploads and history still work; skip to the next section |
+| Row reads "Saved — not analysed" | model failed to load | uploads and history still work; skip to the next section |
 | X-ray thumbnail missing | Render's disk is wiped on redeploy | a known gap; use a freshly uploaded image |
 | 429 on repeated logins | rate limiter, 10/min | wait a minute — it is supposed to do that |
 
