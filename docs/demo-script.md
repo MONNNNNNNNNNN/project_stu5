@@ -18,6 +18,13 @@ curl https://growth-backend-a479.onrender.com/health
 # {"status":"ok","service":"growth-backend"}
 ```
 
+Or run the bone-age smoke test, which warms it *and* proves the model still answers. It cleans
+up the account it creates:
+
+```bash
+./scripts/smoke-bone-age.sh
+```
+
 **Have ready:** a hand X-ray image (JPEG or PNG, under 10 MB), and an account with one child
 who already has 4–6 measurements. Creating that history live is slow and dull to watch.
 
