@@ -37,12 +37,14 @@ Its clinical grounding is the thing to note:
 
 **Three things we should take seriously:**
 
-1. **It already solves growth tracking, and does it with the correct Thai reference.** We are
-   currently on CDC 2000 (US). On our single strongest overlapping feature, the incumbent is
-   more correct than we are. This is the sharpest argument for closing
-   [Q1](./client-questions.md#q1--which-growth-reference-should-we-use--tor-obligation).
-2. **It independently confirms the Thai reference is real and usable in production**, which
-   supports the reference swap the team is already sourcing files for.
+1. **It already solves growth tracking, and does it with the correct Thai reference.** We stay
+   on CDC 2000 (US), deliberately, to keep one baseline population across growth tracking and
+   the bone-age model. On our single strongest overlapping feature, the incumbent is more
+   locally correct than we are — worth being upfront about at the client meeting rather than
+   letting them find it. See
+   [Q1](./client-questions.md#q1--confirm-growth-reference-stays-cdc-2000-us--tor-obligation).
+2. **It independently confirms a Thai reference is real and usable in production**, which is
+   the road not taken here — the trade-off is recorded in `research-checklist.md` D1.
 3. **Breadth is not where we win.** Seven features, years of iteration, institutional backing,
    a budget. We have 11 people, zero budget, and a fixed 2 Nov date.
 

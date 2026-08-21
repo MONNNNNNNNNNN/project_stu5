@@ -66,9 +66,9 @@ product.
 
 Show the history table underneath, and that entries can be edited or deleted.
 
-> **If asked "which growth reference is this?"** — currently CDC 2000, a US reference. Swapping
-> to the Thai Department of Health charts is open and waiting on the files; it is a data
-> change, not a code change. See [`research-checklist.md`](./research-checklist.md) §D1.
+> **If asked "which growth reference is this?"** — CDC 2000, a US reference, staying that way
+> so it matches the bone-age model's US-calibrated training population. Still needs client
+> ratification per TOR §2A.2. See [`research-checklist.md`](./research-checklist.md) §D1.
 
 ### 5. Puberty screening — 1.5 min
 `/puberty`. Start the screening. The questions **branch on the child's sex** and follow the
@@ -150,6 +150,6 @@ Render bills 750 instance hours per workspace, not per service. Two always-wakin
 halve the runway and chain two cold starts onto the first request.
 
 **"What is not finished?"**
-Calibration constants, the Thai growth reference, notifications having a producer, and
-uploads surviving a redeploy. All tracked in
+Calibration constants, client ratification of the CDC 2000 reference, notifications having a
+producer, and uploads surviving a redeploy. All tracked in
 [`research-checklist.md`](./research-checklist.md).

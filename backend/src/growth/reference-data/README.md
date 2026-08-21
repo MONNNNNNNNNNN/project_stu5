@@ -31,30 +31,42 @@ percentile = Φ(Z) × 100
 > 3.530 kg where WHO's is 3.346, and the tables run to 36 months where WHO's stop at 24.
 > The `wtageinf`/`lenageinf` files are CDC's own infant charts, not its WHO-based set.
 
-## Three things to settle before this is used on real children
+## Decision: staying on CDC 2000
+
+**2026-08-21 — the team decided to keep this US reference rather than swap to a Thai one.**
+Rationale: the bone-age model (`ai-service/`, RSNA-trained) is itself calibrated against a
+US/international clinical population, not a Thai one. Rather than mix a Thai growth reference
+with an American-calibrated AI model, the app stays on one consistent baseline across both
+features.
+
+Worth stating plainly, since it is not symmetric: **skeletal maturation (what the bone-age
+model reads) varies less by ethnicity than height/weight/BMI do** — those are far more
+sensitive to genetics, nutrition and environment. So this argument is stronger for the bone-age
+model than it is for the growth charts, and a Thai child's height/weight percentile against
+CDC 2000 can still land noticeably off from where a Thai paediatrician would place them
+(FR-10 flags anything beyond ±2 SD and tells the parent to consider seeing a doctor). Recorded
+as a known trade-off, not resolved by this decision — see `research-checklist.md` D1.
+
+**Still outstanding regardless of this decision:**
 
 1. **TOR §2A.2 requires the reference dataset to be confirmed with the Client
    Representative.** It says the team "will have access to a standard set of pediatric
    growth reference data (e.g., WHO or national growth standards)… the specific reference
    dataset to be used shall be confirmed with the Client Representative early in the
-   project." As far as this repo shows, that confirmation has not happened. Every percentile
-   and SDS the app displays depends on it.
+   project." Staying on CDC 2000 is the team's call, but it is still an unconfirmed one from
+   the client's side — put it to them as a decision to ratify, not reopen (`client-questions.md`
+   Q1).
 
-2. **This is a US reference being applied to Thai children.** Thailand publishes its own
-   national growth references through the Department of Health, Ministry of Public Health,
-   and Thai clinical practice does not generally read children against CDC 2000. A Thai
-   child plotted on a US reference can land several percentile points away from where a
-   Thai paediatrician would place them — which matters, because FR-10 flags anything beyond
-   ±2 SD and tells the parent to consider seeing a doctor.
+2. **CDC's own recommendation is WHO for 0–2 years**, CDC 2000 for 2–20. Using CDC 2000 below
+   24 months departs from that. Since the decision is to stay on a US reference, the infant
+   tables should be swapped for CDC's WHO-based set
+   (`https://www.cdc.gov/growthcharts/who-data-files.htm`) to be internally consistent with
+   CDC's own guidance.
 
-3. **CDC's own recommendation is WHO for 0–2 years**, CDC 2000 for 2–20. Using CDC 2000
-   below 24 months departs from that. If the decision is to stay on a US reference, the
-   infant tables should be swapped for CDC's WHO-based set
-   (`https://www.cdc.gov/growthcharts/who-data-files.htm`).
-
-Swapping references is a data change, not a code change: `growth-reference.service.ts` reads
-whatever LMS rows these files contain. Stored `heightPercentile` / `heightSds` columns on
-existing `growth_records` would need recomputing, since they are persisted at write time.
+`growth-reference.service.ts` reads whatever LMS rows these files contain; a future reference
+change is a data change, not a code change. Stored `heightPercentile` / `heightSds` columns on
+existing `growth_records` would need recomputing if it ever happens, since they are persisted
+at write time.
 
 ## One measurement caveat
 

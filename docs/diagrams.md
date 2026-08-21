@@ -40,7 +40,7 @@ flowchart TB
         subgraph api["growth-backend · NestJS 11"]
             GUARD["Global guards, in order<br/>1 ProxyAwareThrottlerGuard<br/>2 JwtAuthGuard"]
             MOD["Modules<br/>auth · users · children · growth<br/>puberty · bone-age · articles<br/>notifications · support"]
-            LMS["GrowthReferenceService<br/>LMS tables — CDC 2000, in-process<br/>Thai reference pending"]
+            LMS["GrowthReferenceService<br/>LMS tables — CDC 2000, in-process<br/>staying CDC 2000, see research-checklist D1"]
             GUARD --> MOD
             MOD --> LMS
         end
@@ -74,8 +74,9 @@ flowchart TB
   Postgres, not in the process — Render serves more than one instance, and per-process tallies
   multiplied the limit by the instance count.
 - **Percentile maths runs in-process**, not in the database and not in a service — the LMS
-  tables are JSON bundled with the API. They are currently **CDC 2000 (US)**; the Thai
-  reference swap is pending (see `research-checklist.md` §D1).
+  tables are JSON bundled with the API. **CDC 2000 (US)**, staying that way — kept consistent
+  with the bone-age model's US-calibrated training population (see `research-checklist.md`
+  §D1).
 - **One service, not two.** Inference runs inside the backend through `onnxruntime-node`.
   Render bills **750 instance hours per workspace per month**, not per service, so a second
   always-waking service burns the quota twice as fast — and chains a second ~1-minute cold

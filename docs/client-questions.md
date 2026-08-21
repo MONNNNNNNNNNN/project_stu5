@@ -10,31 +10,39 @@ Bring [`research-checklist.md`](./research-checklist.md) and
 
 ---
 
-## Q1 — Which growth reference should we use? ⚠️ TOR obligation
+## Q1 — Confirm: growth reference stays CDC 2000 (US) ⚠️ TOR obligation
 
 **Why.** TOR §2A.2 says the reference dataset *"shall be confirmed with the Client
-Representative early in the project"*. That has not happened. Meanwhile we found the app is
-running on **CDC 2000 (United States)** tables — a US reference applied to Thai children.
-Every percentile and SDS the app shows, and every "consider seeing a doctor" prompt under
-FR-10, comes from these numbers.
+Representative early in the project"*. That confirmation has never happened. The app has been
+running on **CDC 2000 (United States)** tables — a US reference applied to Thai children —
+this whole time, and every percentile, SDS, and "consider seeing a doctor" prompt under FR-10
+comes from these numbers.
 
-For comparison: KhunLook uses **Thailand Department of Health charts, 0–19 years**.
+**Team decision (2026-08-21):** stay on CDC 2000 rather than swap to a Thai reference, so that
+the growth charts and the bone-age model — which is itself calibrated against a
+US/international population — quote one consistent baseline instead of two. This is not being
+raised as an open choice; it is a decision the team needs you to **ratify**, per §2A.2.
+
+Trade-off worth knowing before you sign off: a Thai child's height/weight percentile against
+CDC 2000 can land off from where a Thai paediatrician would place them, more so than for bone
+age — skeletal maturation is less ethnicity-sensitive than height/weight/BMI. KhunLook, for
+comparison, uses Thailand Department of Health charts, 0–19 years.
 
 **Options.**
 
 | Answer | What we do |
 | --- | --- |
-| Thai MOPH / TSPE charts | Preferred. We need the LMS parameter tables, not printed charts — see Q2 |
-| WHO | We can implement immediately; WHO publishes LMS openly. Thailand already uses WHO for under-5s |
-| Stay on CDC 2000 | We document the decision and the rationale, and stop raising it |
+| Confirm CDC 2000 | We record the date and this rationale as the §2A.2 confirmation, and close this permanently |
+| No — use Thai MOPH / TSPE charts instead | We need the LMS parameter tables, not printed charts — see Q2. Also means bone age and growth charts run on different baseline populations, which we'd document as accepted |
+| No — use WHO instead | We can implement immediately; WHO publishes LMS openly. Thailand already uses WHO for under-5s |
 
-**Cost of the change.** Data-only, no code rewrite — *except* that stored percentile/SDS
+**Cost of a later change.** Data-only, no code rewrite — *except* that stored percentile/SDS
 columns on existing records must be recomputed, or old and new records will quote different
 populations on the same chart.
 
 ---
 
-## Q2 — Can you get us the Thai reference as **parameters**, not charts?
+## Q2 — If you choose Thai instead: can you get us the reference as **parameters**, not charts?
 
 **Why.** Our engine needs LMS values (L, M, S per age per sex). Thai growth charts are usually
 published as printable percentile charts. Those are not directly usable.

@@ -153,16 +153,28 @@ Held at the team's instruction until research lands. Recorded so they are not lo
 
 ## D. Data provenance already found broken
 
-### D1 🟢 Growth reference is CDC 2000 (US), not WHO
+### D1 🟡 Growth reference is CDC 2000 (US), not WHO — team decided to stay on it
 
-Closed and corrected 2026-08-17. `backend/src/growth/reference-data/README.md` claimed the
-infant tables were WHO Child Growth Standards. They are CDC 2000: our male birth-weight median
-is 3.530 kg where WHO's is 3.346, and the tables run to 36 months where WHO's stop at 24.
+The mislabel (infant tables were claimed as WHO, are actually CDC 2000) was corrected
+2026-08-17.
 
-**Still open:** which reference we *should* use. TOR §2A.2 requires the Client Representative to
-confirm this and there is no record that it happened. KhunLook — the competitor the client
-named — uses **Thailand Department of Health charts 0–19 years**. Thai files are being sourced
-by the team; the sandbox is blocked from `thaipedendo.org`.
+**2026-08-21 — decision: stay on CDC 2000**, rather than swap to the Thai reference the team
+had been sourcing. Rationale: the bone-age model is calibrated against a US/international
+population (RSNA), and mixing that with a Thai growth reference means the two AI-adjacent
+features quote two different baseline populations. One consistent reference across both beats
+a per-feature match.
+
+Flagged as a trade-off, not a clean win: skeletal maturation (bone age) is less
+ethnicity-sensitive than height/weight/BMI, so the argument is stronger for the bone-age model
+than it is for the growth charts. A Thai child's height/weight percentile against CDC 2000 can
+still land off from where a Thai paediatrician would place them, and FR-10's ±2 SD flag inherits
+that. Full reasoning in `backend/src/growth/reference-data/README.md`.
+
+**Still open — now a ratification, not an open question:** TOR §2A.2 requires the Client
+Representative to confirm the reference. There is no record that happened. Bring this decision
+to them as something to sign off, not reopen — see `client-questions.md` Q1 (updated). KhunLook,
+the competitor the client named, uses Thailand Department of Health charts 0–19 years; worth
+being ready to explain why GrowTH differs.
 
 ### D2 🔴 Every other clinical constant in the app is uncited
 
