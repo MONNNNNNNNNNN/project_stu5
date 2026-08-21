@@ -57,27 +57,33 @@ published as printable percentile charts. Those are not directly usable.
 
 ---
 
-## Q3 — Should the puberty age thresholds follow Thai data?
+## Q3 — Confirm: puberty age thresholds stay on the Western (Endocrine Society) cutoffs
 
-**Why.** The app currently flags "early" below 8 and "delayed" above 13 (breast) / 15
-(menarche). These are Western cutoffs with no citation. A Khon Kaen University study of healthy
-Thai girls found:
+**Why.** The app flags "early" below 8 and "delayed" above 13 (breast) / 15 (menarche) —
+Endocrine Society cutoffs, American in origin, currently uncited in the repo.
 
-- thelarche median **9.3 y** (range 7.8–13.4)
-- menarche median **11.6 y** (range **10.0–14.0**)
+**Team decision (2026-08-21):** keep these rather than adopt the Thai figures below, for the
+same reason as the growth-reference decision (Q1) — one consistent baseline population across
+growth charts, puberty thresholds, and the US-calibrated bone-age model, rather than mixing a
+Thai reference into two out of three features. Raised here to **ratify**, not reopen.
 
-Thai girls' observed menarche range ends at 14.0, so our "delayed" flag at 15 fires later than
-local data supports — we would be reassuring families we should be flagging.
+Trade-off you should know before signing off: a Khon Kaen University study of healthy Thai
+girls found thelarche median **9.3 y** (range 7.8–13.4) and menarche median **11.6 y** (range
+**10.0–14.0**). Thai girls' observed menarche range ends at 14.0, so our "delayed" flag at 15
+fires a year later than local data would — a Thai girl not yet menstruating at 14.5 goes
+unflagged under the current threshold, even though Thai-specific data would call that unusual.
+This is a risk of missing a case, not of over-flagging one.
 
 **Options.**
 
 | Answer | What we do |
 | --- | --- |
-| Adopt Thai study figures | Update the constants, cite the paper in the code and the UI |
-| Use Royal College of Pediatricians of Thailand guidance | Please point us to it — we could not find published cutoffs |
-| Keep international cutoffs | We document why, and cite the guideline followed |
+| Confirm Western/Endocrine Society cutoffs | We cite the Endocrine Society guideline in code and UI, record this as the decision, and close it |
+| No — adopt the Thai study figures instead | We update the constants and cite the paper — but this also means puberty thresholds and the growth/AI baseline no longer match, which we'd document as accepted |
+| Use Royal College of Pediatricians of Thailand guidance instead | Please point us to it — we could not find published cutoffs |
 
-**Also needed:** we found no equivalent Thai dataset for **boys**. Do you know of one?
+**Also on record, not being pursued further under the "confirm" answer:** no equivalent Thai
+dataset for **boys** was found either.
 
 ---
 

@@ -23,32 +23,34 @@ Status key: 🔴 not started · 🟡 in progress · 🟢 closed with citation ·
 
 ## A. Puberty reference data (client points 1–4)
 
-### A1 🟡 What age does puberty normally start, and in what range?
+### A1 🟡 What age does puberty normally start, and in what range? — team decided to stay on Western cutoffs
 
-**What we have.** Verified — and it does not match what the app currently does.
+**2026-08-21 — decision: keep the existing thresholds**, not swap to the Thai KKU figures
+below. Same reasoning as `research-checklist.md` D1 (growth reference): the current cutoffs are
+**Endocrine Society** figures — American — and the bone-age model is US-calibrated, so this
+keeps puberty screening, growth charts, and bone age on one consistent population baseline
+rather than mixing a Thai puberty reference into an otherwise American-referenced app.
 
-A Khon Kaen University study of healthy Thai girls
+**Trade-off, not a clean win — worth stating plainly:** a Khon Kaen University study of healthy
+Thai girls found Thai girls' observed menarche range tops out at **14.0 y**, but the app only
+flags "delayed" at **15** — a year later than the local data would flag it. Staying on the
+Western threshold means a Thai girl who has not menstruated by 14.5 is not flagged, even though
+Thai-specific data would call that unusual. This is an under-flagging risk (missed cases), not
+an over-flagging one, and is the same shape of trade-off as the growth-reference decision.
+
+Source, for the record — the study that was found and is no longer being pursued for adoption
 ([Int J Pediatr Endocrinol 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3850010/)):
 
-| Milestone | Thai median (range) | Thai mean | App threshold today |
-| --- | --- | --- | --- |
-| Thelarche (breast) | **9.3 y** (7.8–13.4) | 10.1 ± 1.2 | early < 8, delayed > 13 |
-| Pubarche (pubic hair) | **10.8 y** (8.9–14.5) | 11.6 ± 1.2 | early < 8 |
-| Menarche | **11.6 y** (10.0–14.0) | 11.6 ± 0.8 | delayed > 15 |
+| Milestone | Thai median (range) | App threshold (Endocrine Society, unchanged) |
+| --- | --- | --- |
+| Thelarche (breast) | 9.3 y (7.8–13.4) | early < 8, delayed > 13 |
+| Pubarche (pubic hair) | 10.8 y (8.9–14.5) | early < 8 |
+| Menarche | 11.6 y (10.0–14.0) | delayed > 15 |
 
-The app's numbers live in `backend/src/puberty/puberty-screening.util.ts:8-12` and are Western
-cutoffs with **no citation in the repo**.
-
-Two concrete mismatches to put to the client:
-
-- Thai girls' observed menarche range tops out at **14.0**, but the app only flags "delayed" at
-  **15** — later than the local data supports.
-- Median thelarche at **9.3** means a large, healthy fraction of Thai girls start before 10.
-  Our "early" flag at 8 is probably still right, but it should be a decision, not an inheritance.
-
-**Missing.** Thai **boys** — no equivalent Thai dataset found yet. Also whether the Royal
-College of Pediatricians of Thailand publishes its own recommended cutoffs, which would
-outrank a single study.
+**Still open — now a ratification, not a research task:** put this to the Client Representative
+alongside the growth-reference decision — see `client-questions.md` Q3 (updated). Do **not**
+chase Thai boys' data or Royal College of Pediatricians of Thailand cutoffs further; that
+sourcing task is closed by this decision.
 
 **Owner:** ___ **Due:** ___
 
@@ -261,8 +263,8 @@ peer-reviewed, RCT-validated app. Read it before the client meeting.
 
 | Blocking | Item | Who decides |
 | --- | --- | --- |
-| FR-12/13 correctness | Puberty age thresholds — Thai or Western | Client |
-| FR-7/8/9 correctness, TOR §2A.2 | Growth reference | Client |
+| FR-12/13 correctness | Puberty age thresholds — team decided Western, needs ratification | Client |
+| FR-7/8/9 correctness, TOR §2A.2 | Growth reference — team decided CDC 2000, needs ratification | Client |
 | Whether bone age is worth further investment | The AI value question | Client |
 | Feature integration | Growth → Puberty → Bone Age triggers | Client |
 | C1 BMI chart | BMI category source | Team research, then client confirms |
