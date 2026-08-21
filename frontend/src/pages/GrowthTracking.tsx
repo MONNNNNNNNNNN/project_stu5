@@ -15,7 +15,24 @@ import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { GrowthChartPoint, GrowthRecord, ReferenceCurvePoint } from '../types';
 
 function fmtPercentile(p: string | null) {
-  return p !== null ? `P${Math.round(Number(p))}` : '—';
+  if (p === null) return '—';
+  const n = Number(p);
+  // Rounding stops carrying information past the 99th — a BMI of 35 and one of 60 in a
+  // ten-year-old both render as "P100" otherwise.
+  return n >= 99.5 ? '>P99' : `P${Math.round(n)}`;
+}
+
+/** The BMI cell: weight status where there is one, because the percentile saturates. */
+function fmtBmi(record: GrowthRecord) {
+  if (!record.bmi) return '';
+  const status = record.guidance?.nutritionalStatus;
+  const pct = record.guidance?.bmiPctOfP95;
+  if (!status) return `BMI ${record.bmi}`;
+  const severity =
+    record.guidance?.nutritionalStatusKey === 'SEVERE_OBESITY' && pct
+      ? ` · ${Math.round(Number(pct))}% of P95`
+      : '';
+  return `BMI ${record.bmi} · ${status}${severity}`;
 }
 
 export default function GrowthTracking() {
@@ -231,7 +248,17 @@ export default function GrowthTracking() {
                   <span className="text-gray-500">{formatDate(record.measuredAt)}</span>
                   <span>{record.heightCm ? `${record.heightCm} cm (${fmtPercentile(record.heightPercentile)})` : '—'}</span>
                   <span>{record.weightKg ? `${record.weightKg} kg (${fmtPercentile(record.weightPercentile)})` : '—'}</span>
-                  <span className="text-gray-500">{record.bmi ? `BMI ${record.bmi}` : ''}</span>
+                  <span
+                    className={
+                      record.guidance?.nutritionalStatusKey === 'SEVERE_OBESITY'
+                        ? 'text-red-700 dark:text-red-400'
+                        : record.guidance?.flagged
+                          ? 'text-amber-700 dark:text-amber-400'
+                          : 'text-gray-500'
+                    }
+                  >
+                    {fmtBmi(record)}
+                  </span>
                   <span className="flex items-center gap-1 ml-auto">
                     <IconButton size="small" onClick={() => startEdit(record)}>
                       <EditIcon fontSize="small" />

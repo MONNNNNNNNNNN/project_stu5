@@ -127,6 +127,9 @@ model GrowthRecord {
   heightSds        Decimal?  @db.Decimal(4, 2)
   weightSds        Decimal?  @db.Decimal(4, 2)
   bmiSds           Decimal?  @db.Decimal(4, 2)
+  /// BMI as a percentage of the 95th percentile. CDC's severity metric above P95, and the
+  /// only one that still resolves once the percentile itself has saturated at 100.
+  bmiPctOfP95      Decimal?  @db.Decimal(5, 1)
   note             String?
   createdAt        DateTime  @default(now())
   deletedAt        DateTime?

@@ -21,11 +21,71 @@ function computeBmi(
   return Math.round((weightKg / (heightM * heightM)) * 100) / 100;
 }
 
-function nutritionalStatus(bmiPercentile: number): string {
-  if (bmiPercentile < 5) return 'Underweight';
-  if (bmiPercentile < 85) return 'Healthy weight';
-  if (bmiPercentile < 95) return 'Overweight';
-  return 'Obesity range';
+/**
+ * CDC BMI-for-age weight status categories.
+ *
+ *   underweight      below the 5th percentile
+ *   healthy weight   5th to below the 85th
+ *   overweight       85th to below the 95th
+ *   obesity          95th and above
+ *   severe obesity   at or above 120% of the 95th percentile, or a BMI of 35, whichever
+ *                    comes first
+ *
+ * Source: CDC, "Defining Child BMI Categories", alongside the 2022 extended BMI-for-age
+ * percentiles. Checked 2026-08-21. Closes the BMI cut-points row of research-checklist.md D2.
+ *
+ * Severity above the 95th is deliberately driven by percent-of-P95 rather than by a
+ * percentile. 120% of P95 corresponds to the 99.98th percentile at two years and the 98.05th
+ * at twenty — a fixed percentile cut-point would be wrong by nearly two percentile points
+ * across the age range this app covers, and at that end of the scale that is the difference
+ * between one child in fifty and one in four thousand.
+ *
+ * The BMI-of-35 clause is load-bearing, not decorative: at twenty years a BMI of 35 is the
+ * 97.32nd percentile, which sits *below* 120% of P95, and tall older adolescents are exactly
+ * who it catches. The two conditions cannot invert the ordering — the highest P95 anywhere in
+ * the table is 31.8, so a BMI of 35 always implies a BMI above P95.
+ */
+const SEVERE_OBESITY_PCT_OF_P95 = 120;
+const SEVERE_OBESITY_BMI = 35;
+
+export type NutritionalStatusKey =
+  | 'UNDERWEIGHT'
+  | 'HEALTHY'
+  | 'OVERWEIGHT'
+  | 'OBESITY'
+  | 'SEVERE_OBESITY';
+
+const NUTRITIONAL_STATUS_LABELS: Record<NutritionalStatusKey, string> = {
+  UNDERWEIGHT: 'Underweight',
+  HEALTHY: 'Healthy weight',
+  OVERWEIGHT: 'Overweight',
+  OBESITY: 'Obesity',
+  SEVERE_OBESITY: 'Severe obesity',
+};
+
+export function nutritionalStatusKey(
+  bmiPercentile: number,
+  bmi: number | null,
+  pctOfP95: number | null,
+): NutritionalStatusKey {
+  if (bmiPercentile < 5) return 'UNDERWEIGHT';
+  if (bmiPercentile < 85) return 'HEALTHY';
+  if (bmiPercentile < 95) return 'OVERWEIGHT';
+  const severe =
+    (pctOfP95 !== null && pctOfP95 >= SEVERE_OBESITY_PCT_OF_P95) ||
+    (bmi !== null && bmi >= SEVERE_OBESITY_BMI);
+  return severe ? 'SEVERE_OBESITY' : 'OBESITY';
+}
+
+/**
+ * BMI-for-age only applies from five years (FR-8).
+ *
+ * Rounded before comparing because `ageInMonths` divides by an average month length, which
+ * can land a hair under an exact-year boundary purely from leap-year timing — 59.99 rather
+ * than 60. Shared so the backfill script and `computeMetrics` cannot drift apart on it.
+ */
+export function hasBmiForAge(ageMonths: number): boolean {
+  return Math.round(ageMonths) >= BMI_FOR_AGE_MIN_MONTHS;
 }
 
 @Injectable()
@@ -55,10 +115,8 @@ export class GrowthService {
     const weight = weightKg
       ? this.reference.compute('weight', child.sex, ageMonths, weightKg)
       : null;
-    // Round before comparing: ageInMonths uses an average days-per-month divisor, which can land
-    // a hair under an exact-year threshold (e.g. 59.99 instead of 60) purely from leap-year timing.
     const bmiMetric =
-      bmi && Math.round(ageMonths) >= BMI_FOR_AGE_MIN_MONTHS
+      bmi && hasBmiForAge(ageMonths)
         ? this.reference.compute('bmi', child.sex, ageMonths, bmi)
         : null;
 
@@ -70,6 +128,7 @@ export class GrowthService {
       weightSds: weight?.z ?? null,
       bmiPercentile: bmiMetric?.percentile ?? null,
       bmiSds: bmiMetric?.z ?? null,
+      bmiPctOfP95: bmiMetric?.pctOfP95 ?? null,
     };
   }
 
@@ -77,34 +136,61 @@ export class GrowthService {
   private guidance(record: {
     heightSds: unknown;
     weightSds: unknown;
+    bmi: unknown;
     bmiPercentile: unknown;
-  }): { message: string; flagged: boolean; nutritionalStatus: string | null } {
-    const heightSds =
-      record.heightSds !== null ? Number(record.heightSds) : null;
-    const weightSds =
-      record.weightSds !== null ? Number(record.weightSds) : null;
-    const bmiPercentile =
-      record.bmiPercentile !== null ? Number(record.bmiPercentile) : null;
+    bmiPctOfP95?: unknown;
+  }): {
+    message: string;
+    flagged: boolean;
+    nutritionalStatus: string | null;
+    nutritionalStatusKey: NutritionalStatusKey | null;
+    bmiPctOfP95: number | null;
+  } {
+    const asNumber = (v: unknown) => (v !== null && v !== undefined ? Number(v) : null);
+    const heightSds = asNumber(record.heightSds);
+    const weightSds = asNumber(record.weightSds);
+    const bmi = asNumber(record.bmi);
+    const bmiPercentile = asNumber(record.bmiPercentile);
+    const bmiPctOfP95 = asNumber(record.bmiPctOfP95);
 
+    const statusKey =
+      bmiPercentile !== null
+        ? nutritionalStatusKey(bmiPercentile, bmi, bmiPctOfP95)
+        : null;
+
+    // BMI has to count towards the flag. Without it the app printed "within the typical range
+    // for the child's age and sex" directly above "Nutritional status: Severe obesity" — a
+    // ten-year-old at 130cm and 48kg is 128.5% of P95 but only -1.33 and 1.80 SD on height
+    // and weight, so neither of those thresholds fired.
     const flagged =
       (heightSds !== null && Math.abs(heightSds) > NOTABLE_Z_THRESHOLD) ||
-      (weightSds !== null && Math.abs(weightSds) > NOTABLE_Z_THRESHOLD);
-
-    const status =
-      bmiPercentile !== null ? nutritionalStatus(bmiPercentile) : null;
+      (weightSds !== null && Math.abs(weightSds) > NOTABLE_Z_THRESHOLD) ||
+      statusKey === 'UNDERWEIGHT' ||
+      statusKey === 'OBESITY' ||
+      statusKey === 'SEVERE_OBESITY';
 
     const message = flagged
       ? "This measurement falls notably outside the typical range for the child's age and sex. This is a screening signal, not a diagnosis — consider discussing it with a pediatrician."
       : "This measurement is within the typical range for the child's age and sex.";
 
-    return { message, flagged, nutritionalStatus: status };
+    return {
+      message,
+      flagged,
+      nutritionalStatus: statusKey ? NUTRITIONAL_STATUS_LABELS[statusKey] : null,
+      // The key, not just the label, so the UI can colour and branch on a stable value rather
+      // than matching on prose that copy edits will change.
+      nutritionalStatusKey: statusKey,
+      bmiPctOfP95,
+    };
   }
 
   private attachGuidance<
     T extends {
       heightSds: unknown;
       weightSds: unknown;
+      bmi: unknown;
       bmiPercentile: unknown;
+      bmiPctOfP95?: unknown;
     },
   >(record: T) {
     return { ...record, guidance: this.guidance(record) };
@@ -208,6 +294,7 @@ export class GrowthService {
         heightPercentile: true,
         weightPercentile: true,
         bmiPercentile: true,
+        bmiPctOfP95: true,
       },
     });
     return records.map((r) => ({
@@ -218,6 +305,7 @@ export class GrowthService {
       heightPercentile: r.heightPercentile ? Number(r.heightPercentile) : null,
       weightPercentile: r.weightPercentile ? Number(r.weightPercentile) : null,
       bmiPercentile: r.bmiPercentile ? Number(r.bmiPercentile) : null,
+      bmiPctOfP95: r.bmiPctOfP95 ? Number(r.bmiPctOfP95) : null,
     }));
   }
 

@@ -38,14 +38,26 @@ function ReferenceTooltip({ active, label, payload, unit, title, curve }: Refere
   const ref = nearestCurvePoint(curve, ageMonths);
   const actual = payload?.find((p) => p.dataKey === 'value')?.value as number | undefined;
 
+  // BMI reads against the obesity lines, not against P97 — that is what the bands mean here.
+  const isBmi = ref?.p95 !== undefined;
+
   let status: string | null = null;
   if (actual !== undefined && ref) {
-    if (actual < ref.p3) status = `Below the typical reference range (P3: ${fmt(ref.p3)}${unit})`;
-    else if (actual > ref.p97) status = `Above the typical reference range (P97: ${fmt(ref.p97)}${unit})`;
+    if (isBmi && actual >= ref.p120ofP95!)
+      status = `Severe obesity range (at or above 120% of P95: ${fmt(ref.p120ofP95!)}${unit})`;
+    else if (isBmi && actual >= ref.p95!)
+      status = `Obesity range (at or above P95: ${fmt(ref.p95!)}${unit})`;
+    else if (actual < ref.p3) status = `Below the typical reference range (P3: ${fmt(ref.p3)}${unit})`;
+    else if (!isBmi && actual > ref.p97)
+      status = `Above the typical reference range (P97: ${fmt(ref.p97)}${unit})`;
+    else if (isBmi) status = `Below the obesity threshold (P95: ${fmt(ref.p95!)}${unit})`;
     else status = `Within the typical reference range (P3–P97: ${fmt(ref.p3)}–${fmt(ref.p97)}${unit})`;
   }
 
-  const outside = actual !== undefined && ref !== null && (actual < ref.p3 || actual > ref.p97);
+  const outside =
+    actual !== undefined &&
+    ref !== null &&
+    (actual < ref.p3 || (isBmi ? actual >= ref.p95! : actual > ref.p97));
 
   return (
     <div className="bg-surface border border-brand-100 rounded-xl shadow-md px-3 py-2 text-xs">
@@ -102,18 +114,29 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
   // ordering — so the same four entries read in a different order on every chart. Rendering
   // it ourselves also keeps the reference lines painted *under* the child's line, which
   // declaration order alone would not allow.
+  // BMI charts show P95 and 120%-of-P95 instead of P97. P97 has no clinical reading on a BMI
+  // chart, and at ten years it sits about 1.2 BMI units from P95 — two dashed lines almost on
+  // top of each other, neither of which is the line a clinician looks for.
+  const hasObesityBands = visibleCurve.some((p) => p.p95 !== undefined);
   const legendItems = [
     { label: title, color: seriesColor, dashed: false },
     { label: 'P3', color: c.band, dashed: true },
     { label: 'P50 (median)', color: c.median, dashed: true },
-    { label: 'P97', color: c.band, dashed: true },
+    ...(hasObesityBands
+      ? [
+          { label: 'P95 (obesity)', color: c.band, dashed: true },
+          { label: '120% of P95 (severe)', color: c.band, dashed: true },
+        ]
+      : [{ label: 'P97', color: c.band, dashed: true }]),
   ];
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-5">
       <h2 className="font-semibold text-ink mb-1">{title}</h2>
       <p className="text-xs text-gray-500 mb-4">
-        Dashed lines are the 3rd/50th/97th percentile reference curves for the child's age and sex.
+        {hasObesityBands
+          ? "Dashed lines are the 3rd and 50th percentile, the 95th (obesity) and 120% of the 95th (severe obesity), for the child's age and sex. Percentiles above the 95th use CDC's 2022 extended method."
+          : "Dashed lines are the 3rd/50th/97th percentile reference curves for the child's age and sex."}
       </p>
       <ResponsiveContainer width="100%" height={260}>
         <ComposedChart>
@@ -138,7 +161,14 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
           />
           <Tooltip content={<ReferenceTooltip unit={unit} title={title} curve={visibleCurve} />} />
           <Legend content={<ChartLegend items={legendItems} />} />
-          <Line data={visibleCurve} dataKey="p97" stroke={c.band} strokeDasharray="4 3" dot={false} name="P97" isAnimationActive={false} />
+          {hasObesityBands ? (
+            <>
+              <Line data={visibleCurve} dataKey="p120ofP95" stroke={c.band} strokeDasharray="4 3" dot={false} name="120% of P95 (severe)" isAnimationActive={false} />
+              <Line data={visibleCurve} dataKey="p95" stroke={c.band} strokeDasharray="4 3" dot={false} name="P95 (obesity)" isAnimationActive={false} />
+            </>
+          ) : (
+            <Line data={visibleCurve} dataKey="p97" stroke={c.band} strokeDasharray="4 3" dot={false} name="P97" isAnimationActive={false} />
+          )}
           <Line data={visibleCurve} dataKey="p50" stroke={c.median} strokeDasharray="4 3" dot={false} name="P50 (median)" isAnimationActive={false} />
           <Line data={visibleCurve} dataKey="p3" stroke={c.band} strokeDasharray="4 3" dot={false} name="P3" isAnimationActive={false} />
           <Line

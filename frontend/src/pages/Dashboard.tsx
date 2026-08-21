@@ -18,6 +18,7 @@ import type {
   Article,
   BoneAgePrediction,
   GrowthChartPoint,
+  GrowthGuidance,
   GrowthStatistics,
   PubertyScreening,
   ReferenceCurvePoint,
@@ -74,11 +75,40 @@ const MEASURES: {
   },
 ];
 
+const AMBER = 'text-amber-700 dark:text-amber-400';
+const RED = 'text-red-700 dark:text-red-400';
+
 function describePercentile(p: number | null) {
   if (p === null) return null;
-  if (p < 3) return { label: `P${Math.round(p)} · below typical`, tone: 'text-amber-700 dark:text-amber-400' };
-  if (p > 97) return { label: `P${Math.round(p)} · above typical`, tone: 'text-amber-700 dark:text-amber-400' };
+  // Above the 99th, rounding to a whole percentile stops carrying information: a BMI of 35
+  // and a BMI of 60 in a ten-year-old are the 99.97th and 100th, and both render as "P100".
+  // Say ">P99" and let the BMI tile below carry the actual severity.
+  if (p >= 99.5) return { label: '>P99 · well above typical', tone: AMBER };
+  if (p < 3) return { label: `P${Math.round(p)} · below typical`, tone: AMBER };
+  if (p > 97) return { label: `P${Math.round(p)} · above typical`, tone: AMBER };
   return { label: `P${Math.round(p)} · typical range`, tone: 'text-brand-600' };
+}
+
+/**
+ * What the BMI tile says.
+ *
+ * Percentile alone is the wrong summary once a child is obese — it saturates. The weight
+ * status and the percent-of-P95 are the only things that still distinguish one severely obese
+ * child from another, so they take over the line when the status warrants it.
+ */
+function describeBmi(percentile: number | null, guidance?: GrowthGuidance) {
+  const key = guidance?.nutritionalStatusKey;
+  if (key === 'SEVERE_OBESITY' || key === 'OBESITY' || key === 'UNDERWEIGHT') {
+    const pct = guidance?.bmiPctOfP95;
+    return {
+      label:
+        key === 'UNDERWEIGHT'
+          ? guidance!.nutritionalStatus!
+          : `${guidance!.nutritionalStatus}${pct ? ` · ${Math.round(pct)}% of P95` : ''}`,
+      tone: key === 'SEVERE_OBESITY' ? RED : AMBER,
+    };
+  }
+  return describePercentile(percentile);
 }
 
 export default function Dashboard() {
@@ -186,7 +216,11 @@ export default function Dashboard() {
                     ? fmt(stats?.latest?.weightKg, ' kg')
                     : fmt(stats?.latest?.bmi, '');
               const raw = stats?.latest?.[m.percentile];
-              const status = describePercentile(raw !== null && raw !== undefined ? Number(raw) : null);
+              const percentile = raw !== null && raw !== undefined ? Number(raw) : null;
+              const status =
+                m.key === 'bmi'
+                  ? describeBmi(percentile, stats?.latest?.guidance)
+                  : describePercentile(percentile);
               return (
                 <button
                   key={m.key}

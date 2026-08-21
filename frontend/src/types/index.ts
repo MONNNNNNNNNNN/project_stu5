@@ -19,10 +19,21 @@ export interface Child {
   createdAt: string;
 }
 
+/** Stable keys for the BMI weight-status tiers, so the UI colours on a value rather than prose. */
+export type NutritionalStatusKey =
+  | 'UNDERWEIGHT'
+  | 'HEALTHY'
+  | 'OVERWEIGHT'
+  | 'OBESITY'
+  | 'SEVERE_OBESITY';
+
 export interface GrowthGuidance {
   message: string;
   flagged: boolean;
   nutritionalStatus: string | null;
+  nutritionalStatusKey: NutritionalStatusKey | null;
+  /** BMI as a percentage of the 95th percentile — the severity figure above P95. */
+  bmiPctOfP95: number | null;
 }
 
 export interface GrowthRecord {
@@ -38,6 +49,7 @@ export interface GrowthRecord {
   heightSds: string | null;
   weightSds: string | null;
   bmiSds: string | null;
+  bmiPctOfP95: string | null;
   note: string | null;
   createdAt: string;
   guidance?: GrowthGuidance;
@@ -51,6 +63,7 @@ export interface GrowthChartPoint {
   heightPercentile: number | null;
   weightPercentile: number | null;
   bmiPercentile: number | null;
+  bmiPctOfP95: number | null;
 }
 
 export interface ReferenceCurvePoint {
@@ -58,6 +71,9 @@ export interface ReferenceCurvePoint {
   p3: number;
   p50: number;
   p97: number;
+  /** BMI charts only: the obesity line and CDC's severe-obesity line. */
+  p95?: number;
+  p120ofP95?: number;
 }
 
 export interface GrowthStatistics {
