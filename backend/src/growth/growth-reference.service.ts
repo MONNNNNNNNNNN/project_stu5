@@ -13,6 +13,20 @@ interface LmsRow {
   S: number;
 }
 
+/**
+ * BMI rows carry one parameter the others do not.
+ *
+ * CDC's December 2022 extended BMI-for-age keeps the same L/M/S below the 95th percentile and
+ * splices a half-normal onto the tail above it. `sigma` is that distribution's scale. It
+ * exists only in the BMI table, which is why it is a separate interface rather than an
+ * optional field on `LmsRow` that height and weight would have to keep explaining.
+ *
+ * Source: https://www.cdc.gov/growthcharts/data/extended-bmi/bmi-age-2022.csv
+ */
+interface BmiLmsRow extends LmsRow {
+  sigma: number;
+}
+
 type Measure = 'weight' | 'height' | 'bmi';
 type Sex = 'MALE' | 'FEMALE';
 
@@ -86,7 +100,7 @@ function interpolateLms(
   table: LmsRow[],
   sex: Sex,
   ageMonths: number,
-): LmsRow | null {
+): (LmsRow & { sigma?: number }) | null {
   const rows = table.filter((r) => r.sex === sexCode(sex));
   if (rows.length === 0) return null;
 
@@ -107,12 +121,20 @@ function interpolateLms(
 
   if (lo.ageMonths === hi.ageMonths) return lo;
   const t = (clamped - lo.ageMonths) / (hi.ageMonths - lo.ageMonths);
+  const loSigma = (lo as BmiLmsRow).sigma;
+  const hiSigma = (hi as BmiLmsRow).sigma;
   return {
     sex: lo.sex,
     ageMonths: clamped,
     L: lo.L + t * (hi.L - lo.L),
     M: lo.M + t * (hi.M - lo.M),
     S: lo.S + t * (hi.S - lo.S),
+    // BMI only. Interpolated exactly like L/M/S and on the same half-month grid; sigma is
+    // strictly increasing with age (1.376 -> 7.831) with no adjacent-row step above 3%, so
+    // linear interpolation cannot land on a nonsensical value.
+    ...(loSigma !== undefined && hiSigma !== undefined
+      ? { sigma: loSigma + t * (hiSigma - loSigma) }
+      : {}),
   };
 }
 
@@ -154,9 +176,168 @@ function normalCdf(z: number): number {
   return 0.5 * (1 + erf(z / Math.SQRT2));
 }
 
+/**
+ * z at the 95th percentile: Phi(1.6448536269514722) = 0.95.
+ *
+ * Both the branch point for CDC's extended BMI percentiles and the reason the two branches
+ * meet without a step: P95 is *defined* as `valueAtZ(lms, P95_Z)`, so at exactly that BMI the
+ * extended formula's offset is zero and it returns the same 95 the LMS branch does.
+ */
+const P95_Z = 1.6448536269514722;
+
+/**
+ * Complementary error function — Chebyshev fit, Numerical Recipes 3rd ed. §6.2.
+ *
+ * `erf` above (A&S 7.1.26) is accurate to 1.5e-7 *absolute*, which is fine for a percentile
+ * and useless for a tail probability: the true upper tail at z = 5 is 2.9e-7, so A&S carries
+ * roughly 50% *relative* error there and saturates outright above z ~ 6 — which would make
+ * the probit below return Infinity and Prisma reject the write. A BMI of 40 in a ten-year-old
+ * already reaches z 4.37. This fit holds ~1e-13 fractional accuracy across the whole tail.
+ *
+ * `erf`/`normalCdf` are deliberately left alone so height and weight results are unchanged.
+ */
+const ERFC_COF = [
+  -1.3026537197817094, 6.4196979235649026e-1, 1.9476473204185836e-2,
+  -9.561514786808631e-3, -9.46595344482036e-4, 3.66839497852761e-4,
+  4.2523324806907e-5, -2.0278578112534e-5, -1.624290004647e-6, 1.30365583558e-6,
+  1.5626441722e-8, -8.5238095915e-8, 6.529054439e-9, 5.059343495e-9,
+  -9.91364156e-10, -2.27365122e-10, 9.6467911e-11, 2.394038e-12, -6.886027e-12,
+  8.94487e-13, 3.13092e-13, -1.12708e-13, 3.81e-16, 7.106e-15,
+];
+
+function erfc(x: number): number {
+  const z = Math.abs(x);
+  const t = 2 / (2 + z);
+  const ty = 4 * t - 2;
+  let d = 0;
+  let dd = 0;
+  for (let j = ERFC_COF.length - 1; j > 0; j--) {
+    const tmp = d;
+    d = ty * d - dd + ERFC_COF[j];
+    dd = tmp;
+  }
+  const ans = t * Math.exp(-z * z + 0.5 * (ERFC_COF[0] + ty * d) - dd);
+  return x >= 0 ? ans : 2 - ans;
+}
+
+/**
+ * Upper-tail probability P(Z > x).
+ *
+ * Computed directly rather than as `1 - normalCdf(x)`, which cancels to exactly zero once x
+ * passes about 8 and throws away every significant digit long before that.
+ */
+function normalSf(x: number): number {
+  return 0.5 * erfc(x / Math.SQRT2);
+}
+
+/**
+ * Inverse normal CDF, expressed on the upper tail: returns z such that P(Z > z) = q.
+ *
+ * Peter Acklam's rational approximation, relative error below 1.15e-9 — far more than the two
+ * decimal places `compute` rounds to, and chosen over Wichura's AS241 because it is half the
+ * coefficients for accuracy this codebase does not need.
+ *
+ * Taking q as the upper tail rather than accepting a percentile is the point: converting a
+ * 99.99th percentile back to an SDS via `probit(p / 100)` loses all precision, and
+ * `probit(100 / 100)` is Infinity.
+ */
+const PROBIT_A = [
+  -3.969683028665376e1, 2.209460984245205e2, -2.759285104469687e2,
+  1.38357751867269e2, -3.066479806614716e1, 2.506628277459239,
+];
+const PROBIT_B = [
+  -5.447609879822406e1, 1.615858368580409e2, -1.556989798598866e2,
+  6.680131188771972e1, -1.328068155288572e1,
+];
+const PROBIT_C = [
+  -7.784894002430293e-3, -3.223964580411365e-1, -2.400758277161838,
+  -2.549732539343734, 4.374664141464968, 2.938163982698783,
+];
+const PROBIT_D = [
+  7.784695709041462e-3, 3.224671290700398e-1, 2.445134137142996,
+  3.754408661907416,
+];
+const PROBIT_LOW = 0.02425;
+
+function probitUpper(q: number): number {
+  if (!(q > 0)) return Infinity;
+  if (q >= 1) return -Infinity;
+  if (q < PROBIT_LOW) {
+    const t = Math.sqrt(-2 * Math.log(q));
+    return (
+      -(
+        ((((PROBIT_C[0] * t + PROBIT_C[1]) * t + PROBIT_C[2]) * t + PROBIT_C[3]) *
+          t +
+          PROBIT_C[4]) *
+          t +
+        PROBIT_C[5]
+      ) /
+      ((((PROBIT_D[0] * t + PROBIT_D[1]) * t + PROBIT_D[2]) * t + PROBIT_D[3]) *
+        t +
+        1)
+    );
+  }
+  if (q > 1 - PROBIT_LOW) return -probitUpper(1 - q);
+  const r = 0.5 - q;
+  const s = r * r;
+  return (
+    ((((((PROBIT_A[0] * s + PROBIT_A[1]) * s + PROBIT_A[2]) * s + PROBIT_A[3]) *
+      s +
+      PROBIT_A[4]) *
+      s +
+      PROBIT_A[5]) *
+      r) /
+    (((((PROBIT_B[0] * s + PROBIT_B[1]) * s + PROBIT_B[2]) * s + PROBIT_B[3]) *
+      s +
+      PROBIT_B[4]) *
+      s +
+      1)
+  );
+}
+
+/**
+ * CDC 2022 extended BMI-for-age, above the 95th percentile.
+ *
+ * The LMS z formula has a hard ceiling wherever L is negative, which for BMI it is at every
+ * age: z can never exceed -1/(L*S), and for a ten-year-old boy that is 3.0096. So BMI 35 and
+ * BMI 60 came out 0.26 percentile points apart (99.5704 and 99.8272) despite one being nearly
+ * double the other. CDC replaces the tail with a half-normal on the BMI scale itself:
+ *
+ *     P(bmi) = 100 * (0.95 + 0.05 * (2*Phi((bmi - P95)/sigma) - 1))     for bmi >= P95
+ *
+ * Verified against CDC's own published P95/P98/P99/P99.9/P99.99 columns across all 438 rows,
+ * worst disagreement 1.2e-4 percentile points — see scripts/build-reference-data.mjs.
+ *
+ * The upper tail is carried as `q` throughout rather than reconstructed from the percentile,
+ * because `1 - P/100` cancels to zero well before the model stops being able to resolve.
+ */
+function extendedBmiTail(
+  bmi: number,
+  p95: number,
+  sigma: number,
+): { percentile: number; z: number } {
+  const q = 0.1 * normalSf((bmi - p95) / sigma);
+  return { percentile: 100 * (1 - q), z: probitUpper(q) };
+}
+
+/**
+ * Storage guard, not a clinical one. `bmiSds` is Decimal(4,2), and the tail probability only
+ * underflows to zero above z ~ 37; the largest a real measurement produces is around 8.4
+ * (BMI 60 at ten years).
+ */
+const MAX_STORABLE_Z = 20;
+
 export interface GrowthMetric {
   z: number;
   percentile: number;
+  /**
+   * BMI only: the measurement as a percentage of the 95th percentile for age and sex.
+   *
+   * CDC's severity metric above P95, and the only one that still resolves once the percentile
+   * has saturated — BMI 35 and BMI 60 in a ten-year-old are 99.97 and 100.00, but 158% and
+   * 271% of P95.
+   */
+  pctOfP95?: number;
 }
 
 @Injectable()
@@ -178,10 +359,35 @@ export class GrowthReferenceService {
     const table = pickTable(measure, ageMonths);
     const lms = interpolateLms(table, sex, ageMonths);
     if (!lms) return null;
+
+    // Two decimal places, not one. The extended range lives entirely inside the last of them:
+    // at one decimal place a BMI of 35, 40 and 60 all store as 100.0 and the whole extension
+    // is cosmetic. bmiPercentile is already Decimal(5,2), so this needs no schema change.
+    if (measure === 'bmi' && lms.sigma !== undefined) {
+      const p95 = valueAtZ(lms, P95_Z);
+      const pctOfP95 = Math.round((value / p95) * 1000) / 10;
+
+      if (value >= p95) {
+        const { percentile, z } = extendedBmiTail(value, p95, lms.sigma);
+        return {
+          z: Math.round(Math.min(z, MAX_STORABLE_Z) * 100) / 100,
+          percentile: Math.round(percentile * 100) / 100,
+          pctOfP95,
+        };
+      }
+
+      const z = zScore(value, lms);
+      return {
+        z: Math.round(z * 100) / 100,
+        percentile: Math.round(normalCdf(z) * 10000) / 100,
+        pctOfP95,
+      };
+    }
+
     const z = zScore(value, lms);
     return {
       z: Math.round(z * 100) / 100,
-      percentile: Math.round(normalCdf(z) * 1000) / 10,
+      percentile: Math.round(normalCdf(z) * 10000) / 100,
     };
   }
 
@@ -193,11 +399,20 @@ export class GrowthReferenceService {
         r.ageMonths >= fromMonths &&
         r.ageMonths <= toMonths,
     );
-    return rows.map((r) => ({
-      ageMonths: r.ageMonths,
-      p3: valueAtZ(r, -P3_P97_Z),
-      p50: r.M,
-      p97: valueAtZ(r, P3_P97_Z),
-    }));
+    return rows.map((r) => {
+      // BMI charts get P95 and 120%-of-P95 instead of P97. P95 is the obesity line and 120%
+      // of it is CDC's severe-obesity line; P97 has no clinical reading on a BMI chart and
+      // sits about 1.2 BMI units from P95 at ten years, so drawing both just puts two nearly
+      // coincident dashed lines on the same axis.
+      const sigma = (r as BmiLmsRow).sigma;
+      const p95 = sigma !== undefined ? valueAtZ(r, P95_Z) : undefined;
+      return {
+        ageMonths: r.ageMonths,
+        p3: valueAtZ(r, -P3_P97_Z),
+        p50: r.M,
+        p97: valueAtZ(r, P3_P97_Z),
+        ...(p95 !== undefined ? { p95, p120ofP95: 1.2 * p95 } : {}),
+      };
+    });
   }
 }
