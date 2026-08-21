@@ -1,6 +1,7 @@
 # Product flow and feature integration
 
-Prepared 2026-08-18, answering three points from the client review:
+Prepared 2026-08-18, revised 2026-08-21 to match the flow the client actually described,
+answering three points from the client review:
 
 - *"Function แต่ละเมนูไม่ related กัน"*
 - *"Flow การใช้งานเป็นอย่างไร"*
@@ -51,18 +52,22 @@ We built the three features. We did not build the "alongside".
         ┌──────────────── log height / weight ─────────────────┐
         │                                                      │
         ▼                                                      ▼
-   within range                                    outside ±2 SD, OR
-        │                                     crossing percentile bands upward
+  BMI: Healthy weight                    BMI: Underweight / Overweight / Obesity range
         │                                                      │
         ▼                                                      ▼
-   "typical range"                              ┌─────────────────────────────┐
-   keep tracking                                │ SUGGEST: puberty screening  │
-                                                │ "growth like this is worth  │
-                                                │  checking alongside signs   │
-                                                │  of puberty"                │
-                                                └──────────────┬──────────────┘
-                                                               ▼
-                                                     puberty screening
+   keep tracking                          child's age within the screening range?
+                                                       │              │
+                                                      no             yes
+                                                       │              │
+                                                       ▼              ▼
+                                            keep tracking,   ┌─────────────────────────────┐
+                                            re-check BMI     │ SUGGEST: puberty screening  │
+                                            next visit       │ "growth like this is worth  │
+                                                              │  checking alongside signs   │
+                                                              │  of puberty"                │
+                                                              └──────────────┬──────────────┘
+                                                                             ▼
+                                                                   puberty screening
                                                                │
                               ┌────────────────────────────────┼──────────────┐
                               ▼                                ▼              ▼
@@ -90,18 +95,37 @@ We built the three features. We did not build the "alongside".
 
 ## Trigger rules
 
+This replaces the earlier draft of this table, which used height/weight SDS as the growth
+trigger. That was the team's own guess at a mechanism, not what the client asked for — the
+client's actual description uses **BMI**, which the app already computes and displays but does
+not currently act on.
+
 | # | Trigger | Action | Clinical rationale |
 | --- | --- | --- | --- |
-| T1 | height or weight SDS beyond ±2 | suggest puberty screening | growth deviation is a recognised presenting sign of a pubertal disorder |
-| T2 | height crossing upward through percentile bands over 2+ measurements | suggest puberty screening | accelerating growth velocity is the classic early sign — often before any visible pubertal change |
-| T3 | screening returns `EARLY_SIGNS` | suggest bone-age upload | bone age is what distinguishes rapidly-progressive from slowly-progressive puberty |
-| T4 | bone age ≥ 2 years ahead of chronological age | surface on the growth chart, suggest referral | advanced skeletal maturation with early signs is the combination that matters |
-| T5 | screening flagged, no follow-up in 4 months | remind | the existing `buildMonitoringPlan` already computes this date — nothing currently surfaces it |
+| T1 | BMI-for-age outside healthy range — `nutritionalStatus` returns Underweight, Overweight, or Obesity range (`growth.service.ts:24-28`) | suggest puberty screening | adiposity is a recognised risk factor for earlier pubertal onset, particularly in girls; low BMI is associated with delayed onset — **needs a citation**, see `research-checklist.md` D2 |
+| T1a | only surface T1's suggestion once the child is within the screening's age range | gate, not itself a suggestion | client's instruction was *"ถามก็ต่อเมื่อเด็กอายุถึง"* — ask only once the child's age reaches [threshold]. **The exact age was not confirmed and is not in this repo — needs re-asking**, see `client-questions.md` Q7a |
+| T2 | screening returns `EARLY_SIGNS` | suggest bone-age upload, **and** the "see a doctor" notification the client described | already built server-side: `EARLY_SIGNS` sets `seeDoctor: true` and guidance to book an appointment, plus a recurring monitoring plan every `FOLLOW_UP_INTERVAL_MONTHS` (4 months) for `FOLLOW_UP_ROUNDS` (3 rounds) — see `puberty-screening.util.ts`. This is very likely the "พบแพทย์ประจำ" (regular/ongoing doctor) framing the client meant; **confirm at the next client meeting**, since the client's exact wording was not retained |
+| T3 | bone age ≥ 2 years ahead of chronological age | surface on the growth chart, suggest referral | advanced skeletal maturation with early signs is the combination that matters — threshold still uncited, see D3 |
+| T4 | screening flagged, no follow-up in 4 months | remind | the existing `buildMonitoringPlan` already computes this date — nothing currently surfaces it |
 
-**T5 is worth noting:** the follow-up schedule is already calculated and displayed, but nothing
+**T1 and T1a are both currently unbuilt.** `nutritionalStatus` is computed and returned by the
+API on every growth record, and shown to the parent, but nothing reads it to suggest a
+screening — that wiring, plus the age gate, is the actual gap to close.
+
+**T1a needs a number before it can be built.** Two candidates, both defensible, and the choice
+changes what the feature catches:
+
+| Option | What it catches | What it misses |
+| --- | --- | --- |
+| Gate at the precocious-puberty threshold age (8♀ / 9♂ — `PRECOCIOUS_AGE_FEMALE`/`_MALE`) | Nothing below that age is asked, matching "don't ask a 3-year-old's parent about breast development" | A child whose BMI flags at age 6 waits years before the app ever prompts screening, even though early-onset cases are exactly what needs catching before that threshold |
+| Gate at whatever age the client actually meant | — | unknown until re-confirmed |
+
+Recommend re-asking rather than guessing — see `client-questions.md` Q7a.
+
+**T4 is worth noting:** the follow-up schedule is already calculated and displayed, but nothing
 reminds the parent when the date arrives. The `Notification` model, the bell, the badge and the
 `/notifications` page all exist and are all permanently empty because **nothing in the backend
-ever creates a notification**. T5 would be the first real producer — closing a dead feature and
+ever creates a notification**. T4 would be the first real producer — closing a dead feature and
 adding the connective tissue in one change.
 
 ## Suggested, not required
@@ -173,8 +197,9 @@ Small, and mostly in the backend that already exists:
 
 | Change | Where |
 | --- | --- |
-| Trigger evaluation T1–T4 | `growth.service.ts` guidance, `puberty.service.ts` result |
-| Notification producer for T5 | new — first writer to the `Notification` model |
+| T1/T1a BMI-based trigger + age gate | `growth.service.ts` guidance, once T1a's age is confirmed |
+| T2/T3 wiring | `puberty.service.ts` result, `bone-age.service.ts` |
+| Notification producer for T4 | new — first writer to the `Notification` model |
 | Combined view | `Dashboard.tsx` — a panel that reads all three, rather than three separate cards |
 | Copy changes | `BoneAgeUpload.tsx` intro, puberty result next-steps |
 
@@ -186,5 +211,9 @@ No schema change. No new dependency. The data to drive every trigger is already 
 
 - [ ] Suggested or required? ([Q8](./client-questions.md#q8--should-the-features-trigger-each-other))
 - [ ] Is the AI framing above the one to build toward? ([Q4](./client-questions.md#q4--what-is-the-ai-bone-age-actually-for--most-important))
-- [ ] T4's "2 years ahead" threshold needs a clinical source — currently our own suggestion
-- [ ] T2's "crossing percentile bands" needs a precise definition (how many bands, over how long)
+- [ ] **T1a's age gate — what age did the client actually mean?** ([Q7a](./client-questions.md#q7a--at-what-age-should-puberty-screening-first-be-offered))
+- [ ] **T2's "notify to see a doctor" — confirm this maps to the existing `EARLY_SIGNS` /
+      `seeDoctor: true` / 4-month follow-up behaviour**, since the client's exact wording on
+      this point was not retained by the team
+- [ ] T3's "2 years ahead" threshold needs a clinical source — currently our own suggestion
+- [ ] T1's BMI-to-puberty-onset link needs a citation before it goes in front of a parent

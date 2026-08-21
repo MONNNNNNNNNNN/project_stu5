@@ -3,7 +3,7 @@
 Prepared 2026-08-18, from the client review. Ordered by how much work each unblocks.
 
 Each question states **why we are asking** and **what we do with each answer**, so the meeting
-produces decisions instead of discussion. Nine questions — should fit one session.
+produces decisions instead of discussion. Ten questions — should fit one session.
 
 Bring [`research-checklist.md`](./research-checklist.md) and
 [`competitor-analysis.md`](./competitor-analysis.md) as backup.
@@ -152,20 +152,43 @@ should the app record who did?
 
 ---
 
+## Q7a — At what age should puberty screening first be offered?
+
+**Why.** You told us to only ask the puberty questions once the child's age reaches a certain
+point — the team's notes did not capture the specific age you gave, and we would rather
+re-ask than guess at something this clinical. We do not want to invent a number and have it
+turn out wrong in either direction: gate it too late and a child with a genuine early sign at,
+say, age 6 never gets flagged before the threshold; gate it too early and parents of very young
+children get asked clinically-loaded questions with no relevance yet.
+
+**Options.**
+
+| Answer | What we do |
+| --- | --- |
+| Gate at the precocious-puberty threshold age (8 for girls, 9 for boys) | Matches the age the app already uses to flag "early" — but by definition delays the prompt past the age where catching an early case matters most |
+| A younger age you specify | We use it directly |
+| No gate — offer it any time BMI flags | Simplest to build, but risks the "why is my toddler being asked about menstruation" reaction you may have been trying to avoid |
+
+---
+
 ## Q8 — Should the features trigger each other?
 
 **Why.** You said the menus are not related. We agree — Growth, Puberty and Bone Age are three
 parallel screens that never reference each other, and a bone age only means something next to a
 growth chart and a puberty stage.
 
-**What we propose** (detail in [`product-flow.md`](./product-flow.md)):
+**What we propose**, matching the flow you described (detail in
+[`product-flow.md`](./product-flow.md)):
 
 | Trigger | Action |
 | --- | --- |
-| height/weight SDS beyond ±2 | prompt a puberty screening |
-| height crossing upward through percentile bands | prompt a puberty screening |
-| screening returns "early signs" | prompt a bone-age upload |
+| BMI outside the healthy range (Underweight / Overweight / Obesity) | prompt a puberty screening — once the age gate in Q7a is settled |
+| screening returns "early signs" | prompt a bone-age upload, and a "see a doctor" notification with a recurring follow-up |
 | bone age well ahead of chronological age | show on the growth chart, prompt referral |
+
+We changed this from an earlier draft that used height/weight SDS as the growth trigger — that
+was our own guess before we confirmed BMI was what you meant. Please correct us if BMI is not
+right either.
 
 **Question for you:** should these be **required** (blocking) or **suggested** (dismissible)?
 We lean strongly to suggested — a required medical questionnaire a parent cannot skip will make
