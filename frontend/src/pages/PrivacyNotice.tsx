@@ -1,11 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
 import { PageChrome } from '../components/PageChrome';
-import { useAuth } from '../context/AuthContext';
+import { BackLink } from '../components/BackLink';
 
 export default function PrivacyNotice() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
   return (
     <PageChrome>
       <div className="max-w-2xl mx-auto bg-surface rounded-2xl shadow-sm p-8 flex flex-col gap-4 text-sm text-ink leading-relaxed">
@@ -49,21 +45,7 @@ export default function PrivacyNotice() {
           which removes your login and unlinks you from any children's records.
         </p>
 
-        {/* A signed-in reader reached this from inside the app. Sending them to the
-            registration page reads as though their session had ended. */}
-        {user ? (
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="text-brand-600 font-medium mt-4 self-start hover:underline"
-          >
-            ← Back
-          </button>
-        ) : (
-          <Link to="/register" className="text-brand-600 font-medium mt-4">
-            ← Back to registration
-          </Link>
-        )}
+        <BackLink />
       </div>
     </PageChrome>
   );

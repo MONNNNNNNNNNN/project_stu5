@@ -10,7 +10,15 @@ import { useAuth } from '../context/AuthContext';
  * logged out mid-session; everyone else gets the public header and footer.
  */
 export function PageChrome({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // While the session is still being restored `user` is null, which is indistinguishable from
+  // signed out. Rendering the public shell during that window makes a signed-in reader flash
+  // the logged-out header — and any "back" control rendered in that frame points at the
+  // registration page. Wait for the answer instead of guessing it.
+  if (loading) {
+    return <div className="min-h-svh bg-cream" />;
+  }
 
   if (user) {
     return <AppChrome>{children}</AppChrome>;

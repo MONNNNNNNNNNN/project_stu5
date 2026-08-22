@@ -1,6 +1,19 @@
 import axios from 'axios';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
+/**
+ * Trailing slashes are stripped deliberately.
+ *
+ * The axios *instance* normalises `baseURL + '/path'` for us, but the two places that build a
+ * URL by string concatenation do not — and VITE_API_URL is set from a dashboard, where a
+ * trailing slash is easy to paste in. It currently has one, which made those two requests go
+ * to `//health` and `//auth/refresh`. The backend 404s a doubled slash, so the cold-start
+ * warm-up silently did nothing, and the silent token refresh failed — logging a user out
+ * fifteen minutes into a session instead of renewing it, which is long enough that nobody
+ * connects the two.
+ */
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
+).replace(/\/+$/, '');
 
 // Render's free tier can cold-start the backend, so this needs to be generous enough
 // to survive that — but bounded, so a dead/unreachable backend fails fast instead of

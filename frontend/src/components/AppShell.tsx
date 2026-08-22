@@ -7,6 +7,7 @@ import HealthIcon from '@mui/icons-material/MonitorHeartOutlined';
 import ResourcesIcon from '@mui/icons-material/MenuBookOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import FamilyRestroomOutlinedIcon from '@mui/icons-material/FamilyRestroomOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../context/AuthContext';
@@ -75,6 +76,20 @@ function AccountMenu({ avatarSize }: { avatarSize: number }) {
             <PersonOutlineIcon fontSize="small" />
           </ListItemIcon>
           Profile
+        </MenuItem>
+        {/* ChildList was implemented and routed but nothing anywhere linked to it, so the only
+            way in was to type the URL. Adding, editing and removing a child were each reachable
+            from other screens, which is probably why the page going missing was never noticed. */}
+        <MenuItem
+          onClick={() => {
+            setAnchorEl(null);
+            navigate('/children');
+          }}
+        >
+          <ListItemIcon>
+            <FamilyRestroomOutlinedIcon fontSize="small" />
+          </ListItemIcon>
+          My children
         </MenuItem>
         <MenuItem
           onClick={() => {

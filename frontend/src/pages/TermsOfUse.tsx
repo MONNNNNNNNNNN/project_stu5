@@ -1,6 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PageChrome } from '../components/PageChrome';
-import { useAuth } from '../context/AuthContext';
+import { BackLink } from '../components/BackLink';
 
 /**
  * Terms of use.
@@ -14,9 +14,6 @@ import { useAuth } from '../context/AuthContext';
  * Tracked as an open item in docs/research-checklist.md. Get it reviewed before 2 Nov.
  */
 export default function TermsOfUse() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
   return (
     <PageChrome>
       <div className="max-w-2xl mx-auto bg-surface rounded-2xl shadow-sm p-8 flex flex-col gap-4 text-sm text-ink leading-relaxed">
@@ -115,21 +112,7 @@ export default function TermsOfUse() {
           .
         </p>
 
-        {/* Signed-in readers came from somewhere inside the app; sending them to the
-            registration page would be nonsense. */}
-        {user ? (
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="text-brand-600 font-medium mt-4 self-start hover:underline"
-          >
-            ← Back
-          </button>
-        ) : (
-          <Link to="/register" className="text-brand-600 font-medium mt-4">
-            ← Back to registration
-          </Link>
-        )}
+        <BackLink />
       </div>
     </PageChrome>
   );
