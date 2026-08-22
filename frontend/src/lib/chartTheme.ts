@@ -46,37 +46,46 @@ export function chartPalette(mode: 'light' | 'dark'): ChartPalette {
 }
 
 /**
- * Fills for the shaded reference bands.
+ * Fills for the shaded reference zones.
  *
- * The client asked for the CDC charts' coloured zones so a parent can see at a glance where
- * their child sits, rather than reading a number off a legend. These are backgrounds behind a
- * plotted line, not the line itself, so they sit well below the 3:1 graphics floor on purpose
- * — the meaning is always also carried by the label and the tooltip, never by colour alone
- * (WCAG 1.4.1). Dark mode uses lower alpha because the surface is already dark.
+ * The first version used one amber for both "underweight" and "overweight", which made the two
+ * ends of the chart look identical — the reader could see *that* the child was outside the
+ * healthy band but not which side. These run a proper cold-to-hot scale instead: blue below,
+ * green healthy, then yellow, orange, red climbing away from it. Direction is legible before
+ * you read a single word.
+ *
+ * Dark mode carries more alpha. A wash that reads clearly on white disappears on #16213a, and
+ * the first attempt did exactly that.
+ *
+ * These are backgrounds behind a plotted line, not the line itself, so they sit below the 3:1
+ * graphics floor deliberately. The meaning is always also carried by the named key under the
+ * chart and by the tooltip — never by colour alone (WCAG 1.4.1).
  */
 export interface BandFills {
-  ok: string;
-  caution: string;
-  concern: string;
+  low: string;
+  healthy: string;
+  raised: string;
+  high: string;
   severe: string;
 }
 
 export function bandFills(mode: 'light' | 'dark'): BandFills {
   return mode === 'dark'
     ? {
-        ok: 'rgba(93, 188, 156, 0.14)',
-        caution: 'rgba(239, 185, 110, 0.16)',
-        concern: 'rgba(232, 145, 72, 0.18)',
-        severe: 'rgba(233, 106, 106, 0.20)',
+        low: 'rgba(96, 165, 250, 0.24)', // blue
+        healthy: 'rgba(52, 211, 153, 0.20)', // green
+        raised: 'rgba(250, 204, 21, 0.22)', // yellow
+        high: 'rgba(251, 146, 60, 0.26)', // orange
+        severe: 'rgba(248, 113, 113, 0.30)', // red
       }
     : {
-        ok: 'rgba(45, 122, 96, 0.10)',
-        caution: 'rgba(214, 158, 46, 0.14)',
-        concern: 'rgba(198, 110, 40, 0.16)',
-        severe: 'rgba(190, 60, 60, 0.14)',
+        low: 'rgba(59, 130, 246, 0.16)',
+        healthy: 'rgba(16, 185, 129, 0.14)',
+        raised: 'rgba(234, 179, 8, 0.20)',
+        high: 'rgba(249, 115, 22, 0.20)',
+        severe: 'rgba(239, 68, 68, 0.20)',
       };
 }
-
 
 /**
  * The age window a chart should actually show.

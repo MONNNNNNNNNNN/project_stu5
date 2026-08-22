@@ -17,6 +17,7 @@ import type { GrowthChartPoint, GrowthRecord, ReferenceCurvePoint } from '../typ
 function fmtPercentile(p: string | null) {
   if (p === null) return '—';
   const n = Number(p);
+  if (n < 0.5) return '<P1';
   // Rounding stops carrying information past the 99th — a BMI of 35 and one of 60 in a
   // ten-year-old both render as "P100" otherwise.
   return n >= 99.5 ? '>P99' : `P${Math.round(n)}`;

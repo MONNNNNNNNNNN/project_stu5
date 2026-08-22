@@ -196,16 +196,18 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
 
   const zoneKeys: readonly (readonly [Zone, string, string])[] = hasObesityBands
     ? ([
-        ['zUnder', fills.caution, 'Underweight'],
-        ['zHealthy', fills.ok, 'Healthy weight'],
-        ['zOver', fills.caution, 'Overweight'],
-        ['zObese', fills.concern, 'Obesity'],
+        ['zUnder', fills.low, 'Underweight'],
+        ['zHealthy', fills.healthy, 'Healthy weight'],
+        ['zOver', fills.raised, 'Overweight'],
+        ['zObese', fills.high, 'Obesity'],
         ['zSevere', fills.severe, 'Severe obesity'],
       ] as const)
     : ([
-        ['zLow', fills.caution, 'Below P3'],
-        ['zTypical', fills.ok, 'Typical range'],
-        ['zHigh', fills.caution, 'Above P97'],
+        // Low and high get different colours too. One amber for both told the reader they were
+        // outside the band without telling them which way.
+        ['zLow', fills.low, 'Below P3'],
+        ['zTypical', fills.healthy, 'Typical range'],
+        ['zHigh', fills.high, 'Above P97'],
       ] as const);
 
   return (

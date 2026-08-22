@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { RouteTransition } from './components/RouteTransition';
 import { ScrollToTop } from './components/ScrollToTop';
 import { AppShell } from './components/AppShell';
 import { Placeholder } from './components/Placeholder';
@@ -36,6 +37,7 @@ export default function App() {
   return (
     <>
     <ScrollToTop />
+    <RouteTransition>
     <Routes>
       <Route path="/" element={<HomeRoute />} />
       <Route path="/about" element={<About />} />
@@ -72,6 +74,7 @@ export default function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </RouteTransition>
     </>
   );
 }

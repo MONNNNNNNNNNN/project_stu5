@@ -8,6 +8,7 @@ import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNewOutlined';
 import PsychologyIcon from '@mui/icons-material/PsychologyOutlined';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServicesOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import WarningAmberIcon from '@mui/icons-material/WarningAmberOutlined';
 import { api } from '../lib/api';
 import { ageInMonths } from '../lib/age';
 import { useChildren } from '../context/ChildContext';
@@ -85,6 +86,7 @@ function describePercentile(p: number | null) {
   // and a BMI of 60 in a ten-year-old are the 99.97th and 100th, and both render as "P100".
   // Say ">P99" and let the BMI tile below carry the actual severity.
   if (p >= 99.5) return { label: '>P99 · well above typical', tone: AMBER };
+  if (p < 0.5) return { label: '<P1 · well below typical', tone: AMBER };
   if (p < 3) return { label: `P${Math.round(p)} · below typical`, tone: AMBER };
   if (p > 97) return { label: `P${Math.round(p)} · above typical`, tone: AMBER };
   return { label: `P${Math.round(p)} · typical range`, tone: 'text-brand-600' };
@@ -236,9 +238,23 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6">
       {selectedChild && <ChildProfileCard child={selectedChild} />}
 
+      {/* One alert, clearly labelled as an alert. Previously this sentence appeared twice on
+          the same screen and looked identical to the suggestion card below it, so nothing on
+          the dashboard signalled which item actually needed attention. */}
       {stats?.latest?.guidance?.flagged && (
-        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-800">
-          {stats.latest.guidance.message}
+        <div className="rounded-2xl border-l-4 border-l-amber-500 border border-amber-200 bg-amber-50 dark:bg-amber-500/10 p-4 flex gap-3">
+          <WarningAmberIcon className="text-amber-600 shrink-0" fontSize="small" />
+          <div>
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-300">
+              Worth a look
+              {stats.latest.guidance.nutritionalStatus
+                ? ` · ${stats.latest.guidance.nutritionalStatus}`
+                : ''}
+            </p>
+            <p className="text-xs text-amber-800 dark:text-amber-200/90 mt-0.5">
+              {stats.latest.guidance.message}
+            </p>
+          </div>
         </div>
       )}
 
@@ -297,14 +313,6 @@ export default function Dashboard() {
             })}
           </div>
 
-          {stats?.latest?.guidance && (
-            <p className={`text-xs mb-2 ${stats.latest.guidance.flagged ? 'text-amber-700' : 'text-brand-600'}`}>
-              {stats.latest.guidance.message}
-              {measure === 'bmi' && stats.latest.guidance.nutritionalStatus && (
-                <> Nutritional status: <span className="font-semibold">{stats.latest.guidance.nutritionalStatus}</span>.</>
-              )}
-            </p>
-          )}
           <PercentileChart
             title={`${active.title} vs. Reference`}
             unit={active.unit}

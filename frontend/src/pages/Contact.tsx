@@ -98,7 +98,7 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-svh bg-cream flex flex-col page-fade-in">
+    <div className="min-h-svh bg-cream flex flex-col">
       <PublicHeader />
       <main className="flex-1 py-16 px-4 md:px-8">{body}</main>
       <Footer />

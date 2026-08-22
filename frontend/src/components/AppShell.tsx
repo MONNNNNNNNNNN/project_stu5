@@ -179,7 +179,7 @@ export function AppChrome({ children }: { children: ReactNode }) {
       {/* Bottom padding clears the fixed mobile nav *and* the iPhone home indicator —
           without the safe-area term the last card sits under the nav on a notched device. */}
       <main className="max-w-6xl w-full mx-auto px-4 md:px-8 py-6 pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-10 flex-1">
-        <div key={location.pathname} className="page-fade-in">
+        <div key={location.pathname} className="">
           {children}
         </div>
       </main>

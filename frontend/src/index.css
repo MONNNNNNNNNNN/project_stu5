@@ -121,6 +121,50 @@ button {
   }
 
   .page-fade-in {
-    animation: page-fade-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: page-fade-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /*
+   * Interaction feedback. Navigation used to be the only thing that moved, and it moved
+   * instantly, so a tap gave no acknowledgement at all before the screen changed.
+   */
+  a,
+  button,
+  .MuiButtonBase-root {
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.12s ease;
+  }
+
+  /* A press should register under the finger before the route changes. */
+  a:active,
+  button:active,
+  .MuiButtonBase-root:active {
+    transform: scale(0.975);
+  }
+
+  /*
+   * Motion that helps most people orient can make others ill, and this is a health app used
+   * by people who may already be anxious. Honour the system setting rather than overriding it.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .page-fade-in {
+      animation: none;
+    }
+
+    a,
+    button,
+    .MuiButtonBase-root {
+      transition: none;
+    }
+
+    a:active,
+    button:active,
+    .MuiButtonBase-root:active {
+      transform: none;
+    }
   }
 }
