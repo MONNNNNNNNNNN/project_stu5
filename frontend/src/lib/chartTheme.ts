@@ -46,6 +46,39 @@ export function chartPalette(mode: 'light' | 'dark'): ChartPalette {
 }
 
 /**
+ * Fills for the shaded reference bands.
+ *
+ * The client asked for the CDC charts' coloured zones so a parent can see at a glance where
+ * their child sits, rather than reading a number off a legend. These are backgrounds behind a
+ * plotted line, not the line itself, so they sit well below the 3:1 graphics floor on purpose
+ * — the meaning is always also carried by the label and the tooltip, never by colour alone
+ * (WCAG 1.4.1). Dark mode uses lower alpha because the surface is already dark.
+ */
+export interface BandFills {
+  ok: string;
+  caution: string;
+  concern: string;
+  severe: string;
+}
+
+export function bandFills(mode: 'light' | 'dark'): BandFills {
+  return mode === 'dark'
+    ? {
+        ok: 'rgba(93, 188, 156, 0.14)',
+        caution: 'rgba(239, 185, 110, 0.16)',
+        concern: 'rgba(232, 145, 72, 0.18)',
+        severe: 'rgba(233, 106, 106, 0.20)',
+      }
+    : {
+        ok: 'rgba(45, 122, 96, 0.10)',
+        caution: 'rgba(214, 158, 46, 0.14)',
+        concern: 'rgba(198, 110, 40, 0.16)',
+        severe: 'rgba(190, 60, 60, 0.14)',
+      };
+}
+
+
+/**
  * The age window a chart should actually show.
  *
  * The reference tables run birth to 20 years. Plotting all of that for a child with two

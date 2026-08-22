@@ -1,6 +1,6 @@
-import { ComposedChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
+import { Area, ComposedChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import { useThemeMode } from '../context/ThemeModeContext';
-import { ageWindow, chartPalette, type Measure } from '../lib/chartTheme';
+import { ageWindow, bandFills, chartPalette, type Measure } from '../lib/chartTheme';
 import type { ReferenceCurvePoint } from '../types';
 
 interface Props {
@@ -96,6 +96,7 @@ function ChartLegend({ items }: { items: { label: string; color: string; dashed:
 export function PercentileChart({ title, unit, curve, points, measure, footnote }: Props) {
   const { mode } = useThemeMode();
   const c = chartPalette(mode);
+  const fills = bandFills(mode);
   const seriesColor = c.series[measure];
 
   const actual = points
@@ -118,6 +119,69 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
   // chart, and at ten years it sits about 1.2 BMI units from P95 — two dashed lines almost on
   // top of each other, neither of which is the line a clinician looks for.
   const hasObesityBands = visibleCurve.some((p) => p.p95 !== undefined);
+
+  /**
+   * An explicit y-domain, so the shaded zones can reach the top and bottom of the plot.
+   *
+   * With recharts' 'auto' domain the outermost bands would have nothing to extend to, and
+   * feeding them a large sentinel value to reach would drag the axis out to meet it.
+   */
+  const yValues = [
+    ...visibleCurve.flatMap((p) =>
+      [p.p3, p.p50, p.p97, p.p5, p.p85, p.p95, p.p120ofP95].filter(
+        (v): v is number => v !== undefined,
+      ),
+    ),
+    ...actual.map((p) => p.value as number),
+  ];
+  const yLo = yValues.length ? Math.min(...yValues) : 0;
+  const yHi = yValues.length ? Math.max(...yValues) : 1;
+  const pad = (yHi - yLo) * 0.08 || 1;
+  const domain: [number, number] = [
+    Math.max(0, Math.floor(yLo - pad)),
+    Math.ceil(yHi + pad),
+  ];
+
+  /**
+   * The shaded zones, as [low, high] pairs recharts draws as ranged areas.
+   *
+   * BMI gets CDC's weight-status categories, which is what the client asked for — a parent
+   * should be able to see where the child sits without decoding a percentile. Height and
+   * weight get the one distinction that means anything for them: inside or outside P3-P97.
+   */
+  type Zone =
+    | 'zUnder' | 'zHealthy' | 'zOver' | 'zObese' | 'zSevere'
+    | 'zLow' | 'zTypical' | 'zHigh';
+
+  // Every point carries every zone key, most of them undefined. A union of two shapes reads
+  // more honestly but recharts types `dataKey` against the element type, so a key that exists
+  // on only one branch is rejected — and a chart is either one kind or the other anyway.
+  type BandedPoint = ReferenceCurvePoint & Partial<Record<Zone, [number, number]>>;
+
+  const banded: BandedPoint[] = visibleCurve.map((p) => {
+    const [lo, hi] = domain;
+    if (
+      hasObesityBands &&
+      p.p5 !== undefined && p.p85 !== undefined &&
+      p.p95 !== undefined && p.p120ofP95 !== undefined
+    ) {
+      return {
+        ...p,
+        zUnder: [lo, p.p5],
+        zHealthy: [p.p5, p.p85],
+        zOver: [p.p85, p.p95],
+        zObese: [p.p95, p.p120ofP95],
+        zSevere: [p.p120ofP95, hi],
+      };
+    }
+    return {
+      ...p,
+      zLow: [lo, p.p3],
+      zTypical: [p.p3, p.p97],
+      zHigh: [p.p97, hi],
+    };
+  });
+
   const legendItems = [
     { label: title, color: seriesColor, dashed: false },
     { label: 'P3', color: c.band, dashed: true },
@@ -129,6 +193,20 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
         ]
       : [{ label: 'P97', color: c.band, dashed: true }]),
   ];
+
+  const zoneKeys: readonly (readonly [Zone, string, string])[] = hasObesityBands
+    ? ([
+        ['zUnder', fills.caution, 'Underweight'],
+        ['zHealthy', fills.ok, 'Healthy weight'],
+        ['zOver', fills.caution, 'Overweight'],
+        ['zObese', fills.concern, 'Obesity'],
+        ['zSevere', fills.severe, 'Severe obesity'],
+      ] as const)
+    : ([
+        ['zLow', fills.caution, 'Below P3'],
+        ['zTypical', fills.ok, 'Typical range'],
+        ['zHigh', fills.caution, 'Above P97'],
+      ] as const);
 
   return (
     <div className="bg-surface rounded-2xl shadow-sm p-5">
@@ -153,12 +231,28 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
           />
           <YAxis
             dataKey="value"
-            domain={['auto', 'auto']}
+            domain={domain}
+            allowDataOverflow
             unit={unit}
             fontSize={12}
             stroke={c.tick}
             tick={{ fill: c.tick }}
           />
+          {/* Painted before every line so the child's own series stays legible on top. */}
+          {zoneKeys.map(([key, fill]) => (
+            <Area
+              key={key}
+              data={banded}
+              dataKey={key}
+              fill={fill}
+              stroke="none"
+              isAnimationActive={false}
+              activeDot={false}
+              legendType="none"
+              tooltipType="none"
+            />
+          ))}
+
           <Tooltip content={<ReferenceTooltip unit={unit} title={title} curve={visibleCurve} />} />
           <Legend content={<ChartLegend items={legendItems} />} />
           {hasObesityBands ? (
@@ -183,6 +277,21 @@ export function PercentileChart({ title, unit, curve, points, measure, footnote 
           />
         </ComposedChart>
       </ResponsiveContainer>
+      {/* The shaded zones need naming. Colour on its own cannot carry the meaning — a reader
+          who cannot distinguish the tints, or is looking at a printout, still has to be able
+          to tell which band is which (WCAG 1.4.1). */}
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-xs text-gray-500">
+        {zoneKeys.map(([key, fill, label]) => (
+          <li key={key} className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-3 w-3 rounded-sm border border-black/10 dark:border-white/15"
+              style={{ backgroundColor: fill }}
+            />
+            {label}
+          </li>
+        ))}
+      </ul>
+
       {footnote && <p className="text-xs text-gray-500 mt-2">{footnote}</p>}
     </div>
   );

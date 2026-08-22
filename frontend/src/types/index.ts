@@ -71,7 +71,9 @@ export interface ReferenceCurvePoint {
   p3: number;
   p50: number;
   p97: number;
-  /** BMI charts only: the obesity line and CDC's severe-obesity line. */
+  /** BMI charts only: CDC's weight-status category boundaries. */
+  p5?: number;
+  p85?: number;
   p95?: number;
   p120ofP95?: number;
 }

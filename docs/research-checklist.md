@@ -308,6 +308,21 @@ peer-reviewed, RCT-validated app. Read it before the client meeting.
 
 ---
 
+### E3 🔴 Terms of Use needs review
+
+Written 2026-08-22 (`frontend/src/pages/TermsOfUse.tsx`) because registration asked parents to
+agree to "terms of use" that did not exist as a document. Drafted by the team, **not a lawyer**,
+and not yet seen by the Client Representative.
+
+The clauses that carry weight are what GrowTH is not (a diagnosis, a registered medical device,
+an emergency service) and the guardian's authority to enter a child's health data — PDPA
+requires the guardian's consent to process a minor's personal data, and account creation is
+where that consent is now taken. Get it reviewed before 2 Nov.
+
+**Owner:** ___ **Due:** ___
+
+---
+
 ## Summary for the client meeting
 
 | Blocking | Item | Who decides |

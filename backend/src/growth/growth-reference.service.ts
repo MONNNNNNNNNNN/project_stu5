@@ -185,6 +185,10 @@ function normalCdf(z: number): number {
  */
 const P95_Z = 1.6448536269514722;
 
+/** The other two CDC BMI category boundaries: Phi(-1.6449) = 0.05, Phi(1.0364) = 0.85. */
+const P5_Z = -1.6448536269514722;
+const P85_Z = 1.0364333894937898;
+
 /**
  * Complementary error function — Chebyshev fit, Numerical Recipes 3rd ed. §6.2.
  *
@@ -405,13 +409,23 @@ export class GrowthReferenceService {
       // sits about 1.2 BMI units from P95 at ten years, so drawing both just puts two nearly
       // coincident dashed lines on the same axis.
       const sigma = (r as BmiLmsRow).sigma;
-      const p95 = sigma !== undefined ? valueAtZ(r, P95_Z) : undefined;
+      const isBmi = sigma !== undefined;
       return {
         ageMonths: r.ageMonths,
         p3: valueAtZ(r, -P3_P97_Z),
         p50: r.M,
         p97: valueAtZ(r, P3_P97_Z),
-        ...(p95 !== undefined ? { p95, p120ofP95: 1.2 * p95 } : {}),
+        // BMI also carries the boundaries of CDC's weight-status categories, so the chart can
+        // shade them. These are the same cut-points nutritionalStatusKey classifies on, read
+        // from the same LMS row, so a shaded band and the label under it cannot disagree.
+        ...(isBmi
+          ? {
+              p5: valueAtZ(r, P5_Z),
+              p85: valueAtZ(r, P85_Z),
+              p95: valueAtZ(r, P95_Z),
+              p120ofP95: 1.2 * valueAtZ(r, P95_Z),
+            }
+          : {}),
       };
     });
   }
