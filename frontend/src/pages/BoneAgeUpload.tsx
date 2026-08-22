@@ -119,10 +119,25 @@ export default function BoneAgeUpload() {
       {selectedChild && <ChildProfileCard child={selectedChild} />}
       <div>
         <h1 className="text-xl font-semibold text-brand-700">AI Bone Age Analysis</h1>
+        {/*
+          Answers the client's objection head-on: "AI ช่วยอะไร ถ้ายังต้องไปโรงพยาบาลอยู่ดี".
+          It is a fair question and the page used to have no answer at all — it opened with
+          "upload for an instant automated bone age estimation", which invites exactly that
+          reply. The honest answer is in the TOR's own background: the bottleneck is not taking
+          the film, it is that many facilities have no one able to read it.
+
+          ⚠️ This framing is a proposal pending client question Q4. If they reject it, the
+          feature needs rethinking rather than rewording.
+        */}
         <p className="text-sm text-gray-500 mt-1">
-          Already have a hand X-ray? Upload it here for an automated bone age estimate. This
-          does not replace the X-ray or the appointment — it gives you a reading while you wait
-          for one.
+          For parents who <span className="font-medium text-ink">already have a hand X-ray</span>{' '}
+          and are waiting to find out what it means.
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          This does not replace the hospital visit. Taking the X-ray was never the hard part —
+          the wait is usually for someone qualified to read it, and many clinics do not have a
+          paediatric radiologist available. This gives you a provisional reading in the
+          meantime, to bring to the appointment.
         </p>
       </div>
 
@@ -165,9 +180,8 @@ export default function BoneAgeUpload() {
       </div>
 
       <p className="text-xs text-gray-500">
-        Disclaimer: The AI Bone Age Prediction is an investigational tool for educational
-        tracking purposes only. It is not intended for primary medical diagnosis. Always consult
-        a pediatric endocrinologist for clinical evaluations.
+        An investigational tool, not a diagnosis. Only a paediatric endocrinologist can say what
+        a bone age means for your child.
       </p>
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">

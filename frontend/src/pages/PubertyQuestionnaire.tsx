@@ -176,8 +176,7 @@ function ResultCard({ result }: { result: ScreeningResult }) {
       </div>
 
       <p className="text-xs text-gray-500">
-        This is a screening aid, not a diagnosis. Only a clinical examination can confirm what stage
-        of puberty a child is in.
+        A screening aid, not a diagnosis. Only an examination can confirm what stage a child is in.
       </p>
     </div>
   );
@@ -192,9 +191,8 @@ function MonitoringPlanCard({ plan }: { plan: MonitoringPlan }) {
         <Chip label={`${plan.completedRounds}/${plan.totalRounds} done`} size="small" />
       </div>
       <p className="text-sm text-gray-600">
-        When early signs show up, what matters most is whether they keep progressing. Repeating this
-        screening every few months turns that into something you can show a doctor, rather than
-        something you have to remember.
+        What matters is whether the signs keep progressing. Repeating this every few months gives
+        a doctor something dated to read, instead of something you have to remember.
       </p>
 
       <Stepper activeStep={plan.completedRounds} alternativeLabel sx={{ mt: 1 }}>
