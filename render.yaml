@@ -53,6 +53,12 @@ services:
         sync: false
       - key: MAIL_FROM
         sync: false
+      # Google sign-in. The public client ID only — this is the ID-token flow, which verifies
+      # Google's signature and checks the audience matches. No client secret is involved, so
+      # there is no OAuth secret to store, rotate or leak. Unset, /auth/google returns a clear
+      # misconfiguration error and email/password sign-in is unaffected.
+      - key: GOOGLE_CLIENT_ID
+        sync: false
       # --- bone age, in-process -------------------------------------------------------
       # Deliberately NOT a second Render service. The free tier bills 750 instance hours per
       # *workspace* per month, not per service, so two always-waking services burn the quota

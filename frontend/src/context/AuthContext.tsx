@@ -6,6 +6,7 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string, acceptedTerms: boolean) => Promise<void>;
   register: (
     email: string,
     password: string,
@@ -68,6 +69,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await applySession(res.data);
   }
 
+  /**
+   * Sign in with a Google ID token.
+   *
+   * `acceptedTerms` only matters for a first-time sign-in — the server ignores it for accounts
+   * that already exist, and rejects account creation without it (FR-2).
+   */
+  async function loginWithGoogle(credential: string, acceptedTerms: boolean) {
+    const res = await api.post(
+      '/auth/google',
+      { credential, acceptedTerms },
+      { timeout: COLD_START_TIMEOUT_MS },
+    );
+    await applySession(res.data);
+  }
+
   async function register(
     email: string,
     password: string,
@@ -94,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser: setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, register, logout, updateUser: setUser }}>
       {children}
     </AuthContext.Provider>
   );

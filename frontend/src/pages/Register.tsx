@@ -7,6 +7,7 @@ import { Button, TextField, Alert, FormControlLabel, Checkbox, FormHelperText } 
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { ColdStartNotice } from '../components/ColdStartNotice';
 import { useAuth } from '../context/AuthContext';
+import { GoogleSignInButton } from '../components/GoogleSignInButton';
 import { PASSWORD_REGEX, PASSWORD_MESSAGE } from '../lib/passwordRules';
 
 const schema = z.object({
@@ -22,7 +23,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function Register() {
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const {
@@ -30,7 +31,12 @@ export default function Register() {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { acceptedTerms: false } });
+
+  // FR-2 is enforced server-side too — this only stops the parent getting as far as Google's
+  // consent screen before being refused.
+  const termsAccepted = watch('acceptedTerms');
 
   async function onSubmit(values: FormValues) {
     setError(null);
@@ -42,6 +48,21 @@ export default function Register() {
         err?.response?.data?.message ??
           (err?.response
             ? 'Could not create account.'
+            : 'Could not reach the server. It may still be starting up — please try again.'),
+      );
+    }
+  }
+
+  async function handleGoogle(credential: string) {
+    setError(null);
+    try {
+      await loginWithGoogle(credential, true);
+      navigate('/children/new');
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ??
+          (err?.response
+            ? 'Could not create an account with that Google sign-in.'
             : 'Could not reach the server. It may still be starting up — please try again.'),
       );
     }
@@ -114,6 +135,19 @@ export default function Register() {
             {isSubmitting ? 'Creating account…' : 'Create Account'}
           </Button>
         </form>
+
+        <div className="flex items-center gap-3 my-5">
+          <span className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-400">or</span>
+          <span className="h-px flex-1 bg-gray-200" />
+        </div>
+
+        <GoogleSignInButton
+          text="signup_with"
+          onCredential={handleGoogle}
+          disabled={!termsAccepted}
+          disabledReason={termsAccepted ? undefined : 'Accept the terms above first'}
+        />
         <p className="text-sm text-gray-500 text-center mt-6">
           Already have an account?{' '}
           <Link to="/login" className="text-brand-600 font-medium">

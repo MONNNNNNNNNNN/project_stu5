@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +14,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
 const REFRESH_TOKEN_BYTES = 48;
@@ -122,10 +125,111 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // A Google-only account has no hash. bcrypt.compare throws on a null hash rather than
+    // returning false, so without this the request 500s instead of failing authentication —
+    // and a 500 here is also an account-existence oracle.
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    const tokens = await this.issueTokens(user);
+    return { user: this.sanitizeUser(user), ...tokens };
+  }
+
+  /**
+   * Sign in with Google, via an ID token from Google Identity Services.
+   *
+   * The ID-token flow rather than the authorization-code flow: this is a SPA with its own JWT
+   * sessions, so all we need from Google is a trustworthy assertion of who the user is. That
+   * needs only the public client ID to verify — no client secret is involved anywhere, which
+   * is one fewer credential to leak.
+   *
+   * `verifyIdToken` checks Google's signature against their published keys, the expiry, the
+   * issuer, and that the audience is *our* client ID. That last check is what stops someone
+   * presenting a valid Google token minted for a different application.
+   */
+  async googleLogin(dto: GoogleLoginDto) {
+    const clientId = this.config.get<string>('GOOGLE_CLIENT_ID');
+    if (!clientId) {
+      this.logger.error('GOOGLE_CLIENT_ID is not set — refusing Google sign-in');
+      throw new BadRequestException('Google sign-in is not configured');
+    }
+
+    let payload;
+    try {
+      const ticket = await new OAuth2Client(clientId).verifyIdToken({
+        idToken: dto.credential,
+        audience: clientId,
+      });
+      payload = ticket.getPayload();
+    } catch {
+      // Deliberately not logging the token or the underlying error text — it can contain the
+      // credential itself.
+      throw new UnauthorizedException('Could not verify that Google sign-in');
+    }
+
+    if (!payload?.email || !payload.sub) {
+      throw new UnauthorizedException('Google did not return an email address');
+    }
+
+    // Linking an existing account by email is only safe because Google has verified it. An
+    // unverified address would let anyone who can create a Google account with someone else's
+    // address walk into their account.
+    if (!payload.email_verified) {
+      throw new UnauthorizedException(
+        'That Google account has an unverified email address',
+      );
+    }
+
+    const email = payload.email.toLowerCase();
+    const existing = await this.prisma.user.findFirst({
+      where: { OR: [{ googleId: payload.sub }, { email }] },
+    });
+
+    if (existing?.deletedAt) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (existing) {
+      // First Google sign-in on an account that registered with a password: record the link
+      // so a later Google email change still resolves here.
+      const user = existing.googleId
+        ? existing
+        : await this.prisma.user.update({
+            where: { id: existing.id },
+            data: { googleId: payload.sub, isVerified: true },
+          });
+      const tokens = await this.issueTokens(user);
+      return { user: this.sanitizeUser(user), ...tokens };
+    }
+
+    // FR-2: terms have to be accepted before an account exists, and the Google button skips
+    // the registration form that normally enforces that. The client is expected to collect it
+    // and send it; this is the server-side half, so a crafted request cannot bypass it.
+    if (dto.acceptedTerms !== true) {
+      throw new BadRequestException(
+        'You must accept the terms of use and privacy notice to create an account',
+      );
+    }
+
+    const user = await this.prisma.user.create({
+      data: {
+        email,
+        googleId: payload.sub,
+        // No password. `login` refuses these accounts before it reaches bcrypt.
+        passwordHash: null,
+        fullName: payload.name ?? email.split('@')[0],
+        avatarUrl: payload.picture ?? null,
+        // Google has already verified the address, which is what this flag means.
+        isVerified: true,
+        termsAcceptedAt: new Date(),
+      },
+    });
 
     const tokens = await this.issueTokens(user);
     return { user: this.sanitizeUser(user), ...tokens };
@@ -226,6 +330,17 @@ export class AuthService {
     const user = await this.prisma.user.findUniqueOrThrow({
       where: { id: userId },
     });
+
+    // A Google-only account has no current password to verify against. Letting it through on
+    // an empty comparison would turn "change password" into "set a password on any account
+    // whose session you hold", so it is refused outright. Setting a first password on a
+    // Google account needs its own flow with its own proof of ownership; it does not exist yet.
+    if (!user.passwordHash) {
+      throw new BadRequestException(
+        'This account signs in with Google and has no password to change.',
+      );
+    }
+
     const valid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!valid) {
       throw new UnauthorizedException('Current password is incorrect');

@@ -7,6 +7,7 @@ import { Button, TextField, Alert } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { ColdStartNotice } from '../components/ColdStartNotice';
 import { useAuth } from '../context/AuthContext';
+import { GoogleSignInButton } from '../components/GoogleSignInButton';
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -15,7 +16,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const {
@@ -37,6 +38,26 @@ export default function Login() {
         err?.response
           ? 'Invalid email or password.'
           : 'Could not reach the server. It may still be starting up — please try again.',
+      );
+    }
+  }
+
+  async function handleGoogle(credential: string) {
+    setError(null);
+    try {
+      // `true` here is not the consent itself — an existing account already gave it at
+      // registration, and the server refuses to create a new one without it having been
+      // collected. A first-time Google user is sent to /register to tick the box properly.
+      await loginWithGoogle(credential, false);
+      navigate('/dashboard');
+    } catch (err: any) {
+      const status = err?.response?.status;
+      setError(
+        status === 400
+          ? 'No account yet for that Google address. Create one first — it takes a moment and you will need to accept the terms.'
+          : status
+            ? 'Could not sign in with that Google account.'
+            : 'Could not reach the server. It may still be starting up — please try again.',
       );
     }
   }
@@ -75,6 +96,17 @@ export default function Login() {
             {isSubmitting ? 'Logging in…' : 'Log In'}
           </Button>
         </form>
+
+        <div className="flex items-center gap-3 my-5">
+          <span className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs text-gray-400">or</span>
+          <span className="h-px flex-1 bg-gray-200" />
+        </div>
+
+        {/* Existing accounts have already accepted the terms, so nothing is gated here — that
+            only applies when Google sign-in creates a new account, which the server enforces. */}
+        <GoogleSignInButton text="signin_with" onCredential={handleGoogle} />
+
         <p className="text-sm text-gray-500 text-center mt-6">
           New here?{' '}
           <Link to="/register" className="text-brand-600 font-medium">
