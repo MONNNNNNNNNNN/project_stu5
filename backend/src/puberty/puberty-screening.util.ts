@@ -1,10 +1,26 @@
 import { ChildSex } from '@prisma/client';
 import { PubertyAnswersDto } from './dto/submit-puberty-screening.dto';
 
-// Widely-cited clinical age cutoffs for precocious/delayed puberty (referenced directly
-// in the TOR's own background section, and consistent with the Endocrine Society's
-// central precocious puberty guideline). Used only to flag a screening signal — never
-// presented as a diagnosis.
+/**
+ * Age cutoffs for precocious and delayed puberty. Used only to raise a screening signal —
+ * never presented as a diagnosis.
+ *
+ * These are the international (Western) figures, kept deliberately rather than swapped for
+ * Thai data: the growth reference is CDC 2000 and the bone-age model is trained on a US
+ * population, so all three quote one baseline instead of three. That decision, and its cost,
+ * are recorded in docs/research-checklist.md A1 — a Khon Kaen University study found Thai
+ * girls' observed menarche range ends at 14.0 years, so the delayed flag at 15 fires a year
+ * later than local data would, which is a risk of missing a case rather than over-flagging.
+ *
+ * Precocious thresholds (8 girls, 9 boys) — Latronico AC, Brito VN, Carel JC. "Causes,
+ * diagnosis, and treatment of central precocious puberty." Lancet Diabetes Endocrinol 2016;
+ * PMID 26852255. Checked 2026-08-21.
+ *
+ * ⚠️ The three delayed thresholds below are NOT yet sourced. They are the conventional
+ * figures and match what the TOR's background describes, but no citation has been recorded
+ * for them, which the research checklist's own rules do not allow for a number shown to a
+ * parent. Tracked in docs/research-checklist.md A1. Do not invent one.
+ */
 const PRECOCIOUS_AGE_FEMALE = 8;
 const PRECOCIOUS_AGE_MALE = 9;
 const DELAYED_AGE_FEMALE_BREAST = 13;

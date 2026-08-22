@@ -147,7 +147,7 @@ Held at the team's instruction until research lands. Recorded so they are not lo
 
 | # | Item | Note |
 | --- | --- | --- |
-| C1 | BMI comparison chart with clear colour bands | Needs the BMI cut-points sourced first (see D2) — colour bands encode clinical categories, so the categories must be right before they are coloured |
+| C1 | BMI comparison chart with clear colour bands | 🟢 **unblocked and done.** Cut-points sourced to CDC (D2), and the BMI chart now draws P95 (obesity) and 120%-of-P95 (severe) in place of P97, with `nutritionalStatusKey` driving the colour |
 | C2 | Articles need images | Blocked on licensing — see `client-questions.md` Q6 |
 | C3 | Reduce text density, make content readable | Applies to article pages and the puberty result screen |
 
@@ -172,26 +172,47 @@ than it is for the growth charts. A Thai child's height/weight percentile agains
 still land off from where a Thai paediatrician would place them, and FR-10's ±2 SD flag inherits
 that. Full reasoning in `backend/src/growth/reference-data/README.md`.
 
+**Provenance is now proven, not asserted.** `npm run reference:check` regenerates every table
+from cdc.gov and fails if the committed files disagree. All of them verify byte-exact:
+weight-infant 76 rows, height-infant 74, weight-child 436, height-child 436, bmi-child 438 —
+zero difference in L, M or S anywhere. The original Excel workbooks are archived in
+`data-knowledge/Chart/`. This is what the rules at the top of this file ask for, applied to the
+largest block of clinical numbers in the app.
+
+**The era gap, stated plainly.** CDC 2000 is built on NHANES measurements taken between
+**1963 and 1994**. The bone-age model is trained on the RSNA 2017 set — Stanford and the
+University of Colorado, imaged in the 2010s. Both American, roughly forty years apart, and the
+gap **cannot be closed**: CDC never reissued height or weight-for-age, and `statage-2022.csv`
+and `wtage-2022.csv` both 404. CDC 2000 is still the current US standard. The one modernisation
+that does exist is BMI-only and is now implemented — CDC's December 2022 extended percentiles.
+
 **Still open — now a ratification, not an open question:** TOR §2A.2 requires the Client
 Representative to confirm the reference. There is no record that happened. Bring this decision
 to them as something to sign off, not reopen — see `client-questions.md` Q1 (updated). KhunLook,
 the competitor the client named, uses Thailand Department of Health charts 0–19 years; worth
 being ready to explain why GrowTH differs.
 
-### D2 🔴 Every other clinical constant in the app is uncited
+### D2 🟡 Clinical constants — two closed, three still uncited
 
-Each of these currently has no source recorded:
+| Constant | Value | Where | Status |
+| --- | --- | --- | --- |
+| BMI categories | <5th under, <85th healthy, <95th over, ≥95th obesity, ≥120% of P95 or BMI 35 severe | `growth.service.ts` | 🟢 **closed** — CDC, "Defining Child BMI Categories" + 2022 extended percentiles, checked 2026-08-21, cited in code |
+| Precocious puberty ages | 8 girls, 9 boys | `puberty-screening.util.ts` | 🟢 **closed** — [Latronico, Brito & Carel, Lancet Diabetes Endocrinol 2016, PMID 26852255](https://pubmed.ncbi.nlm.nih.gov/26852255/), checked 2026-08-21 |
+| Delayed puberty ages | 13 breast, 15 menarche, 14 testicular | `puberty-screening.util.ts` | 🔴 **no source found.** Conventional figures, but searching did not land a citation. Do not invent one |
+| "notable" deviation flag | ±2 SD | `growth.service.ts` | 🔴 uncited |
+| Follow-up screening interval | 4 months, 3 rounds | `puberty-screening.util.ts` | 🔴 uncited — team item |
+| BMI-for-age minimum age | 5 years | `growth.service.ts` | 🔴 uncited (FR-8 states it, but FR-8's own basis is not recorded) |
+| Weight-for-length categories | — | not implemented | 🔴 **needed before the table can be used** — see below |
 
-| Constant | Value | Where |
-| --- | --- | --- |
-| "notable" deviation flag | ±2 SD | `growth.service.ts:9` |
-| BMI categories | <5th underweight, <85th healthy, <95th overweight, else obesity | `growth.service.ts:17-22` |
-| Follow-up screening interval | 4 months, 3 rounds | `puberty-screening.util.ts:20-23` |
-| BMI-for-age minimum age | 5 years | `growth.service.ts:8` |
+**C1 (BMI colour bands) is unblocked.** The categories are sourced and `guidance()` now returns
+a stable `nutritionalStatusKey`, so the chart can colour on a value rather than matching on
+prose. The bands are already drawn: P95 and 120%-of-P95 replaced P97 on the BMI chart.
 
-The BMI cut-points look like the CDC/US convention. If we move to a Thai growth reference,
-**the categories may move with it** — Thai MOPH uses its own nutritional-status bands. Do not
-colour the BMI chart (C1) until this is settled.
+**New gap found while implementing:** `BMI_FOR_AGE_MIN_MONTHS` is 60, so a parent logging a
+two-year-old gets percentiles and **no nutritional status at all**. `weight-for-length.json`
+(CDC, 120 rows, 45–103.5 cm) is committed and verified but deliberately unused, because its
+category cut-points are not settled — CDC's own guidance for under-twos points at WHO, and the
+conventional bands differ from BMI's 5/85/95. Sourcing those cut-points is what unblocks it.
 
 **Owner:** ___ **Due:** ___
 
@@ -267,5 +288,5 @@ peer-reviewed, RCT-validated app. Read it before the client meeting.
 | FR-7/8/9 correctness, TOR §2A.2 | Growth reference — team decided CDC 2000, needs ratification | Client |
 | Whether bone age is worth further investment | The AI value question | Client |
 | Feature integration | Growth → Puberty → Bone Age triggers | Client |
-| C1 BMI chart | BMI category source | Team research, then client confirms |
+| ~~C1 BMI chart~~ | ~~BMI category source~~ | 🟢 closed — CDC, cited in code 2026-08-21 |
 | Scope | Google OAuth | Client |
