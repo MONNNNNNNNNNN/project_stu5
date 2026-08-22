@@ -312,9 +312,17 @@ export default function PubertyQuestionnaire() {
             <li className="flex gap-2">
               <span className="text-brand-500">•</span>
               <span>
-                <span className="font-medium text-ink">"Not sure" is a real answer.</span> Some of
-                these are not visible unless you are with {firstName} every day. Saying so is far
-                more useful than guessing — a guess can send the wrong family to a doctor.
+                <span className="font-medium text-ink">You never need to examine {firstName}.</span>{' '}
+                Answer from what you have happened to notice. Most of it is everyday stuff —
+                shoe sizes, body odour, growing out of a uniform.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-brand-500">•</span>
+              <span>
+                <span className="font-medium text-ink">"Not sure" is a real answer.</span> Saying
+                so is far more useful than guessing — a guess can send the wrong family to a
+                doctor. If too much is unknown, the result says so instead of inventing one.
               </span>
             </li>
             <li className="flex gap-2">
@@ -362,86 +370,50 @@ export default function PubertyQuestionnaire() {
 
       {formOpen && (
         <>
+          {/*
+            Order matters here, and it changed on 2026-08-22.
+
+            The questionnaire used to open by asking a parent whether their son's testicles had
+            grown. It is the earliest sign of male puberty, so it was first — but it asks a
+            parent to have inspected their child's genitals, which is an uncomfortable thing to
+            be asked by an app and a poor way to open. It is also weak data: parents cannot
+            judge testicular volume reliably, which is why clinicians use an orchidometer.
+
+            So the everyday, fully-observable signs come first, and the private ones sit in
+            their own clearly-marked optional section below, with an explicit statement that
+            nobody needs to examine their child to use this.
+          */}
           <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
-            <div className="flex items-center justify-between mb-1">
-              <h2 className="font-semibold text-ink">{isFemale ? 'For girls' : 'For boys'}</h2>
+            <div className="flex items-start justify-between mb-1 gap-3">
+              <div>
+                <h2 className="font-semibold text-ink">Everyday changes</h2>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Things you would notice normally, without looking for them.
+                </p>
+              </div>
               <Button size="small" onClick={() => setFormOpen(false)}>
                 Cancel
               </Button>
             </div>
 
-            {isFemale ? (
-              <>
-                <SignQuestion
-                  label="Has breast development begun?"
-                  description="The first sign is usually a small, sometimes tender lump under one or both nipples — often one side before the other. Clinically this is called thelarche."
-                  value={answers.breastDevelopment}
-                  onChange={(v) => set('breastDevelopment', v)}
-                  ageValue={answers.breastDevelopmentAgeYears}
-                  onAgeChange={(v) => set('breastDevelopmentAgeYears', v)}
-                />
-                <SignQuestion
-                  label="Have her periods started?"
-                  description="The first menstrual period. This usually happens about two years after breast development begins."
-                  value={answers.menstruation}
-                  onChange={(v) => set('menstruation', v)}
-                  ageValue={answers.menstruationAgeYears}
-                  onAgeChange={(v) => set('menstruationAgeYears', v)}
-                />
-              </>
-            ) : (
-              <>
-                <SignQuestion
-                  label="Have the testicles or genitals started to grow?"
-                  description="Usually the earliest sign in boys: the testicles get larger before anything else changes. It is easy to miss unless you are looking for it."
-                  value={answers.testicularOrGenitalEnlargement}
-                  onChange={(v) => set('testicularOrGenitalEnlargement', v)}
-                  ageValue={answers.testicularOrGenitalEnlargementAgeYears}
-                  onAgeChange={(v) => set('testicularOrGenitalEnlargementAgeYears', v)}
-                />
-                <SignQuestion
-                  label="Has his voice started to deepen?"
-                  description="Getting lower, or cracking and breaking between high and low."
-                  value={answers.voiceDeepening}
-                  onChange={(v) => set('voiceDeepening', v)}
-                />
-              </>
-            )}
-
             <SignQuestion
-              label={isFemale ? 'Has pubic or underarm hair appeared?' : 'Has pubic, underarm, or facial hair appeared?'}
-              description="The first hairs are usually fine and straight, and become coarser and curlier over time."
-              value={answers.pubicOrBodyHairGrowth}
-              onChange={(v) => set('pubicOrBodyHairGrowth', v)}
-              ageValue={answers.pubicOrBodyHairGrowthAgeYears}
-              onAgeChange={(v) => set('pubicOrBodyHairGrowthAgeYears', v)}
-            />
-
-            <SignQuestion
-              label="Has the child been growing noticeably faster recently?"
-              description="A growth spurt — suddenly getting taller much faster than in previous years."
+              label="Have they been growing noticeably faster recently?"
+              description="Suddenly getting taller much faster than in previous years."
               value={answers.growthSpurt}
               onChange={(v) => set('growthSpurt', v)}
             />
-          </div>
 
-          {/*
-            Indirect signs. These exist for the parent who is not with the child every day —
-            everything above needs close observation, and these do not. None of them decides
-            an outcome on its own, but together they turn "we cannot tell" into something
-            concrete to raise at an appointment.
-          */}
-          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
-            <div>
-              <h2 className="font-semibold text-ink">Things you may have noticed indirectly</h2>
-              <p className="text-xs text-gray-500 mt-0.5">
-                Answer these even if you were unsure about the questions above — they are often
-                easier to spot, and they still tell a doctor something useful.
-              </p>
-            </div>
+            {!isFemale && (
+              <SignQuestion
+                label="Has his voice started to deepen?"
+                description="Getting lower, or cracking and breaking between high and low."
+                value={answers.voiceDeepening}
+                onChange={(v) => set('voiceDeepening', v)}
+              />
+            )}
 
             <SignQuestion
-              label="Is the child outgrowing clothes or shoes unusually fast?"
+              label="Are they outgrowing clothes or shoes unusually fast?"
               description="Needing the next shoe size or a new uniform much sooner than before."
               value={answers.rapidClothingOrShoeSizeChange}
               onChange={(v) => set('rapidClothingOrShoeSizeChange', v)}
@@ -458,7 +430,74 @@ export default function PubertyQuestionnaire() {
               value={answers.acne}
               onChange={(v) => set('acne', v)}
             />
+            <SignQuestion
+              label="Have there been noticeable changes in mood or behaviour?"
+              description="More irritable, more private, or bigger swings in mood than before."
+              value={answers.behavioralMoodSkinChanges}
+              onChange={(v) => set('behavioralMoodSkinChanges', v)}
+            />
+          </div>
 
+          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+            <div>
+              <h2 className="font-semibold text-ink">Signs of physical development</h2>
+              <p className="text-xs text-gray-500 mt-1">
+                These are the changes a doctor uses to judge how far puberty has actually
+                progressed, so they are the most useful part of this screening — but they are
+                also private.
+              </p>
+              <p className="text-xs text-gray-500 mt-1.5">
+                <span className="font-medium text-ink">
+                  You should never examine your child to answer these.
+                </span>{' '}
+                Answer only what you happen to have noticed, and choose "Not sure" for anything
+                else. That is a normal answer, and the result will say plainly that it could not
+                reach a conclusion rather than guessing one.
+              </p>
+            </div>
+
+            {isFemale ? (
+              <>
+                <SignQuestion
+                  label="Has breast development begun?"
+                  description="Usually the first change — often noticeable through clothing before anything else. You do not need to look for it."
+                  value={answers.breastDevelopment}
+                  onChange={(v) => set('breastDevelopment', v)}
+                  ageValue={answers.breastDevelopmentAgeYears}
+                  onAgeChange={(v) => set('breastDevelopmentAgeYears', v)}
+                />
+                <SignQuestion
+                  label="Have her periods started?"
+                  description="The first period. This usually happens about two years after breast development begins."
+                  value={answers.menstruation}
+                  onChange={(v) => set('menstruation', v)}
+                  ageValue={answers.menstruationAgeYears}
+                  onAgeChange={(v) => set('menstruationAgeYears', v)}
+                />
+              </>
+            ) : (
+              <SignQuestion
+                label="Have you noticed the start of physical development?"
+                description="In boys this usually begins with the testicles growing larger, before any other change. Most parents never see this and answer 'Not sure' — that is expected, and it is why the everyday questions above matter."
+                value={answers.testicularOrGenitalEnlargement}
+                onChange={(v) => set('testicularOrGenitalEnlargement', v)}
+                ageValue={answers.testicularOrGenitalEnlargementAgeYears}
+                onAgeChange={(v) => set('testicularOrGenitalEnlargementAgeYears', v)}
+              />
+            )}
+
+            <SignQuestion
+              label={isFemale ? 'Has underarm or body hair appeared?' : 'Has facial, underarm or body hair appeared?'}
+              description="The first hairs are usually fine and straight, becoming coarser over time."
+              value={answers.pubicOrBodyHairGrowth}
+              onChange={(v) => set('pubicOrBodyHairGrowth', v)}
+              ageValue={answers.pubicOrBodyHairGrowthAgeYears}
+              onAgeChange={(v) => set('pubicOrBodyHairGrowthAgeYears', v)}
+            />
+          </div>
+
+          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+            <h2 className="font-semibold text-ink mb-1">General</h2>
             <TextField
               size="small"
               label="Who answered these questions? (optional)"
@@ -467,22 +506,12 @@ export default function PubertyQuestionnaire() {
               value={answers.answeredBy ?? ''}
               onChange={(e) => set('answeredBy', e.target.value)}
             />
-          </div>
-
-          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
-            <h2 className="font-semibold text-ink mb-1">General</h2>
             <TextField
               size="small"
               type="number"
               label="At approx. what age did the child's parents or siblings begin puberty? (optional)"
               value={answers.familyPubertyOnsetAgeYears ?? ''}
               onChange={(e) => set('familyPubertyOnsetAgeYears', e.target.value ? Number(e.target.value) : undefined)}
-            />
-            <SignQuestion
-              label="Have there been noticeable changes in mood or behaviour?"
-              description="More irritable, more private, or bigger swings in mood than before."
-              value={answers.behavioralMoodSkinChanges}
-              onChange={(v) => set('behavioralMoodSkinChanges', v)}
             />
             <TextField
               label="Other health conditions, medications, or relevant history (optional)"

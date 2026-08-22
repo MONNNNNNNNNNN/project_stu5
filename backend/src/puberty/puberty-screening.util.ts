@@ -224,7 +224,7 @@ export function compilePubertyResult(
         worthLooking
           ? 'Mention what you did notice at your next routine appointment. Indirect changes like these are useful to a doctor even without the rest.'
           : 'Nothing here needs action, because nothing here has been established either way.',
-        'If someone else sees the child more often — the other parent, a grandparent, a school nurse — they may be able to answer the questions you were unsure about. You can record who answered.',
+        'If someone else sees the child more often — the other parent, a grandparent, a school nurse — they may be able to answer what you were unsure about. There is a field to record who answered. Do not examine the child to fill this in; a doctor can check properly in a few seconds.',
         'Keep recording height. Growth rate is measurable without close observation, and a growth spurt is one of the more reliable early signals.',
         'Re-run this screening whenever you are able to answer more of it.',
       ],

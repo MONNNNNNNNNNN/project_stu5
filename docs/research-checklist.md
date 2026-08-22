@@ -108,6 +108,34 @@ something concrete to raise at an appointment. There is an optional "who answere
 
 **Owner:** ___ **Due:** ___
 
+### A3b 🟡 Question wording reviewed for appropriateness — **revised, needs client sign-off**
+
+**2026-08-22.** The questionnaire opened by asking whether a boy's testicles had grown. It is
+the earliest sign of male puberty, so it led — but it asks a parent to have inspected their
+child's genitals, which is an uncomfortable thing for an app to ask and a poor way to open a
+screening. It is also weak data: parents cannot judge testicular volume reliably, which is why
+clinicians use an orchidometer.
+
+Restructured rather than removed, because dropping it loses the earliest male signal entirely:
+
+- **Everyday changes first** — growth spurt, voice, shoe/uniform size, body odour, acne, mood.
+  All fully observable without looking for anything.
+- **Signs of physical development second**, in its own card, prefaced with *"You should never
+  examine your child to answer these"* and an explicit statement that "Not sure" is normal and
+  the result will say it could not conclude.
+- The male item is now *"Have you noticed the start of physical development?"*, with the
+  clinical detail in the description and the expectation set that most parents answer "Not sure".
+- The hair question leads with the observable part (facial, underarm) rather than pubic.
+
+No field names or scoring changed, so history recompiles identically — 36 tests pass untouched.
+
+⚠️ **Needs the Client Representative's view**, and ideally a clinician's. There is a real
+trade-off here: gentler wording will produce more "Not sure" on the single most diagnostic
+item, which means more INSUFFICIENT_INFO results and fewer early flags. That is the right
+default for an app a parent uses alone, but it is a clinical call, not a copy decision.
+
+**Owner:** ___ **Due:** ___
+
 ### A4 🟢 Examples that make the signs easy to observe — **built**
 
 **Built 2026-08-22** for the wording half. Every question is now phrased as what the parent
