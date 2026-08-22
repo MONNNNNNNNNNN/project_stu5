@@ -81,7 +81,7 @@ cite the Korean/Taiwanese data — which is defensible.
 
 **Owner:** ___ **Due:** ___
 
-### A3 🔴 Questions must work for a parent who is not with the child daily
+### A3 🟢 Questions must work for a parent who is not with the child daily — **built**
 
 Client's point: some parents work away, or the child is at boarding school / with grandparents.
 Our questionnaire currently asks things a parent may simply not know.
@@ -99,12 +99,27 @@ Several of those require close physical observation. Needed:
 - guidance on **who else can answer** — school nurse, grandparent — and whether that is
   acceptable to record
 
+**Built 2026-08-22.** Every sign is now yes / no / not sure. When the sign that would decide a
+delayed outcome is answered "not sure", the result is `INSUFFICIENT_INFO` rather than
+`DELAYED_ONSET` — nothing was established, and reporting it as delayed development invents
+evidence. Indirect indicators a distant parent can answer were added (outgrowing clothes or
+shoes, body odour, acne); none decides an outcome alone but they turn "we cannot tell" into
+something concrete to raise at an appointment. There is an optional "who answered" field.
+
 **Owner:** ___ **Due:** ___
 
-### A4 🔴 Examples that make the signs easy to observe
+### A4 🟢 Examples that make the signs easy to observe — **built**
 
-Client asked for concrete examples. We currently give a clinical term and expect the parent to
-know it ("thelarche", "testicular or genital enlargement").
+**Built 2026-08-22** for the wording half. Every question is now phrased as what the parent
+would actually see, with a description underneath: "Has breast development (thelarche) been
+observed?" became "Has breast development begun?" plus a description of what the first sign
+looks like. A clinical term the reader has to already know is not a question they can answer.
+
+Note the client's "plain-Thai" request was dropped on 2026-08-22 — the app is English-only and
+the decision is to stay consistent with the American reference data, so this is plain-language
+English rather than Thai. Thai localisation would be a separate i18n project; none exists today.
+
+**Still open:** whether to add illustrations.
 
 Needed: plain-Thai description per sign, and a decision on whether to use **illustrations**
 (Tanner-stage style line drawings). ⚠️ Note the TOR §3.4 constraint: *no copyrighted atlas
@@ -117,27 +132,40 @@ client question (see `client-questions.md` Q6).
 
 ## B. Product design (client points 5, 8, 9, 10)
 
-### B1 ⚪ Make Growth / Puberty / AI relate to each other
+### B1 🟢 Make Growth / Puberty / AI relate to each other — **built**
 
 Client: *"if the height chart goes above the threshold there should be a required puberty
 screening"*, and *"each menu's functions aren't related"*.
 
-Design proposal written up in [`product-flow.md`](./product-flow.md). Needs client approval
-before building.
+**Built 2026-08-22** as `backend/src/suggestions/`, surfaced as a "What to do next" panel on
+the dashboard. Four rules: BMI outside the healthy range suggests a screening; early signs
+suggest a bone-age upload; a bone age two years ahead suggests raising it with a paediatrician;
+a due follow-up reminds. The growth trigger is **BMI**, matching the client's own description,
+not the height/weight SDS an earlier draft guessed at.
 
-### B2 ⚪ What does the AI actually add? — **the most important open question**
+**Suggested, not required** — see `client-questions.md` Q8. Two thresholds are provisional and
+marked in code: the screening age gate (6, pending Q7a) and the bone-age gap (24 months, uncited,
+see D3).
+
+### B2 🟡 What does the AI actually add? — **framing shipped, still needs client sign-off**
 
 Client: *"AI เข้ามาช่วยอะไร เหมือน User ก็ต้องไปโรงพยาบาลเพื่อเอกซเรย์เหมือนเดิม"*
 
-This is correct as stated and the app never answers it. Full argument in
+**The framing is now stated in the product** (2026-08-22). The bone-age page says who it is
+for — parents who already have an X-ray and are waiting to learn what it means — and that it
+does not replace the hospital visit. It previously opened by inviting an upload "for an instant
+automated bone age estimation", which invites the client's objection directly.
+
+⚠️ Shipping the copy does **not** close this. If the client rejects the framing at Q4, the
+feature needs rethinking rather than rewording. Full argument in
 [`product-flow.md`](./product-flow.md#the-ai-question); the short version is that the
 bottleneck the TOR §1 describes is not *taking* the X-ray, it is finding someone qualified to
 *read* it. Needs a client decision on whether that is the value proposition to build toward.
 
-### B3 🔴 What is the usage flow?
+### B3 🟢 What is the usage flow? — **documented and now built**
 
-No documented end-to-end flow exists. Draft in [`product-flow.md`](./product-flow.md), to be
-checked against the deployed app.
+Documented in [`product-flow.md`](./product-flow.md) and implemented as the suggestion rules in
+B1, so the flow the document describes is the flow the app now walks a parent through.
 
 ---
 
