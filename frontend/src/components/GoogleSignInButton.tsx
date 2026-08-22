@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
+import { Button, CircularProgress } from '@mui/material';
 
 /**
- * Google Identity Services sign-in button.
+ * Sign in with Google, styled as one of our own buttons.
  *
- * The ID-token flow, not the redirect flow. Google hands the browser a signed JWT, we post it
- * to `/auth/google`, and the backend verifies the signature and audience before issuing our
- * own session. No client secret exists anywhere in this path, and no redirect plumbing —
- * which is why the OAuth client has no redirect URIs configured.
+ * Google's `renderButton` draws into an iframe we cannot theme, so it always looked like a
+ * white Google button pasted onto the page — wrong in dark mode, wrong shape, wrong font. This
+ * renders a normal MUI button and triggers the same GIS flow from a click, so the control
+ * matches every other button in the app and still uses Google's real consent UI.
  *
- * Renders nothing at all when `VITE_GOOGLE_CLIENT_ID` is unset. Sign-in with Google is an
- * addition to email and password, never a dependency of it, so a missing env var must not
- * leave a broken control on the login form.
+ * Still the ID-token flow: Google hands the browser a signed JWT, we post it to `/auth/google`,
+ * and the backend verifies the signature and audience. No client secret, no redirect plumbing.
+ *
+ * Renders nothing when `VITE_GOOGLE_CLIENT_ID` is unset — Google sign-in is an addition to
+ * email and password, never a dependency of it.
  */
 
 interface GoogleAccountsId {
@@ -19,17 +22,17 @@ interface GoogleAccountsId {
     callback: (response: { credential?: string }) => void;
     auto_select?: boolean;
     cancel_on_tap_outside?: boolean;
+    use_fedcm_for_prompt?: boolean;
   }): void;
-  renderButton(
-    parent: HTMLElement,
-    options: {
-      theme?: 'outline' | 'filled_blue';
-      size?: 'large' | 'medium';
-      width?: number;
-      text?: 'signin_with' | 'signup_with' | 'continue_with';
-      logo_alignment?: 'left' | 'center';
-    },
-  ): void;
+  prompt(momentListener?: (n: PromptMoment) => void): void;
+  disableAutoSelect(): void;
+}
+
+interface PromptMoment {
+  isNotDisplayed?: () => boolean;
+  isSkippedMoment?: () => boolean;
+  isDismissedMoment?: () => boolean;
+  getNotDisplayedReason?: () => string;
 }
 
 declare global {
@@ -57,58 +60,69 @@ function loadGis(): Promise<void> {
   return gisPromise;
 }
 
+/** Google's mark. Inline so the button renders instantly and works offline-ish. */
+function GoogleMark() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.17-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18Z" />
+      <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33Z" />
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58Z" />
+    </svg>
+  );
+}
+
 export function GoogleSignInButton({
   onCredential,
   disabled,
   disabledReason,
-  text = 'continue_with',
+  label = 'Continue with Google',
+  busy,
 }: {
   onCredential: (credential: string) => void;
   /** Used by the register form to hold the button until the terms box is ticked (FR-2). */
   disabled?: boolean;
   disabledReason?: string;
-  text?: 'signin_with' | 'signup_with' | 'continue_with';
+  label?: string;
+  busy?: boolean;
 }) {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
-  const hostRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [opening, setOpening] = useState(false);
 
-  // The callback is read at click time rather than captured at initialise time, so a stale
-  // closure cannot send a credential to an outdated handler.
+  // Read at click time rather than captured at initialise time, so a stale closure cannot
+  // deliver a credential to an outdated handler.
   const callbackRef = useRef(onCredential);
   callbackRef.current = onCredential;
 
   useEffect(() => {
-    if (!clientId || !hostRef.current) return;
+    if (!clientId) return;
     let cancelled = false;
 
     loadGis()
       .then(() => {
-        if (cancelled || !hostRef.current || !window.google) return;
+        if (cancelled || !window.google) return;
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: (response) => {
+            setOpening(false);
             if (response.credential) callbackRef.current(response.credential);
           },
-          // No One Tap auto-select: on a shared family device, silently resuming somebody
-          // else's session on a page showing a child's medical history is not acceptable.
+          // No auto-select. On a shared family device, silently resuming somebody else's
+          // session on a page showing a child's medical history is not acceptable.
           auto_select: false,
           cancel_on_tap_outside: true,
         });
-        window.google.accounts.id.renderButton(hostRef.current, {
-          theme: 'outline',
-          size: 'large',
-          text,
-          logo_alignment: 'center',
-          width: 320,
-        });
+        window.google.accounts.id.disableAutoSelect();
+        setReady(true);
       })
       .catch(() => !cancelled && setFailed(true));
 
     return () => {
       cancelled = true;
     };
-  }, [clientId, text]);
+  }, [clientId]);
 
   if (!clientId) return null;
 
@@ -120,22 +134,42 @@ export function GoogleSignInButton({
     );
   }
 
+  function handleClick() {
+    if (!window.google) return;
+    setOpening(true);
+    window.google.accounts.id.prompt((moment) => {
+      // The chooser can decline to appear — third-party cookies blocked, or the user has
+      // dismissed it too often. Failing silently here leaves a button that does nothing, so
+      // surface it rather than leaving them clicking.
+      if (moment.isNotDisplayed?.() || moment.isSkippedMoment?.() || moment.isDismissedMoment?.()) {
+        setOpening(false);
+      }
+    });
+  }
+
+  const isBusy = busy || opening;
+
   return (
-    <div className="flex flex-col items-center gap-1">
-      {/* Google renders its own button into this node and owns the click. Covering it while
-          disabled is the only way to hold it without Google's iframe swallowing the event. */}
-      <div className="relative">
-        <div ref={hostRef} />
-        {disabled && (
-          <div
-            className="absolute inset-0 cursor-not-allowed rounded bg-surface/60"
-            title={disabledReason}
-            aria-hidden="true"
-          />
-        )}
-      </div>
+    <div className="flex flex-col items-stretch gap-1">
+      <Button
+        type="button"
+        variant="outlined"
+        fullWidth
+        disabled={!ready || disabled || isBusy}
+        onClick={handleClick}
+        startIcon={isBusy ? <CircularProgress size={16} /> : <GoogleMark />}
+        sx={{
+          py: 1.2,
+          textTransform: 'none',
+          fontWeight: 500,
+          borderColor: 'divider',
+          color: 'text.primary',
+        }}
+      >
+        {isBusy ? 'Opening Google…' : label}
+      </Button>
       {disabled && disabledReason && (
-        <p className="text-xs text-gray-500">{disabledReason}</p>
+        <p className="text-xs text-gray-500 text-center">{disabledReason}</p>
       )}
     </div>
   );

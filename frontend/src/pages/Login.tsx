@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, TextField, Alert } from '@mui/material';
+import { Button, TextField, Alert, Checkbox, FormControlLabel } from '@mui/material';
 import { ThemeToggleButton } from '../components/ThemeToggleButton';
 import { ColdStartNotice } from '../components/ColdStartNotice';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +19,10 @@ export default function Login() {
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  /** Held between "no account yet" and the parent accepting the terms. */
+  const [pendingCredential, setPendingCredential] = useState<string | null>(null);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,23 +46,35 @@ export default function Login() {
     }
   }
 
-  async function handleGoogle(credential: string) {
+  /**
+   * Google sign-in that can also create the account.
+   *
+   * The first attempt deliberately sends acceptedTerms: false. An existing account signs
+   * straight in; a new one is refused by the server, and that refusal is the signal to ask for
+   * consent rather than an error to show. FR-2 stays enforced server-side either way — the
+   * consent panel below cannot be skipped by calling the API directly.
+   */
+  async function submitGoogle(credential: string, acceptedTerms: boolean) {
+    setGoogleBusy(true);
     setError(null);
     try {
-      // `true` here is not the consent itself — an existing account already gave it at
-      // registration, and the server refuses to create a new one without it having been
-      // collected. A first-time Google user is sent to /register to tick the box properly.
-      await loginWithGoogle(credential, false);
+      await loginWithGoogle(credential, acceptedTerms);
       navigate('/dashboard');
     } catch (err: any) {
       const status = err?.response?.status;
+      if (status === 400 && !acceptedTerms) {
+        // No account yet. Keep the credential and ask them to accept the terms.
+        setPendingCredential(credential);
+        return;
+      }
+      setPendingCredential(null);
       setError(
-        status === 400
-          ? 'No account yet for that Google address. Create one first — it takes a moment and you will need to accept the terms.'
-          : status
-            ? 'Could not sign in with that Google account.'
-            : 'Could not reach the server. It may still be starting up — please try again.',
+        status
+          ? err?.response?.data?.message ?? 'Could not sign in with that Google account.'
+          : 'Could not reach the server. It may still be starting up — please try again.',
       );
+    } finally {
+      setGoogleBusy(false);
     }
   }
 
@@ -103,9 +119,62 @@ export default function Login() {
           <span className="h-px flex-1 bg-gray-200" />
         </div>
 
-        {/* Existing accounts have already accepted the terms, so nothing is gated here — that
-            only applies when Google sign-in creates a new account, which the server enforces. */}
-        <GoogleSignInButton text="signin_with" onCredential={handleGoogle} />
+        {pendingCredential ? (
+          <div className="rounded-xl border border-brand-200 bg-brand-50/60 dark:bg-transparent p-4 flex flex-col gap-3">
+            <p className="text-sm text-ink">
+              You do not have an account yet. Accept the terms and we will create one from your
+              Google address.
+            </p>
+            <FormControlLabel
+              sx={{ ml: 0, alignItems: 'flex-start' }}
+              control={
+                <Checkbox
+                  checked={termsChecked}
+                  onChange={(e) => setTermsChecked(e.target.checked)}
+                  sx={{ pt: 0 }}
+                />
+              }
+              label={
+                <span className="text-xs text-gray-600">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-brand-600 underline underline-offset-2">
+                    terms of use
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="text-brand-600 underline underline-offset-2">
+                    privacy notice
+                  </Link>
+                  , and I am the child's parent or guardian.
+                </span>
+              }
+            />
+            <div className="flex gap-2">
+              <Button
+                variant="contained"
+                disabled={!termsChecked || googleBusy}
+                onClick={() => submitGoogle(pendingCredential, true)}
+                sx={{ flex: 1 }}
+              >
+                {googleBusy ? 'Creating account…' : 'Create my account'}
+              </Button>
+              <Button
+                variant="text"
+                onClick={() => {
+                  setPendingCredential(null);
+                  setTermsChecked(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <GoogleSignInButton
+            label="Continue with Google"
+            busy={googleBusy}
+            onCredential={(c) => submitGoogle(c, false)}
+          />
+        )}
 
         <p className="text-sm text-gray-500 text-center mt-6">
           New here?{' '}

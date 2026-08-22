@@ -11,7 +11,7 @@ interface AuthContextValue {
     email: string,
     password: string,
     fullName: string,
-    phoneNumber: string,
+    phoneNumber: string | undefined,
     acceptedTerms: boolean,
   ) => Promise<void>;
   logout: () => Promise<void>;
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     fullName: string,
-    phoneNumber: string,
+    phoneNumber: string | undefined,
     acceptedTerms: boolean,
   ) {
     const res = await api.post(

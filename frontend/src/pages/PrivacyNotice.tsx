@@ -1,8 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { PageChrome } from '../components/PageChrome';
+import { useAuth } from '../context/AuthContext';
 
 export default function PrivacyNotice() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
-    <div className="min-h-svh bg-cream px-4 py-10">
+    <PageChrome>
       <div className="max-w-2xl mx-auto bg-surface rounded-2xl shadow-sm p-8 flex flex-col gap-4 text-sm text-ink leading-relaxed">
         <h1 className="text-xl font-semibold text-brand-700 mb-2">Privacy Notice</h1>
 
@@ -15,7 +20,7 @@ export default function PrivacyNotice() {
 
         <h2 className="font-semibold text-ink mt-2">What we collect</h2>
         <ul className="list-disc pl-5 flex flex-col gap-1">
-          <li>Account: full name, email, phone number, hashed password.</li>
+          <li>Account: full name, email, and either a hashed password or a Google account identifier. A phone number only if you choose to add one.</li>
           <li>Child profile: name, sex, date of birth, and your relationship to the child.</li>
           <li>Growth records: height, weight, and the date measured.</li>
           <li>Puberty screening answers, as reported by you.</li>
@@ -26,7 +31,7 @@ export default function PrivacyNotice() {
         <h2 className="font-semibold text-ink mt-2">How it's used</h2>
         <p>
           To calculate growth percentiles/SDS against standard pediatric growth references, compile
-          puberty screening summaries, and (once connected) run bone-age prediction — all shown back
+          puberty screening summaries, and run bone-age prediction — all shown back
           to you inside your own account. None of these results are a clinical diagnosis.
         </p>
 
@@ -44,10 +49,22 @@ export default function PrivacyNotice() {
           which removes your login and unlinks you from any children's records.
         </p>
 
-        <Link to="/register" className="text-brand-600 font-medium mt-4">
-          ← Back to registration
-        </Link>
+        {/* A signed-in reader reached this from inside the app. Sending them to the
+            registration page reads as though their session had ended. */}
+        {user ? (
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="text-brand-600 font-medium mt-4 self-start hover:underline"
+          >
+            ← Back
+          </button>
+        ) : (
+          <Link to="/register" className="text-brand-600 font-medium mt-4">
+            ← Back to registration
+          </Link>
+        )}
       </div>
-    </div>
+    </PageChrome>
   );
 }

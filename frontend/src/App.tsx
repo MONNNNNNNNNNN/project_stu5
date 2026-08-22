@@ -23,6 +23,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Notifications from './pages/Notifications';
 import PrivacyNotice from './pages/PrivacyNotice';
+import TermsOfUse from './pages/TermsOfUse';
 import NotFound from './pages/NotFound';
 
 function HomeRoute() {
@@ -44,6 +45,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/privacy" element={<PrivacyNotice />} />
+      <Route path="/terms" element={<TermsOfUse />} />
       {/* Public: the landing page advertises these articles, so sending a signed-out
           visitor who clicks one back to the home page made them look broken. Both pages
           render the app's nav instead of the public one when there is a session. */}

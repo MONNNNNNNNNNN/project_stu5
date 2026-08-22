@@ -223,7 +223,11 @@ export class AuthService {
         googleId: payload.sub,
         // No password. `login` refuses these accounts before it reaches bcrypt.
         passwordHash: null,
-        fullName: payload.name ?? email.split('@')[0],
+        // The email's local part, deliberately, not payload.name. A Google display name is
+        // often a full legal name or a nickname the parent never chose for this app, and it
+        // silently overwrites nothing they can predict. Starting from the address they just
+        // used is neutral, and Profile lets them change it in one field.
+        fullName: email.split('@')[0],
         avatarUrl: payload.picture ?? null,
         // Google has already verified the address, which is what this flag means.
         isVerified: true,
