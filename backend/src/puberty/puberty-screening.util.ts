@@ -1,5 +1,5 @@
 import { ChildSex } from '@prisma/client';
-import { PubertyAnswersDto } from './dto/submit-puberty-screening.dto';
+import { PubertyAnswersDto, SignAnswer } from './dto/submit-puberty-screening.dto';
 
 /**
  * Age cutoffs for precocious and delayed puberty. Used only to raise a screening signal —
@@ -46,7 +46,16 @@ export type PubertyOutcome =
   /** Signs began before the precocious-puberty threshold for this child's sex. */
   | 'EARLY_SIGNS'
   /** Past the age by which puberty would normally have begun, with no signs reported. */
-  | 'DELAYED_ONSET';
+  | 'DELAYED_ONSET'
+  /**
+   * The parent does not know enough about the signs that would decide this.
+   *
+   * Distinct from NO_SIGNS_YET on purpose. "I have not seen it" and "I would not have seen
+   * it" produce the same empty checkbox but mean opposite things, and only one of them is
+   * evidence. Reporting the second as a delayed-development flag is how a screening tool
+   * sends the wrong family to a doctor.
+   */
+  | 'INSUFFICIENT_INFO';
 
 export interface PubertyScreeningResult {
   outcome: PubertyOutcome;
@@ -72,6 +81,42 @@ function onsetAge(reported: number | undefined, ageYearsNow: number): number {
   return reported !== undefined ? reported : ageYearsNow;
 }
 
+/**
+ * Reads an answer that may be tri-state or a legacy boolean.
+ *
+ * Screenings are stored as raw JSON and recompiled on every read, so this function sees every
+ * record ever written. Before tri-state answers existed, a missing key meant an unchecked box
+ * meant "no" — that mapping is preserved exactly, so no historical result changes.
+ */
+function answered(value: SignAnswer | boolean | undefined): SignAnswer {
+  if (value === true) return 'yes';
+  if (value === 'yes' || value === 'unsure' || value === 'no') return value;
+  return 'no';
+}
+
+const isYes = (v: SignAnswer | boolean | undefined) => answered(v) === 'yes';
+const isUnsure = (v: SignAnswer | boolean | undefined) => answered(v) === 'unsure';
+
+/**
+ * The signs that decide a *delayed* outcome, per sex. If the parent is unsure about the one
+ * that would raise the flag, we have not learned anything and must say so rather than flag.
+ */
+function decidingSignsUnknown(sex: ChildSex, answers: PubertyAnswersDto): boolean {
+  return sex === 'FEMALE'
+    ? isUnsure(answers.breastDevelopment) || isUnsure(answers.menstruation)
+    : isUnsure(answers.testicularOrGenitalEnlargement);
+}
+
+/** Indirect signs a parent who is not with the child daily can still answer. */
+function indirectSignsReported(answers: PubertyAnswersDto): string[] {
+  const out: string[] = [];
+  if (isYes(answers.rapidClothingOrShoeSizeChange))
+    out.push('Outgrowing clothes or shoes unusually fast');
+  if (isYes(answers.bodyOdourChange)) out.push('Adult-type body odour');
+  if (isYes(answers.acne)) out.push('Acne');
+  return out;
+}
+
 export function compilePubertyResult(
   sex: ChildSex,
   ageYearsNow: number,
@@ -85,7 +130,7 @@ export function compilePubertyResult(
   let anyPrimarySign = false;
 
   if (sex === 'FEMALE') {
-    if (answers.breastDevelopment) {
+    if (isYes(answers.breastDevelopment)) {
       anyPrimarySign = true;
       const age = onsetAge(answers.breastDevelopmentAgeYears, ageYearsNow);
       signs.push(
@@ -97,7 +142,7 @@ export function compilePubertyResult(
         earlyReason = `Breast development before age ${PRECOCIOUS_AGE_FEMALE}, which is earlier than typical.`;
       }
     }
-    if (answers.menstruation) {
+    if (isYes(answers.menstruation)) {
       anyPrimarySign = true;
       const age = onsetAge(answers.menstruationAgeYears, ageYearsNow);
       signs.push(
@@ -109,13 +154,13 @@ export function compilePubertyResult(
         earlyReason = earlyReason ?? 'Menstruation reported at an unusually early age.';
       }
     }
-    if (!answers.breastDevelopment && ageYearsNow >= DELAYED_AGE_FEMALE_BREAST) {
+    if (answered(answers.breastDevelopment) === 'no' && ageYearsNow >= DELAYED_AGE_FEMALE_BREAST) {
       delayedReason = `No breast development reported by age ${DELAYED_AGE_FEMALE_BREAST}, which is later than typical.`;
-    } else if (!answers.menstruation && ageYearsNow >= DELAYED_AGE_FEMALE_MENARCHE) {
+    } else if (answered(answers.menstruation) === 'no' && ageYearsNow >= DELAYED_AGE_FEMALE_MENARCHE) {
       delayedReason = `No menstruation reported by age ${DELAYED_AGE_FEMALE_MENARCHE}, which is later than typical.`;
     }
   } else {
-    if (answers.testicularOrGenitalEnlargement) {
+    if (isYes(answers.testicularOrGenitalEnlargement)) {
       anyPrimarySign = true;
       const age = onsetAge(answers.testicularOrGenitalEnlargementAgeYears, ageYearsNow);
       signs.push(
@@ -127,19 +172,19 @@ export function compilePubertyResult(
         earlyReason = `Testicular or genital enlargement before age ${PRECOCIOUS_AGE_MALE}, which is earlier than typical.`;
       }
     }
-    if (answers.voiceDeepening) {
+    if (isYes(answers.voiceDeepening)) {
       anyPrimarySign = true;
       signs.push('Voice deepening');
       if (ageYearsNow < PRECOCIOUS_AGE_MALE) {
         earlyReason = earlyReason ?? `Voice deepening before age ${PRECOCIOUS_AGE_MALE}, which is earlier than typical.`;
       }
     }
-    if (!answers.testicularOrGenitalEnlargement && ageYearsNow >= DELAYED_AGE_MALE) {
+    if (answered(answers.testicularOrGenitalEnlargement) === 'no' && ageYearsNow >= DELAYED_AGE_MALE) {
       delayedReason = `No testicular or genital enlargement reported by age ${DELAYED_AGE_MALE}, which is later than typical.`;
     }
   }
 
-  if (answers.pubicOrBodyHairGrowth) {
+  if (isYes(answers.pubicOrBodyHairGrowth)) {
     const age = onsetAge(answers.pubicOrBodyHairGrowthAgeYears, ageYearsNow);
     signs.push(
       answers.pubicOrBodyHairGrowthAgeYears
@@ -150,8 +195,41 @@ export function compilePubertyResult(
       earlyReason = earlyReason ?? `Pubic or body hair growth before age ${precociousAge}, which is earlier than typical.`;
     }
   }
-  if (answers.growthSpurt) signs.push('Noticeable recent increase in height growth rate');
-  if (answers.behavioralMoodSkinChanges) signs.push('Behavioral, mood, or skin changes noted');
+  if (isYes(answers.growthSpurt)) signs.push('Noticeable recent increase in height growth rate');
+  if (isYes(answers.behavioralMoodSkinChanges)) signs.push('Behavioral, mood, or skin changes noted');
+  signs.push(...indirectSignsReported(answers));
+
+  // A delayed flag rests entirely on a sign being *absent*. If the parent told us they do not
+  // know, absence was never established, and reporting it as delayed development would be
+  // inventing evidence. An early flag is different — it rests on something positively
+  // reported, so an unsure answer elsewhere does not undermine it.
+  if (!earlyReason && decidingSignsUnknown(sex, answers)) {
+    const indirect = indirectSignsReported(answers);
+    const worthLooking = indirect.length > 0;
+    return {
+      outcome: 'INSUFFICIENT_INFO',
+      title: 'Not enough information to say',
+      summary:
+        'Some of the questions that would decide this were answered "not sure", so this ' +
+        'screening cannot reach a result. That is a perfectly reasonable answer — several of ' +
+        'these signs are not visible unless you are with the child every day.' +
+        (worthLooking
+          ? ` You did report: ${indirect.join('; ')}. Those are worth mentioning to a doctor even on their own.`
+          : ''),
+      signsReported: signs,
+      flagged: false,
+      flagReason: null,
+      seeDoctor: worthLooking,
+      guidance: [
+        worthLooking
+          ? 'Mention what you did notice at your next routine appointment. Indirect changes like these are useful to a doctor even without the rest.'
+          : 'Nothing here needs action, because nothing here has been established either way.',
+        'If someone else sees the child more often — the other parent, a grandparent, a school nurse — they may be able to answer the questions you were unsure about. You can record who answered.',
+        'Keep recording height. Growth rate is measurable without close observation, and a growth spurt is one of the more reliable early signals.',
+        'Re-run this screening whenever you are able to answer more of it.',
+      ],
+    };
+  }
 
   if (earlyReason) {
     return {

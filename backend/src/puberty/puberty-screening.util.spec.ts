@@ -107,3 +107,64 @@ describe('buildMonitoringPlan', () => {
     expect(plan.conclusion?.title).toMatch(/doctor/);
   });
 });
+
+describe('not-sure answers', () => {
+  // The gap this closes: an unchecked box used to be read as a confident "no", so a parent
+  // who simply could not see the sign raised a delayed-development flag by omission.
+  it('does not flag delayed development when the deciding sign is unsure', () => {
+    const unsure = compilePubertyResult(FEMALE, 13.5, { breastDevelopment: 'unsure' });
+    expect(unsure.outcome).toBe('INSUFFICIENT_INFO');
+    expect(unsure.flagged).toBe(false);
+
+    // Same age, same absence of signs, but the parent actually knows.
+    const known = compilePubertyResult(FEMALE, 13.5, { breastDevelopment: 'no' });
+    expect(known.outcome).toBe('DELAYED_ONSET');
+  });
+
+  it('treats a missing answer exactly as a legacy record did', () => {
+    // Every screening written before tri-state answers stores booleans or nothing at all,
+    // and results are recompiled on every read — so these must not move.
+    expect(compilePubertyResult(FEMALE, 13.5, {}).outcome).toBe('DELAYED_ONSET');
+    expect(compilePubertyResult(FEMALE, 6, { breastDevelopment: true }).outcome).toBe('EARLY_SIGNS');
+    expect(compilePubertyResult(MALE, 11, { testicularOrGenitalEnlargement: true }).outcome).toBe('TYPICAL_ONSET');
+  });
+
+  it('still raises an early flag when an unrelated answer is unsure', () => {
+    // Early rests on something positively reported, so it survives uncertainty elsewhere.
+    const result = compilePubertyResult(FEMALE, 6, {
+      breastDevelopment: 'yes',
+      menstruation: 'unsure',
+    });
+    expect(result.outcome).toBe('EARLY_SIGNS');
+    expect(result.seeDoctor).toBe(true);
+  });
+
+  it('points an unsure parent at someone who would know', () => {
+    const result = compilePubertyResult(MALE, 14.5, { testicularOrGenitalEnlargement: 'unsure' });
+    expect(result.outcome).toBe('INSUFFICIENT_INFO');
+    expect(result.guidance.join(' ')).toMatch(/grandparent|school nurse|other parent/i);
+  });
+});
+
+describe('indirect indicators', () => {
+  it('reports them, and suggests raising them even when nothing else is known', () => {
+    const result = compilePubertyResult(FEMALE, 13.5, {
+      breastDevelopment: 'unsure',
+      rapidClothingOrShoeSizeChange: 'yes',
+      bodyOdourChange: 'yes',
+    });
+    expect(result.outcome).toBe('INSUFFICIENT_INFO');
+    expect(result.signsReported).toEqual(
+      expect.arrayContaining(['Outgrowing clothes or shoes unusually fast', 'Adult-type body odour']),
+    );
+    // Nothing is established, but there is something concrete to bring to an appointment.
+    expect(result.seeDoctor).toBe(true);
+  });
+
+  it('does not let an indirect sign alone decide an outcome', () => {
+    // Acne and body odour are far too non-specific to call puberty on.
+    const result = compilePubertyResult(MALE, 10, { acne: 'yes', bodyOdourChange: 'yes' });
+    expect(result.outcome).toBe('TYPICAL_ONSET');
+    expect(result.flagged).toBe(false);
+  });
+});

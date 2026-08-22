@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, TextField, Alert, Checkbox, FormControlLabel, Chip, Stepper, Step, StepLabel } from '@mui/material';
+import { Button, TextField, Alert, Chip, Stepper, Step, StepLabel, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/PsychologyOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EventRepeatIcon from '@mui/icons-material/EventRepeatOutlined';
@@ -10,23 +10,42 @@ import { ChildProfileCard } from '../components/ChildProfileCard';
 import type { PubertyScreening } from '../types';
 import { formatDate } from '../lib/formatDate';
 
+/**
+ * Yes / no / not sure.
+ *
+ * "Not sure" is a real answer, not a skipped question. A parent who works away, or whose
+ * child lives with grandparents, genuinely cannot see several of these signs — and treating
+ * that silence as "no" is what used to raise a delayed-development flag on a child who was
+ * developing perfectly normally.
+ */
+type SignAnswer = 'yes' | 'no' | 'unsure';
+
 interface Answers {
-  breastDevelopment?: boolean;
+  breastDevelopment?: SignAnswer;
   breastDevelopmentAgeYears?: number;
-  menstruation?: boolean;
+  menstruation?: SignAnswer;
   menstruationAgeYears?: number;
-  testicularOrGenitalEnlargement?: boolean;
+  testicularOrGenitalEnlargement?: SignAnswer;
   testicularOrGenitalEnlargementAgeYears?: number;
-  voiceDeepening?: boolean;
-  pubicOrBodyHairGrowth?: boolean;
+  voiceDeepening?: SignAnswer;
+  pubicOrBodyHairGrowth?: SignAnswer;
   pubicOrBodyHairGrowthAgeYears?: number;
-  growthSpurt?: boolean;
+  growthSpurt?: SignAnswer;
+  rapidClothingOrShoeSizeChange?: SignAnswer;
+  bodyOdourChange?: SignAnswer;
+  acne?: SignAnswer;
   familyPubertyOnsetAgeYears?: number;
-  behavioralMoodSkinChanges?: boolean;
+  behavioralMoodSkinChanges?: SignAnswer;
   otherHealthNotes?: string;
+  answeredBy?: string;
 }
 
-type PubertyOutcome = 'NO_SIGNS_YET' | 'TYPICAL_ONSET' | 'EARLY_SIGNS' | 'DELAYED_ONSET';
+type PubertyOutcome =
+  | 'NO_SIGNS_YET'
+  | 'TYPICAL_ONSET'
+  | 'EARLY_SIGNS'
+  | 'DELAYED_ONSET'
+  | 'INSUFFICIENT_INFO';
 
 interface ScreeningResult {
   outcome: PubertyOutcome;
@@ -62,38 +81,68 @@ const OUTCOME_SEVERITY: Record<PubertyOutcome, 'success' | 'info' | 'warning'> =
   TYPICAL_ONSET: 'success',
   EARLY_SIGNS: 'warning',
   DELAYED_ONSET: 'warning',
+  // Deliberately not a warning. Nothing has been found; we simply could not tell.
+  INSUFFICIENT_INFO: 'info',
 };
 
+/**
+ * One sign, answered yes / no / not sure.
+ *
+ * `description` exists because the clinical term alone is not answerable by a parent —
+ * "thelarche" and even "testicular or genital enlargement" describe something the reader has
+ * to already know to recognise. The description says what it actually looks like.
+ */
 function SignQuestion({
   label,
-  checked,
-  onCheckedChange,
+  description,
+  value,
+  onChange,
   ageValue,
   onAgeChange,
 }: {
   label: string;
-  checked: boolean;
-  onCheckedChange: (v: boolean) => void;
+  description?: string;
+  value?: SignAnswer;
+  onChange: (v: SignAnswer) => void;
   ageValue?: number;
-  onAgeChange: (v: number | undefined) => void;
+  onAgeChange?: (v: number | undefined) => void;
 }) {
+  const options: { v: SignAnswer; label: string }[] = [
+    { v: 'yes', label: 'Yes' },
+    { v: 'no', label: 'No' },
+    { v: 'unsure', label: "Not sure" },
+  ];
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border border-gray-100 rounded-xl p-3">
-      <FormControlLabel
-        sx={{ ml: 0 }}
-        control={<Checkbox checked={checked} onChange={(e) => onCheckedChange(e.target.checked)} />}
-        label={<span className="text-sm">{label}</span>}
-      />
-      {checked && (
-        <TextField
+    <div className="flex flex-col gap-2 border border-gray-100 rounded-xl p-3">
+      <div>
+        <p className="text-sm text-ink">{label}</p>
+        {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <ToggleButtonGroup
           size="small"
-          type="number"
-          label="Approx. age (years)"
-          value={ageValue ?? ''}
-          onChange={(e) => onAgeChange(e.target.value ? Number(e.target.value) : undefined)}
-          sx={{ width: 160 }}
-        />
-      )}
+          exclusive
+          value={value ?? null}
+          onChange={(_, v: SignAnswer | null) => v && onChange(v)}
+          aria-label={label}
+        >
+          {options.map((o) => (
+            <ToggleButton key={o.v} value={o.v} sx={{ textTransform: 'none', px: 1.75 }}>
+              {o.label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+        {value === 'yes' && onAgeChange && (
+          <TextField
+            size="small"
+            type="number"
+            label="Approx. age (years)"
+            value={ageValue ?? ''}
+            onChange={(e) => onAgeChange(e.target.value ? Number(e.target.value) : undefined)}
+            sx={{ width: 160 }}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -258,24 +307,27 @@ export default function PubertyQuestionnaire() {
             <h2 className="font-semibold text-ink">Before you start</h2>
           </div>
           <p className="text-sm text-gray-600">
-            This is a short questionnaire about the physical changes that mark the start of puberty.
-            It takes a couple of minutes, and it compares what you report against the age ranges
-            doctors use to decide whether development is early, typical, or late for {firstName}.
+            A few questions about the physical changes that mark the start of puberty, checked
+            against the age ranges doctors use for {firstName}. Two minutes.
           </p>
           <ul className="flex flex-col gap-2 text-sm text-gray-600">
             <li className="flex gap-2">
               <span className="text-brand-500">•</span>
-              <span>Answer only what you have actually noticed — leave anything you're unsure about unchecked.</span>
+              <span>
+                <span className="font-medium text-ink">"Not sure" is a real answer.</span> Some of
+                these are not visible unless you are with {firstName} every day. Saying so is far
+                more useful than guessing — a guess can send the wrong family to a doctor.
+              </span>
             </li>
             <li className="flex gap-2">
               <span className="text-brand-500">•</span>
-              <span>Approximate ages are fine. "About when did you first notice it" is what's being asked.</span>
+              <span>Approximate ages are fine — "about when did you first notice it".</span>
             </li>
             <li className="flex gap-2">
               <span className="text-brand-500">•</span>
               <span>
-                If the result suggests early development, you'll get a follow-up plan to repeat the
-                screening every few months — alongside a recommendation to see a doctor.
+                If it suggests early development, you get a follow-up plan and a recommendation to
+                see a doctor.
               </span>
             </li>
             <li className="flex gap-2">
@@ -323,16 +375,18 @@ export default function PubertyQuestionnaire() {
             {isFemale ? (
               <>
                 <SignQuestion
-                  label="Has breast development (thelarche) been observed?"
-                  checked={!!answers.breastDevelopment}
-                  onCheckedChange={(v) => set('breastDevelopment', v)}
+                  label="Has breast development begun?"
+                  description="The first sign is usually a small, sometimes tender lump under one or both nipples — often one side before the other. Clinically this is called thelarche."
+                  value={answers.breastDevelopment}
+                  onChange={(v) => set('breastDevelopment', v)}
                   ageValue={answers.breastDevelopmentAgeYears}
                   onAgeChange={(v) => set('breastDevelopmentAgeYears', v)}
                 />
                 <SignQuestion
-                  label="Has menstruation begun?"
-                  checked={!!answers.menstruation}
-                  onCheckedChange={(v) => set('menstruation', v)}
+                  label="Have her periods started?"
+                  description="The first menstrual period. This usually happens about two years after breast development begins."
+                  value={answers.menstruation}
+                  onChange={(v) => set('menstruation', v)}
                   ageValue={answers.menstruationAgeYears}
                   onAgeChange={(v) => set('menstruationAgeYears', v)}
                 />
@@ -340,45 +394,80 @@ export default function PubertyQuestionnaire() {
             ) : (
               <>
                 <SignQuestion
-                  label="Has testicular or genital enlargement been observed?"
-                  checked={!!answers.testicularOrGenitalEnlargement}
-                  onCheckedChange={(v) => set('testicularOrGenitalEnlargement', v)}
+                  label="Have the testicles or genitals started to grow?"
+                  description="Usually the earliest sign in boys: the testicles get larger before anything else changes. It is easy to miss unless you are looking for it."
+                  value={answers.testicularOrGenitalEnlargement}
+                  onChange={(v) => set('testicularOrGenitalEnlargement', v)}
                   ageValue={answers.testicularOrGenitalEnlargementAgeYears}
                   onAgeChange={(v) => set('testicularOrGenitalEnlargementAgeYears', v)}
                 />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={!!answers.voiceDeepening}
-                      onChange={(e) => set('voiceDeepening', e.target.checked)}
-                    />
-                  }
-                  label={<span className="text-sm">Has voice deepening been observed?</span>}
+                <SignQuestion
+                  label="Has his voice started to deepen?"
+                  description="Getting lower, or cracking and breaking between high and low."
+                  value={answers.voiceDeepening}
+                  onChange={(v) => set('voiceDeepening', v)}
                 />
               </>
             )}
 
             <SignQuestion
-              label={
-                isFemale
-                  ? 'Has pubic or underarm hair growth been observed?'
-                  : 'Has pubic, underarm, or facial hair growth been observed?'
-              }
-              checked={!!answers.pubicOrBodyHairGrowth}
-              onCheckedChange={(v) => set('pubicOrBodyHairGrowth', v)}
+              label={isFemale ? 'Has pubic or underarm hair appeared?' : 'Has pubic, underarm, or facial hair appeared?'}
+              description="The first hairs are usually fine and straight, and become coarser and curlier over time."
+              value={answers.pubicOrBodyHairGrowth}
+              onChange={(v) => set('pubicOrBodyHairGrowth', v)}
               ageValue={answers.pubicOrBodyHairGrowthAgeYears}
               onAgeChange={(v) => set('pubicOrBodyHairGrowthAgeYears', v)}
             />
 
-            <FormControlLabel
-              control={
-                <Checkbox checked={!!answers.growthSpurt} onChange={(e) => set('growthSpurt', e.target.checked)} />
-              }
-              label={
-                <span className="text-sm">
-                  Has the child experienced a noticeable recent increase in height growth rate?
-                </span>
-              }
+            <SignQuestion
+              label="Has the child been growing noticeably faster recently?"
+              description="A growth spurt — suddenly getting taller much faster than in previous years."
+              value={answers.growthSpurt}
+              onChange={(v) => set('growthSpurt', v)}
+            />
+          </div>
+
+          {/*
+            Indirect signs. These exist for the parent who is not with the child every day —
+            everything above needs close observation, and these do not. None of them decides
+            an outcome on its own, but together they turn "we cannot tell" into something
+            concrete to raise at an appointment.
+          */}
+          <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+            <div>
+              <h2 className="font-semibold text-ink">Things you may have noticed indirectly</h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Answer these even if you were unsure about the questions above — they are often
+                easier to spot, and they still tell a doctor something useful.
+              </p>
+            </div>
+
+            <SignQuestion
+              label="Is the child outgrowing clothes or shoes unusually fast?"
+              description="Needing the next shoe size or a new uniform much sooner than before."
+              value={answers.rapidClothingOrShoeSizeChange}
+              onChange={(v) => set('rapidClothingOrShoeSizeChange', v)}
+            />
+            <SignQuestion
+              label="Has their body odour changed?"
+              description="Adult-type body odour, or needing to wash or use deodorant when they did not before."
+              value={answers.bodyOdourChange}
+              onChange={(v) => set('bodyOdourChange', v)}
+            />
+            <SignQuestion
+              label="Have they developed acne or oily skin?"
+              description="Spots on the face, back or chest, or skin and hair becoming greasier."
+              value={answers.acne}
+              onChange={(v) => set('acne', v)}
+            />
+
+            <TextField
+              size="small"
+              label="Who answered these questions? (optional)"
+              placeholder="e.g. grandmother, school nurse, other parent"
+              helperText="If someone who sees the child more often helped, note it here so the answers can be read in context."
+              value={answers.answeredBy ?? ''}
+              onChange={(e) => set('answeredBy', e.target.value)}
             />
           </div>
 
@@ -391,19 +480,11 @@ export default function PubertyQuestionnaire() {
               value={answers.familyPubertyOnsetAgeYears ?? ''}
               onChange={(e) => set('familyPubertyOnsetAgeYears', e.target.value ? Number(e.target.value) : undefined)}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={!!answers.behavioralMoodSkinChanges}
-                  onChange={(e) => set('behavioralMoodSkinChanges', e.target.checked)}
-                />
-              }
-              label={
-                <span className="text-sm">
-                  Any behavioral, mood, or skin changes (e.g., acne, body odor) associated with early
-                  development?
-                </span>
-              }
+            <SignQuestion
+              label="Have there been noticeable changes in mood or behaviour?"
+              description="More irritable, more private, or bigger swings in mood than before."
+              value={answers.behavioralMoodSkinChanges}
+              onChange={(v) => set('behavioralMoodSkinChanges', v)}
             />
             <TextField
               label="Other health conditions, medications, or relevant history (optional)"
