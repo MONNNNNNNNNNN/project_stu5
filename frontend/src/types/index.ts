@@ -50,6 +50,9 @@ export interface GrowthRecord {
   weightSds: string | null;
   bmiSds: string | null;
   bmiPctOfP95: string | null;
+  headCircumferenceCm: string | null;
+  headCircumferencePercentile: string | null;
+  headCircumferenceSds: string | null;
   note: string | null;
   createdAt: string;
   guidance?: GrowthGuidance;
@@ -64,6 +67,8 @@ export interface GrowthChartPoint {
   weightPercentile: number | null;
   bmiPercentile: number | null;
   bmiPctOfP95: number | null;
+  headCircumferenceCm: number | null;
+  headCircumferencePercentile: number | null;
 }
 
 export interface ReferenceCurvePoint {

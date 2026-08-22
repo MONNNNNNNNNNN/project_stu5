@@ -26,11 +26,12 @@ describe('GrowthReferenceService', () => {
       expect([...ages].sort((a, b) => a - b)).toEqual(ages);
     });
 
-    it('honours an explicit lower bound (BMI starts at 5 years)', () => {
-      const ages = service
-        .curve('bmi', 'MALE', 60, 240)
-        .map((p) => p.ageMonths);
-      expect(Math.min(...ages)).toBeGreaterThanOrEqual(60);
+    it('honours an explicit lower bound (BMI starts at 2 years)', () => {
+      const ages = service.curve('bmi', 'MALE', 24, 240).map((p) => p.ageMonths);
+      expect(Math.min(...ages)).toBeGreaterThanOrEqual(24);
+      // The table itself starts at 24 months; asking for less must not invent rows below it.
+      expect(Math.min(...service.curve('bmi', 'MALE', 0, 240).map((p) => p.ageMonths)))
+        .toBeGreaterThanOrEqual(24);
     });
 
     it('orders the bands p3 < p50 < p97 at every sampled age', () => {

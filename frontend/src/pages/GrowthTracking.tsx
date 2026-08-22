@@ -41,6 +41,12 @@ export default function GrowthTracking() {
   const queryClient = useQueryClient();
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
+  const [headCircumferenceCm, setHeadCircumferenceCm] = useState('');
+
+  // CDC's head-circumference table stops at 36 months, and so does clinical use of it.
+  const isInfant =
+    !!selectedChild &&
+    ageInMonths(selectedChild.dateOfBirth, new Date()) <= 36;
   const [measuredAt, setMeasuredAt] = useState(() => new Date().toISOString().slice(0, 10));
   const [lastGuidance, setLastGuidance] = useState<GrowthRecord['guidance'] | null>(null);
 
@@ -109,6 +115,7 @@ export default function GrowthTracking() {
           childId: selectedChildId,
           heightCm: heightCm ? Number(heightCm) : undefined,
           weightKg: weightKg ? Number(weightKg) : undefined,
+          headCircumferenceCm: headCircumferenceCm ? Number(headCircumferenceCm) : undefined,
           measuredAt: new Date(measuredAt).toISOString(),
         })
       ).data as GrowthRecord,
@@ -184,6 +191,19 @@ export default function GrowthTracking() {
         >
           <TextField label="Height (cm)" type="number" value={heightCm} onChange={(e) => setHeightCm(e.target.value)} />
           <TextField label="Weight (kg)" type="number" value={weightKg} onChange={(e) => setWeightKg(e.target.value)} />
+          {/* Under-3s only. Head circumference is the measure that covers the window where
+              BMI-for-age does not apply, and it stops being informative once the skull has
+              finished its fast growth — CDC's table ends at 36 months. Showing the field to a
+              parent of a ten-year-old would just be a question they cannot answer. */}
+          {isInfant && (
+            <TextField
+              label="Head circumference (cm)"
+              type="number"
+              value={headCircumferenceCm}
+              onChange={(e) => setHeadCircumferenceCm(e.target.value)}
+              helperText="Optional, under 3s"
+            />
+          )}
           <TextField
             label="Date"
             type="date"
@@ -205,7 +225,7 @@ export default function GrowthTracking() {
         curve={bmiCurve ?? []}
         points={bmiPoints}
         measure="bmi"
-        footnote="BMI-for-age applies to children aged 5 years and above."
+        footnote="BMI-for-age applies from 2 years. Below that, weight-for-length is the measure clinicians use."
       />
 
       <div className="bg-surface rounded-2xl shadow-sm p-5">

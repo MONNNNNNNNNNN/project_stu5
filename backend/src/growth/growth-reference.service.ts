@@ -4,6 +4,7 @@ import heightInfant from './reference-data/height-infant.json';
 import weightChild from './reference-data/weight-child.json';
 import heightChild from './reference-data/height-child.json';
 import bmiChild from './reference-data/bmi-child.json';
+import headCircumferenceInfant from './reference-data/head-circumference-infant.json';
 
 interface LmsRow {
   sex: 1 | 2;
@@ -27,7 +28,15 @@ interface BmiLmsRow extends LmsRow {
   sigma: number;
 }
 
-type Measure = 'weight' | 'height' | 'bmi';
+/**
+ * `headCircumference` only applies to infants. The AAP periodicity schedule has it measured at
+ * every well-child visit from birth to 24 months, which is precisely the window BMI does not
+ * cover — so between them the app can say something about weight status at any age.
+ */
+type Measure = 'weight' | 'height' | 'bmi' | 'headCircumference';
+
+/** CDC's head-circumference table stops here, and so does clinical use of it. */
+export const HEAD_CIRCUMFERENCE_MAX_MONTHS = 36;
 type Sex = 'MALE' | 'FEMALE';
 
 /**
@@ -47,6 +56,7 @@ function sexCode(sex: Sex): 1 | 2 {
 
 function pickTable(measure: Measure, ageMonths: number): LmsRow[] {
   if (measure === 'bmi') return bmiChild as LmsRow[];
+  if (measure === 'headCircumference') return headCircumferenceInfant as LmsRow[];
   const infant =
     measure === 'weight'
       ? (weightInfant as LmsRow[])
@@ -77,6 +87,7 @@ function tableRange(
   toMonths: number,
 ): LmsRow[] {
   if (measure === 'bmi') return bmiChild as LmsRow[];
+  if (measure === 'headCircumference') return headCircumferenceInfant as LmsRow[];
   const infant =
     measure === 'weight'
       ? (weightInfant as LmsRow[])

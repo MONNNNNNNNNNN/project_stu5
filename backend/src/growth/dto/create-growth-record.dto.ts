@@ -20,6 +20,16 @@ export class CreateGrowthRecordDto {
   @Max(500)
   weightKg?: number;
 
+  /**
+   * Infants only. Fills the window below two years where BMI-for-age does not apply — the AAP
+   * periodicity schedule measures it at every well-child visit from birth to 24 months.
+   */
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(80)
+  headCircumferenceCm?: number;
+
   @IsOptional()
   @IsString()
   note?: string;

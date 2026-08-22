@@ -5,11 +5,26 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChildrenService } from '../children/children.service';
-import { GrowthReferenceService } from './growth-reference.service';
+import {
+  GrowthReferenceService,
+  HEAD_CIRCUMFERENCE_MAX_MONTHS,
+} from './growth-reference.service';
 import { CreateGrowthRecordDto } from './dto/create-growth-record.dto';
 import { UpdateGrowthRecordDto } from './dto/update-growth-record.dto';
 
-const BMI_FOR_AGE_MIN_MONTHS = 60; // FR-8: BMI-for-age applies to children aged 5 years and above.
+/**
+ * BMI-for-age starts at two years, not five.
+ *
+ * FR-8 says five, and the app honoured that — but CDC's own BMI-for-age table begins at
+ * 24 months, so three years of valid reference data per sex were being discarded, and a parent
+ * logging a three-year-old got percentiles with no weight status at all.
+ *
+ * Two years is what the Bright Futures / AAP periodicity schedule specifies: BMI is measured at
+ * every well-child visit from 24 months through 21 years. Below that it is weight-for-length,
+ * not BMI. Source: Bright Futures/AAP Recommendations for Preventive Pediatric Health Care,
+ * 4th ed. Checked 2026-08-23.
+ */
+const BMI_FOR_AGE_MIN_MONTHS = 24;
 const NOTABLE_Z_THRESHOLD = 2; // roughly outside the ~2.3rd-97.7th percentile band.
 
 function computeBmi(
@@ -102,6 +117,7 @@ export class GrowthService {
     measuredAt: Date,
     heightCm?: number | null,
     weightKg?: number | null,
+    headCircumferenceCm?: number | null,
   ) {
     const child = await this.prisma.child.findUniqueOrThrow({
       where: { id: childId },
@@ -120,8 +136,23 @@ export class GrowthService {
         ? this.reference.compute('bmi', child.sex, ageMonths, bmi)
         : null;
 
+    // Only meaningful while the skull is still growing fast enough for the percentile to say
+    // anything; CDC's table stops at 36 months and so does this.
+    const headCircumference =
+      headCircumferenceCm && ageMonths <= HEAD_CIRCUMFERENCE_MAX_MONTHS
+        ? this.reference.compute(
+            'headCircumference',
+            child.sex,
+            ageMonths,
+            headCircumferenceCm,
+          )
+        : null;
+
     return {
       bmi,
+      headCircumferenceCm: headCircumferenceCm ?? null,
+      headCircumferencePercentile: headCircumference?.percentile ?? null,
+      headCircumferenceSds: headCircumference?.z ?? null,
       heightPercentile: height?.percentile ?? null,
       heightSds: height?.z ?? null,
       weightPercentile: weight?.percentile ?? null,
@@ -201,8 +232,14 @@ export class GrowthService {
     // FR-6 asks for height and weight; both are optional on the DTO so a parent can log
     // just one. Neither, though, stores a dated row with nothing in it — it shows up as a
     // blank line in the history and a gap in every chart.
-    if (dto.heightCm === undefined && dto.weightKg === undefined) {
-      throw new BadRequestException('Record at least one of height or weight');
+    if (
+      dto.heightCm === undefined &&
+      dto.weightKg === undefined &&
+      dto.headCircumferenceCm === undefined
+    ) {
+      throw new BadRequestException(
+        'Record at least one of height, weight or head circumference',
+      );
     }
     const measuredAt = dto.measuredAt ? new Date(dto.measuredAt) : new Date();
     const metrics = await this.computeMetrics(
@@ -210,6 +247,7 @@ export class GrowthService {
       measuredAt,
       dto.heightCm,
       dto.weightKg,
+      dto.headCircumferenceCm,
     );
 
     const record = await this.prisma.growthRecord.create({
@@ -252,11 +290,15 @@ export class GrowthService {
     const measuredAt = dto.measuredAt
       ? new Date(dto.measuredAt)
       : record.measuredAt;
+    const headCircumferenceCm =
+      dto.headCircumferenceCm ??
+      (record.headCircumferenceCm ? Number(record.headCircumferenceCm) : undefined);
     const metrics = await this.computeMetrics(
       record.childId,
       measuredAt,
       heightCm,
       weightKg,
+      headCircumferenceCm,
     );
 
     const updated = await this.prisma.growthRecord.update({
@@ -295,6 +337,8 @@ export class GrowthService {
         weightPercentile: true,
         bmiPercentile: true,
         bmiPctOfP95: true,
+        headCircumferenceCm: true,
+        headCircumferencePercentile: true,
       },
     });
     return records.map((r) => ({
@@ -306,6 +350,10 @@ export class GrowthService {
       weightPercentile: r.weightPercentile ? Number(r.weightPercentile) : null,
       bmiPercentile: r.bmiPercentile ? Number(r.bmiPercentile) : null,
       bmiPctOfP95: r.bmiPctOfP95 ? Number(r.bmiPctOfP95) : null,
+      headCircumferenceCm: r.headCircumferenceCm ? Number(r.headCircumferenceCm) : null,
+      headCircumferencePercentile: r.headCircumferencePercentile
+        ? Number(r.headCircumferencePercentile)
+        : null,
     }));
   }
 

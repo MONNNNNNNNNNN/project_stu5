@@ -85,15 +85,18 @@ describe('nutritionalStatusKey', () => {
 });
 
 describe('hasBmiForAge', () => {
-  it('starts at five years', () => {
-    expect(hasBmiForAge(59)).toBe(false);
-    expect(hasBmiForAge(60)).toBe(true);
+  // Two years, per the Bright Futures/AAP periodicity schedule and CDC's own table, which
+  // begins at 24 months. It was 60 months, which threw away three years of valid reference data.
+  it('starts at two years', () => {
+    expect(hasBmiForAge(23)).toBe(false);
+    expect(hasBmiForAge(24)).toBe(true);
+    expect(hasBmiForAge(36)).toBe(true);
   });
 
-  // ageInMonths divides by an average month length, so an exact fifth birthday can compute as
-  // a hair under 60 depending on where the leap years fell.
-  it('rounds, so a fifth birthday is not lost to leap-year drift', () => {
-    expect(hasBmiForAge(59.99)).toBe(true);
-    expect(hasBmiForAge(59.4)).toBe(false);
+  // ageInMonths divides by an average month length, so an exact birthday can compute as a hair
+  // under the boundary depending on where the leap years fell.
+  it('rounds, so a second birthday is not lost to leap-year drift', () => {
+    expect(hasBmiForAge(23.99)).toBe(true);
+    expect(hasBmiForAge(23.4)).toBe(false);
   });
 });

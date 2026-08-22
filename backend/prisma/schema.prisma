@@ -119,25 +119,30 @@ model ChildGuardian {
 // ---------------------------------------------------------------------------
 
 model GrowthRecord {
-  id               String    @id @default(uuid())
-  childId          String
-  child            Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
-  measuredAt       DateTime  @default(now())
-  heightCm         Decimal?  @db.Decimal(5, 2)
-  weightKg         Decimal?  @db.Decimal(5, 2)
-  bmi              Decimal?  @db.Decimal(4, 2)
-  heightPercentile Decimal?  @db.Decimal(5, 2)
-  weightPercentile Decimal?  @db.Decimal(5, 2)
-  bmiPercentile    Decimal?  @db.Decimal(5, 2)
-  heightSds        Decimal?  @db.Decimal(4, 2)
-  weightSds        Decimal?  @db.Decimal(4, 2)
-  bmiSds           Decimal?  @db.Decimal(4, 2)
+  id                          String    @id @default(uuid())
+  childId                     String
+  child                       Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+  measuredAt                  DateTime  @default(now())
+  heightCm                    Decimal?  @db.Decimal(5, 2)
+  weightKg                    Decimal?  @db.Decimal(5, 2)
+  bmi                         Decimal?  @db.Decimal(4, 2)
+  heightPercentile            Decimal?  @db.Decimal(5, 2)
+  weightPercentile            Decimal?  @db.Decimal(5, 2)
+  bmiPercentile               Decimal?  @db.Decimal(5, 2)
+  heightSds                   Decimal?  @db.Decimal(4, 2)
+  weightSds                   Decimal?  @db.Decimal(4, 2)
+  bmiSds                      Decimal?  @db.Decimal(4, 2)
   /// BMI as a percentage of the 95th percentile. CDC's severity metric above P95, and the
   /// only one that still resolves once the percentile itself has saturated at 100.
-  bmiPctOfP95      Decimal?  @db.Decimal(5, 1)
-  note             String?
-  createdAt        DateTime  @default(now())
-  deletedAt        DateTime?
+  bmiPctOfP95                 Decimal?  @db.Decimal(5, 1)
+  /// Head circumference, infants only. The measure that fills the gap below two years, where
+  /// BMI-for-age does not apply. AAP measures it to 24 months; CDC's table runs to 36.
+  headCircumferenceCm         Decimal?  @db.Decimal(5, 2)
+  headCircumferencePercentile Decimal?  @db.Decimal(5, 2)
+  headCircumferenceSds        Decimal?  @db.Decimal(4, 2)
+  note                        String?
+  createdAt                   DateTime  @default(now())
+  deletedAt                   DateTime?
 
   @@index([childId, measuredAt])
   @@map("growth_records")

@@ -50,6 +50,9 @@ const TABLES = [
   { file: 'weight-child.json', url: `${ZSCORE_BASE}/wtage.csv`, axis: 'Agemos', key: 'ageMonths' },
   { file: 'height-child.json', url: `${ZSCORE_BASE}/statage.csv`, axis: 'Agemos', key: 'ageMonths' },
   { file: 'weight-for-length.json', url: `${ZSCORE_BASE}/wtleninf.csv`, axis: 'Length', key: 'lengthCm' },
+  // Head circumference. The AAP periodicity schedule has it measured at every well-child visit
+  // from birth to 24 months, which is exactly the window where BMI does not apply.
+  { file: 'head-circumference-infant.json', url: `${ZSCORE_BASE}/hcageinf.csv`, axis: 'Agemos', key: 'ageMonths' },
   { file: 'bmi-child.json', url: EXTENDED_BMI, axis: 'agemos', key: 'ageMonths', sigma: true },
 ];
 
