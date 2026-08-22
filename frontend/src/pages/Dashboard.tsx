@@ -22,6 +22,7 @@ import type {
   GrowthStatistics,
   PubertyScreening,
   ReferenceCurvePoint,
+  Suggestion,
 } from '../types';
 
 interface PubertyScreeningWithResult extends PubertyScreening {
@@ -111,6 +112,47 @@ function describeBmi(percentile: number | null, guidance?: GrowthGuidance) {
   return describePercentile(percentile);
 }
 
+/**
+ * What to do next, from reading all three features together.
+ *
+ * This is the answer to the client's "the menus aren't related" — a bone age means little
+ * without the growth chart and the screening beside it. Suggestions, never blocks: a medical
+ * questionnaire a parent cannot skip is a reason to close the app.
+ */
+function NextSteps({ items }: { items: Suggestion[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="bg-surface rounded-2xl shadow-sm p-5 flex flex-col gap-3">
+      <h2 className="font-semibold text-ink">What to do next</h2>
+      {items.map((s) => (
+        <div
+          key={s.kind}
+          className={`rounded-xl border p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between ${
+            s.severity === 'warning'
+              ? 'border-amber-300 bg-amber-50/60 dark:bg-transparent'
+              : 'border-brand-100'
+          }`}
+        >
+          <div>
+            <p className="text-sm font-medium text-ink">{s.title}</p>
+            <p className="text-xs text-gray-600 mt-0.5">{s.body}</p>
+          </div>
+          <Button
+            component={Link}
+            to={s.actionHref}
+            size="small"
+            variant={s.severity === 'warning' ? 'contained' : 'outlined'}
+            color={s.severity === 'warning' ? 'warning' : 'primary'}
+            className="shrink-0"
+          >
+            {s.actionLabel}
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { selectedChild, selectedChildId } = useChildren();
   const [measure, setMeasure] = useState<Measure>('height');
@@ -119,6 +161,13 @@ export default function Dashboard() {
     queryKey: ['growth-statistics', selectedChildId],
     queryFn: async () =>
       (await api.get<GrowthStatistics>('/growth/statistics', { params: { childId: selectedChildId } })).data,
+    enabled: !!selectedChildId,
+  });
+
+  const { data: suggestions } = useQuery({
+    queryKey: ['suggestions', selectedChildId],
+    queryFn: async () =>
+      (await api.get<Suggestion[]>('/suggestions', { params: { childId: selectedChildId } })).data,
     enabled: !!selectedChildId,
   });
 
@@ -192,6 +241,8 @@ export default function Dashboard() {
           {stats.latest.guidance.message}
         </div>
       )}
+
+      <NextSteps items={suggestions ?? []} />
 
       <div className="grid md:grid-cols-3 gap-4">
         <div className="md:col-span-2 bg-surface rounded-2xl shadow-sm p-5">

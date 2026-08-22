@@ -8,5 +8,8 @@ import { ChildrenModule } from '../children/children.module';
   imports: [ChildrenModule],
   controllers: [GrowthController],
   providers: [GrowthService, GrowthReferenceService],
+  // SuggestionsModule reads the same LMS tables to decide whether a BMI is out of range, so
+  // the trigger and the number the parent sees can never disagree.
+  exports: [GrowthReferenceService],
 })
 export class GrowthModule {}

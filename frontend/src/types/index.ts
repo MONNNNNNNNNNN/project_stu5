@@ -91,6 +91,19 @@ export interface PubertyScreening {
   assessedAt: string;
 }
 
+/**
+ * A next step the app is suggesting, from reading growth, puberty and bone age together.
+ * Always dismissible in spirit — nothing here blocks the parent from doing something else.
+ */
+export interface Suggestion {
+  kind: 'PUBERTY_SCREENING' | 'BONE_AGE_UPLOAD' | 'BONE_AGE_REFERRAL' | 'PUBERTY_FOLLOW_UP';
+  severity: 'info' | 'warning';
+  title: string;
+  body: string;
+  actionLabel: string;
+  actionHref: string;
+}
+
 export interface BoneAgePrediction {
   id: string;
   childId: string;

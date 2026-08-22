@@ -18,6 +18,7 @@ import { BoneAgeModule } from './bone-age/bone-age.module';
 import { ArticlesModule } from './articles/articles.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { SupportModule } from './support/support.module';
+import { SuggestionsModule } from './suggestions/suggestions.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { SupportModule } from './support/support.module';
     ArticlesModule,
     NotificationsModule,
     SupportModule,
+    SuggestionsModule,
   ],
   controllers: [AppController],
   providers: [
