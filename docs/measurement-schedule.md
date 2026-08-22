@@ -14,13 +14,25 @@ says *when*.
 
 ## The timeline
 
-| Age | Height & weight | BMI | Puberty screening | Bone age |
-| --- | --- | --- | --- | --- |
-| 0–2 y | every well-child visit | — *(not applicable)* | — | — |
-| 2–5 y | every 6–12 months | — *(app starts at 5)* | — | — |
-| 5–8 y | every 6–12 months | ✅ every measurement | only if a sign is reported | only if referred |
-| 8/9 y onward | every 6–12 months | ✅ | ✅ offered from age 6 | if screening flags early signs |
-| Flagged | every 4 months | ✅ | ✅ every 4 months, 3 rounds | once, then as the doctor asks |
+Visit ages, and which measurements are taken at each, are the Bright Futures / AAP
+periodicity schedule (4th ed.) — read from the schedule itself and counted, not paraphrased:
+
+| Measurement | AAP range |
+| --- | --- |
+| Length/height and weight | Newborn → 21 y |
+| Head circumference | Newborn → **24 mo** |
+| Weight-for-length | Newborn → **18 mo** |
+| BMI | **24 mo** → 21 y |
+
+Visits: 3–5 days, then 1, 2, 4, 6, 9, 12, 15, 18, 24 and 30 months, then annually to 21 years.
+
+| Age | Height & weight | Head circumference | BMI | Puberty screening | Bone age |
+| --- | --- | --- | --- | --- | --- |
+| 0–18 mo | every visit | ✅ every visit | — | — | — |
+| 18–24 mo | every visit | ✅ | — | — | — |
+| 2–6 y | every 6–12 months | — *(to 36 mo in-app)* | ✅ from 24 mo | — | — |
+| 6 y onward | every 6–12 months | — | ✅ | ✅ offered from age 6 | only if referred |
+| Flagged | every 4 months | — | ✅ | ✅ every 4 months, 3 rounds | if screening flags early signs |
 
 ### Height and weight — from birth, throughout
 
@@ -32,13 +44,15 @@ rather than birth-to-20.
   flags anything beyond ±2 SD (FR-10).
 - 🔴 The ±2 SD threshold is uncited (D2).
 
-### BMI — from 5 years
+### BMI — from 2 years
 
-- **Why 5 and not earlier:** BMI-for-age is defined from 2 years in CDC's tables, but the app
-  starts at 60 months per FR-8.
-- 🔴 FR-8 states it; FR-8's own basis is not recorded (D2).
-- **Below 5 the app currently says nothing about weight status** — a real gap, see
-  [`growth-reference-sources.md`](./growth-reference-sources.md#what-is-missing).
+- **Why 2:** CDC's BMI-for-age table starts at 24 months and the AAP schedule measures BMI from
+  24 months to 21 years. 🟢 Cited.
+- The app used to start at 60 months per FR-8, discarding three years of valid data. Changed
+  2026-08-23. ⚠️ That is a deviation from a numbered requirement — see
+  [`tor-compliance.md`](./tor-compliance.md).
+- **Below 2 years:** head circumference is now tracked instead, which is what the AAP schedule
+  measures in that window. Weight-for-length remains unused pending category cut-points.
 - **What the app does:** classifies into CDC's five categories and shades them on the chart.
   🟢 Cited — CDC, "Defining Child BMI Categories" + 2022 extended percentiles.
 
@@ -122,12 +136,18 @@ observation. 🔴 Uncited (D2).
 | Precocious puberty ages (8 / 9) | 🟢 PMID 26852255 |
 | Delayed puberty ages (13 / 15 / 14) | 🔴 no source found |
 | ±2 SD growth flag | 🔴 |
-| BMI-for-age minimum age (5 y) | 🔴 |
+| BMI-for-age minimum age (2 y) | 🟢 CDC table + AAP schedule, checked 2026-08-23 |
+| Head circumference window (birth–24 mo) | 🟢 AAP periodicity schedule |
+| Measurement frequency and visit ages | 🟢 AAP periodicity schedule, 4th ed. |
 | Follow-up interval (4 mo × 3) | 🔴 |
 | Bone-age gap threshold (2 y) | 🔴 |
 | BMI ↔ puberty onset link | 🔴 |
+| Weight-for-length categories | 🔴 blocks that table being used |
 | Puberty screening age gate (6) | ⚪ client decision, Q7a |
-| Measurement frequency in the table above | 🔴 **not sourced** — it reflects common well-child practice, not a guideline this repo has read |
 
-Nine of these are open. That is the honest state, and it is why this file leads with a warning
-rather than reading like clinical advice.
+**Six** are open, down from nine — the AAP periodicity schedule closed the frequency and
+age-range rows, and CDC closed the BMI minimum age. The rest is the honest state, and it is why
+this file leads with a warning rather than reading like clinical advice.
+
+Full register, including the AI model's unverified assumptions:
+[`sources-register.md`](./sources-register.md).
