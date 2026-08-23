@@ -9,8 +9,8 @@
  *     npm run build && npm run verify:model
  *
  * Run it after changing preprocessing, swapping the model, or setting the calibration
- * constants. It is the only thing that exercises decode -> resize -> normalise -> infer ->
- * denormalise as one chain.
+ * constants. It is the only thing that exercises decode -> CLAHE -> resize -> normalise ->
+ * infer as one chain.
  */
 
 import { existsSync } from 'fs';
@@ -22,7 +22,7 @@ const MODEL = process.env.BONE_AGE_MODEL_PATH ?? join(root, 'models/bone_age.onn
 const IMAGE = process.env.VERIFY_IMAGE ?? join(root, 'test/fixtures/hand.png');
 
 if (!existsSync(MODEL)) {
-  console.error(`no model at ${MODEL}\n  gh release download model-v1 --pattern 'bone_age.onnx' --dir models`);
+  console.error(`no model at ${MODEL}\n  gh release download model-v2 --pattern 'bone_age.onnx' --dir models`);
   process.exit(1);
 }
 
@@ -30,12 +30,10 @@ const { BoneAgeInferenceService } = await import(join(root, 'dist/bone-age/bone-
 
 const env = {
   BONE_AGE_MODEL_PATH: MODEL,
-  BONE_AGE_MODEL_VERSION: process.env.BONE_AGE_MODEL_VERSION ?? 'effnetb0-v1-rsna',
-  BONE_AGE_MAE_MONTHS: process.env.BONE_AGE_MAE_MONTHS ?? '8.78',
-  BONE_AGE_ACCURACY_12M: process.env.BONE_AGE_ACCURACY_12M ?? '0.731',
-  BONE_AGE_AGE_MEAN: process.env.BONE_AGE_AGE_MEAN,
-  BONE_AGE_AGE_STD: process.env.BONE_AGE_AGE_STD,
-  BONE_AGE_CALIBRATION: process.env.BONE_AGE_CALIBRATION,
+  BONE_AGE_MODEL_VERSION: process.env.BONE_AGE_MODEL_VERSION ?? 'effnetb3-v5-rsna',
+  BONE_AGE_MAE_MONTHS: process.env.BONE_AGE_MAE_MONTHS ?? '8.12',
+  BONE_AGE_ACCURACY_12M: process.env.BONE_AGE_ACCURACY_12M ?? '0.768',
+  BONE_AGE_CALIBRATION: process.env.BONE_AGE_CALIBRATION ?? 'confirmed',
 };
 
 const svc = new BoneAgeInferenceService({ get: (k) => env[k] });
@@ -75,9 +73,8 @@ try {
 check('a non-image is rejected', rejected);
 
 if (svc.status.calibration === 'provisional') {
-  console.log('\n  NOTE: calibration is provisional. AGE_MEAN/AGE_STD were inferred from the');
-  console.log('  reported MSE and R2, not supplied by the ML team, so the months above are');
-  console.log('  indicative only. One labelled sample image would settle it.');
+  console.log('\n  NOTE: calibration is provisional — BONE_AGE_CALIBRATION is not "confirmed"');
+  console.log('  for this model version.');
 }
 
 console.log(failures ? `\n${failures} check(s) failed\n` : '\nall checks passed\n');

@@ -1,21 +1,24 @@
 # AI Bone Age — Integration Contract
 
-How the EfficientNet-B0 bone age model gets from the ML team's notebook into GrowTH.
+How the bone age model gets from the ML team's training repo into GrowTH. Current model:
+**EfficientNet-B3 (refine5), `effnetb3-v5-rsna`** — was EfficientNet-B0 (v1) at launch.
 
 Covers TOR **FR-17**, **FR-18**, **FR-19**, **§3.4**, **§6.3**, deliverable **D4**.
 
-**Status:** wired and running end to end, on **provisional calibration**.
+**Status:** wired and running end to end, on **confirmed calibration**.
 
 - Inference runs **in the NestJS backend** via `onnxruntime-node`, not as a separate service.
   Render bills 750 instance hours per *workspace*, so a second service halves the quota and
   chains a second cold start onto the first request. Node and Python ONNX Runtime were
   compared on identical input and agree to the last decimal.
 - Model is a GitHub Release asset fetched at build time; never committed.
-- `ai-service/` is kept for local experimentation and the one-off `.pt` → `.onnx` conversion.
+- `ai-service/` is kept for local experimentation and the one-off `.pth` → `.onnx` conversion.
 - Updating the model: [`model-updates.md`](./model-updates.md).
-- **Calibration is inferred, not supplied.** `AGE_MEAN`/`AGE_STD` did not come with the
-  weights, so results carry a `provisional` flag through the API into a visible banner. See
-  model-updates.md §Calibration.
+- **Calibration is confirmed, not inferred**, as of v2/refine5: its training target is raw
+  months (confirmed against `src/dataset.py` / `src/train.py` in the model repo), so there is
+  no `AGE_MEAN`/`AGE_STD` denormalisation step at all. v1 (EfficientNet-B0) *was* provisional —
+  its target was normalised and those constants never arrived, so results carried a flag
+  through the API into a visible banner. See model-updates.md §Calibration for that history.
 
 ---
 

@@ -70,14 +70,20 @@ print('regressor.0.weight', tuple(sd['regressor.0.weight'].shape))
 # regressor.0.weight (128, 1281)
 ```
 
-`(128, 1281)` is the architecture fingerprint: 1280 pooled EfficientNet-B0 features plus the
-concatenated sex scalar. **If that shape changed, the architecture changed** — stop and update
-`ai-service/model.py` first, because step 1 loads with `strict=True` and will refuse.
+`(128, in_features + 1)` is the architecture fingerprint: the backbone's pooled feature count
+plus the concatenated sex scalar — `(128, 1281)` for EfficientNet-B0 (v1), `(128, 1537)` for
+EfficientNet-B3 (v2/refine5). **If that shape changed, the architecture changed** — stop and
+update `ai-service/model.py` first, because step 1 loads with `strict=True` and will refuse.
 
 Ask the ML team, in the same message as the file:
 
-- `AGE_MEAN` / `AGE_STD` — the constants the training target was normalised with
+- whether the training target is normalised, and if so `AGE_MEAN` / `AGE_STD` — **not needed
+  as of v2/refine5**: its target is raw months, confirmed against `src/dataset.py` /
+  `src/train.py` in the model repo, so the ONNX output is used directly
 - the metrics: MAE, MSE, R², and share within ±12 months
+- input resolution and any preprocessing beyond ImageNet normalisation — v2/refine5 adds
+  **CLAHE** (`cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))`, applied at native
+  resolution before resizing to **320×320**), which v1 did not have
 - **one labelled sample image** with its true bone age (see [below](#the-one-thing-that-would-settle-everything))
 
 ---
@@ -112,7 +118,7 @@ cp ../ai-service/models/bone_age.onnx models/
 npm ci && npm run build && npm run verify:model
 ```
 
-Exercises the whole chain — decode, resize, normalise, infer, denormalise:
+Exercises the whole chain — decode, CLAHE, resize, normalise, infer:
 
 ```
   PASS  model loads
@@ -130,12 +136,11 @@ error anywhere.
 **With a labelled sample**, this becomes a real accuracy check rather than a plumbing check:
 
 ```bash
-VERIFY_IMAGE=samples/known_120_months.png \
-BONE_AGE_AGE_MEAN=<real> BONE_AGE_AGE_STD=<real> npm run verify:model
+VERIFY_IMAGE=samples/known_120_months.png npm run verify:model
 ```
 
-A known 120-month hand coming back near 120 confirms preprocessing, sex encoding **and**
-denormalisation in one shot.
+A known 120-month hand coming back near 120 confirms preprocessing and sex encoding in one
+shot (and denormalisation too, for any future model version that needs it).
 
 ---
 
@@ -177,16 +182,16 @@ buildCommand: >-
   https://github.com/MONNNNNNNNNNN/project_stu5/releases/download/model-v2/bone_age.onnx
                                                               ^^^^^^^^
 - key: BONE_AGE_MODEL_VERSION
-  value: effnetb0-v2-rsna
+  value: effnetb3-v5-rsna
 ```
 
 And the measured numbers, which the UI shows to users:
 
 ```yaml
 - key: BONE_AGE_MAE_MONTHS
-  value: "8.78"
+  value: "8.12"
 - key: BONE_AGE_ACCURACY_12M
-  value: "0.731"
+  value: "0.768"
 ```
 
 `curl -f` means a missing or renamed asset **fails the build** instead of deploying a service
@@ -220,15 +225,17 @@ the radiograph route is still guardian-only, and **deletes everything it created
 ```
 health... {"status":"ok","service":"growth-backend"}
 register... ok
-model-status... {"ready":true,"modelVersion":"effnetb0-v1-rsna","maeMonths":8.78,
-                 "accuracyWithin12Months":0.731,"calibration":"provisional","detail":null}
+model-status... {"ready":true,"modelVersion":"effnetb3-v5-rsna","maeMonths":8.12,
+                 "accuracyWithin12Months":0.768,"calibration":"confirmed","detail":null}
 create child... 8ec0c11a-7634-490f-92e4-fc38b668291f
 upload... 8a4f645d-563d-40f5-8ee0-3688b4804795 (PENDING)
-  poll 1: COMPLETED 175 effnetb0-v1-rsna (provisional calibration) None
+  poll 1: COMPLETED 175 effnetb3-v5-rsna None
 PASS: bone age 175 months (14.6y)
 PASS: image route 200 with token, 401 without
 cleaned up smoke-1787216204-20286@example.invalid
 ```
+
+(sample numbers above — run the real smoke test for actual figures)
 
 Exit code 0 means the pipeline is live. Point it at a local backend with
 `./scripts/smoke-bone-age.sh http://localhost:3001`.
@@ -242,7 +249,7 @@ does not look at the page: upload an X-ray, watch the row go *Analysing…* then
 | Smoke test says | Means | Do this |
 | --- | --- | --- |
 | `model is not loaded on the server` | build did not fetch the asset | check the release is public and the tag in `render.yaml` matches |
-| `inference failed — ... outside 0-300` | `AGE_MEAN`/`AGE_STD` are wrong for this checkpoint | see [calibration](#calibration--the-one-thing-still-outstanding) |
+| `inference failed — ... outside 0-300` | preprocessing mismatch (CLAHE, resize, sex encoding) for this checkpoint | see [calibration](#calibration--resolved-for-v2refine5-was-outstanding-for-v1) |
 | `still PENDING after 60s` | model loaded but inference is hanging | check Render logs for an OOM kill |
 | `image route is not guardian-checked` | authorisation regression | stop and fix before demoing — these are children's radiographs |
 
@@ -259,47 +266,39 @@ starts, `/bone-age/model-status` reports `ready: false`, uploads keep working, t
 
 ---
 
-## Calibration — the one thing still outstanding
+## Calibration — resolved for v2/refine5, was outstanding for v1
 
-The v1 checkpoint's training target was **normalised**: it emits ~2.4, not ~120. Months are
-`raw * AGE_STD + AGE_MEAN`, and those constants did not arrive with the weights.
+**v1 (EfficientNet-B0)** was normalised: it emitted ~2.4, not ~120, so months needed
+`raw * AGE_STD + AGE_MEAN`, and those constants never arrived with the weights. They were
+inferred (`Var(y) = MSE / (1 - R²)` from the reported MSE/R² → SD ≈ 41.7, RSNA mean ≈ 127.3),
+so `BONE_AGE_CALIBRATION` was `provisional` and every result carried a banner on the upload
+page.
 
-Current values are **inferred, not supplied**:
+**v2 (EfficientNet-B3 / refine5)** does not have this problem: its training target is raw
+months (confirmed against `src/dataset.py` / `src/train.py` in the model repo — no
+normalisation applied at all), so the ONNX output is used directly. `AGE_MEAN`/`AGE_STD` and
+the whole denormalisation step were removed from both `bone-age.inference.ts` and
+`ai-service/main.py` rather than set to `(0, 1)`, since the model repo confirmed there is
+nothing to denormalise. `BONE_AGE_CALIBRATION=confirmed` for this model version — no banner.
 
-```
-Var(y) = MSE / (1 - R²) = 135.91 / 0.0781  ->  SD ≈ 41.7 months
-RSNA training mean                          ->     ≈ 127.3 months
-```
-
-So `BONE_AGE_CALIBRATION=provisional`, and every result carries that flag through the API into
-a visible banner on the upload page. Once the ML team confirms the real values:
-
-```yaml
-- key: BONE_AGE_AGE_MEAN
-  value: "<real>"
-- key: BONE_AGE_AGE_STD
-  value: "<real>"
-- key: BONE_AGE_CALIBRATION
-  value: confirmed        # banner disappears
-```
-
-Run step 2 and step 5 again after changing these. If a supplied `AGE_STD` lands far from ~41.7,
-question it before shipping — the reported metrics imply it should be close if the target was
-normalised by the dataset's own SD.
+If a future retrain reintroduces a normalised target, the `provisional`/`confirmed` mechanism
+(env var → `isProvisional` → UI banner) is still there in `bone-age.inference.ts`; the
+denormalisation arithmetic would need to come back too.
 
 ---
 
 ## The one thing that would settle everything
 
-Four assumptions about v1 are still unconfirmed:
+Four assumptions mattered for v1 and are now **confirmed for v2/refine5**, against
+`src/train.py` / `src/dataset.py` in the model repo:
 
-| Item | Assumed | Risk if wrong |
+| Item | v1 (assumed) | v2/refine5 (confirmed) |
 | --- | --- | --- |
-| `AGE_MEAN` / `AGE_STD` | 127.3 / 41.7 (derived) | wrong scale — currently flagged provisional |
-| Sex encoding | male = 1, female = 0 | quietly worse for one sex, no error |
-| Input resolution | 224 × 224 | silently degraded accuracy |
-| Normalisation | ImageNet mean/std | silently degraded accuracy |
+| Target normalisation | `AGE_MEAN`/`AGE_STD` 127.3/41.7 (derived) | **none — raw months** |
+| Sex encoding | male = 1, female = 0 (guessed) | male = 1, female = 0 (confirmed) |
+| Input resolution | 224 × 224 | **320 × 320** |
+| Preprocessing | ImageNet normalise only | ImageNet normalise **+ CLAHE** (clipLimit=2.0, 8×8 tiles, before resize) |
 
-**One labelled sample image** — a hand X-ray with its true bone age in months — settles all
-four at once through step 2. It remains the single most useful thing the ML team can send, and
-it is worth asking for by name every time a new checkpoint arrives.
+A **labelled sample image** — a hand X-ray with its true bone age in months — is still worth
+asking for on every new checkpoint: it's an end-to-end check that preprocessing, sex encoding,
+and (if reintroduced) denormalisation all agree, independent of anything above.

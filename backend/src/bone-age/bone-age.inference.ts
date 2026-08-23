@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import * as ort from 'onnxruntime-node';
 import sharp from 'sharp';
+import { clahe } from './clahe';
 
 /**
  * Bone-age inference, in-process.
@@ -19,10 +20,17 @@ import sharp from 'sharp';
  * `ai-service/` is kept for local experimentation and for the one-off .pt -> .onnx conversion.
  */
 
-const IMG_SIZE = 224;
+// EfficientNet-B3 (refine5), confirmed against src/train.py in the model repo. The service was
+// built for an earlier EfficientNet-B0 checkpoint at 224px; refine5 trains at 320px.
+const IMG_SIZE = 320;
 
-// ImageNet normalisation, per channel. Standard for a torchvision EfficientNet-B0 — still
-// unconfirmed against the actual training run.
+// CLAHE, applied to the grayscale image at its ORIGINAL resolution before resizing — matches
+// src/train.py's `apply_clahe` + `val_transform` order exactly. This is deterministic
+// preprocessing, not augmentation: skipping it degrades accuracy without ever erroring.
+const CLAHE_CLIP_LIMIT = 2.0;
+const CLAHE_TILES = 8;
+
+// ImageNet normalisation, per channel — confirmed against src/train.py (IMAGENET_MEAN/STD).
 const NORM_MEAN = [0.485, 0.456, 0.406];
 const NORM_STD = [0.229, 0.224, 0.225];
 
@@ -34,7 +42,7 @@ export interface BoneAgeResult {
   boneAgeMonths: number;
   modelVersion: string;
   inferenceMs: number;
-  /** True while the denormalisation constants are inferred rather than supplied. */
+  /** True until BONE_AGE_CALIBRATION=confirmed is set for the currently deployed model. */
   provisional: boolean;
 }
 
@@ -62,8 +70,8 @@ export class BoneAgeInferenceService implements OnModuleInit {
       );
       if (this.isProvisional) {
         this.logger.warn(
-          'Bone-age calibration is PROVISIONAL — AGE_MEAN/AGE_STD were inferred from the ' +
-            'reported metrics, not supplied by the ML team. Results are flagged as such.',
+          'Bone-age calibration is PROVISIONAL — BONE_AGE_CALIBRATION is not set to ' +
+            '"confirmed" for this model version. Results are flagged as such.',
         );
       }
     } catch (err) {
@@ -92,28 +100,11 @@ export class BoneAgeInferenceService implements OnModuleInit {
 
   /**
    * Share of test predictions within a year. Reported alongside the MAE because the mean
-   * hides the spread: at 73.1%, roughly one estimate in four is out by more than a year, and
-   * quoting "±9 months" alone would imply a bound the model does not have.
+   * hides the spread: at 76.8% (refine5), roughly one estimate in four is still out by more
+   * than a year, and quoting "±8 months" alone would imply a bound the model does not have.
    */
   get accuracyWithin12Months(): number {
     return Number(this.config.get<string>('BONE_AGE_ACCURACY_12M') ?? 0);
-  }
-
-  /**
-   * The checkpoint's training target was normalised — it emits ~2.4, not ~120 — so months are
-   * `raw * std + mean`. Those constants did not arrive with the weights.
-   *
-   * Until they do, these are derived: the reported MSE and R² give
-   * `Var(y) = MSE / (1 - R²)`, so the test set's true bone ages have SD ≈ 41.7 months, and the
-   * RSNA training mean is ≈ 127.3. Every result computed this way is marked `provisional` all
-   * the way to the UI, so a demo can run without a guess quietly becoming the truth.
-   */
-  private get ageMean(): number {
-    return Number(this.config.get<string>('BONE_AGE_AGE_MEAN') ?? 127.3);
-  }
-
-  private get ageStd(): number {
-    return Number(this.config.get<string>('BONE_AGE_AGE_STD') ?? 41.7);
   }
 
   get isProvisional(): boolean {
@@ -135,22 +126,61 @@ export class BoneAgeInferenceService implements OnModuleInit {
     };
   }
 
-  /** Decode, resize to the training resolution, normalise, and lay out as NCHW float32. */
+  /**
+   * Decode, CLAHE at native resolution, resize to the training resolution, normalise, and lay
+   * out as NCHW float32 — matches `apply_clahe` + `val_transform` in `src/train.py` step for
+   * step. The order matters: CLAHE runs before resizing in training, so it must here too.
+   *
+   * The single channel CLAHE runs on is the RAW RED CHANNEL, not a perceptual grayscale
+   * conversion: `apply_clahe` in src/train.py takes `img[0:1]` — plain channel 0 — for any
+   * 3-channel source, on the assumption that an X-ray stored as RGB has identical channels.
+   * Using sharp's `.grayscale()` (luma-weighted) here previously produced a wildly wrong
+   * result on a non-grayscale test fixture, which is what caught this: this checkpoint is
+   * unusually sensitive to any preprocessing mismatch, not just the obviously wrong ones.
+   */
   private async preprocess(file: string): Promise<Float32Array> {
-    const { data } = await sharp(await readFile(file))
+    const { data: raw, info } = await sharp(await readFile(file))
       .removeAlpha()
-      .resize(IMG_SIZE, IMG_SIZE, { fit: 'fill' })
-      .toColourspace('srgb')
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const original = new Uint8Array(info.width * info.height);
+    if (info.channels === 1) {
+      original.set(raw);
+    } else {
+      for (let i = 0; i < original.length; i++) {
+        original[i] = raw[i * info.channels]; // channel 0 = red
+      }
+    }
+
+    const enhanced = clahe(original, info.width, info.height, {
+      clipLimit: CLAHE_CLIP_LIMIT,
+      tilesX: CLAHE_TILES,
+      tilesY: CLAHE_TILES,
+    });
+
+    const { data: resized, info: resizedInfo } = await sharp(Buffer.from(enhanced), {
+      raw: { width: info.width, height: info.height, channels: 1 },
+    })
+      // kernel: 'linear', not sharp's default lanczos3 — torchvision's Resize is bilinear.
+      .resize(IMG_SIZE, IMG_SIZE, { fit: 'fill', kernel: 'linear' })
+      // sharp/libvips does not keep raw output single-channel just because the input was —
+      // without this it silently comes back as 3-channel here, which desyncs the `resized[i]`
+      // indexing below from actual pixels and corrupts the tensor with no error anywhere. Was
+      // caught by a >1000-month result on a real test fixture; verify with `npm run
+      // verify:model` after touching this function.
+      .toColourspace('b-w')
       .raw()
       .toBuffer({ resolveWithObject: true });
 
     const pixels = IMG_SIZE * IMG_SIZE;
     const out = new Float32Array(3 * pixels);
     for (let i = 0; i < pixels; i++) {
+      const v = resized[i * resizedInfo.channels] / 255;
+      // Single-channel value repeated into all 3 planes (matches ensure_three_channels),
+      // each then normalised with its own ImageNet channel stats.
       for (let c = 0; c < 3; c++) {
-        // sharp gives interleaved RGB; the model wants planar CHW.
-        out[c * pixels + i] =
-          (data[i * 3 + c] / 255 - NORM_MEAN[c]) / NORM_STD[c];
+        out[c * pixels + i] = (v - NORM_MEAN[c]) / NORM_STD[c];
       }
     }
     return out;
@@ -166,7 +196,7 @@ export class BoneAgeInferenceService implements OnModuleInit {
 
     const feeds = {
       image: new ort.Tensor('float32', pixels, [1, 3, IMG_SIZE, IMG_SIZE]),
-      // Which value means male is still unconfirmed — a flip degrades one sex quietly.
+      // Confirmed against src/dataset.py in the model repo: male=1.0, female=0.0.
       sex: new ort.Tensor(
         'float32',
         new Float32Array([sex === 'MALE' ? 1 : 0]),
@@ -175,8 +205,9 @@ export class BoneAgeInferenceService implements OnModuleInit {
     };
 
     const output = await this.session.run(feeds);
-    const raw = Number((output.bone_age.data as Float32Array)[0]);
-    const months = raw * this.ageStd + this.ageMean;
+    // refine5's target was never normalised during training (see src/dataset.py /
+    // src/train.py) — the model outputs months directly, no denormalisation constants needed.
+    const months = Number((output.bone_age.data as Float32Array)[0]);
 
     if (
       !Number.isFinite(months) ||
@@ -184,8 +215,8 @@ export class BoneAgeInferenceService implements OnModuleInit {
       months > MAX_PLAUSIBLE_MONTHS
     ) {
       throw new Error(
-        `model returned ${months.toFixed(1)} months, outside 0-300 (raw ${raw.toFixed(4)}) — ` +
-          'AGE_MEAN/AGE_STD are the usual cause',
+        `model returned ${months.toFixed(1)} months, outside 0-300 — check preprocessing ` +
+          '(CLAHE, resize, sex encoding) against src/train.py in the model repo',
       );
     }
 

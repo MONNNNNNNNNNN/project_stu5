@@ -25,9 +25,9 @@ maybe('BoneAgeInferenceService', () => {
       get: (k: string) =>
         ({
           BONE_AGE_MODEL_PATH: MODEL,
-          BONE_AGE_MODEL_VERSION: 'effnetb0-v1-rsna',
-          BONE_AGE_MAE_MONTHS: '8.78',
-          BONE_AGE_ACCURACY_12M: '0.731',
+          BONE_AGE_MODEL_VERSION: 'effnetb3-v5-rsna',
+          BONE_AGE_MAE_MONTHS: '8.12',
+          BONE_AGE_ACCURACY_12M: '0.768',
           ...overrides,
         })[k],
     }) as unknown as ConfigService;
@@ -42,10 +42,10 @@ maybe('BoneAgeInferenceService', () => {
   it('reports the measured accuracy the UI needs for FR-18', async () => {
     const svc = new BoneAgeInferenceService(config());
     await svc.onModuleInit();
-    // Both numbers, not just the mean: 73.1% within a year is what stops the UI implying
-    // that +/-8.78 months is a bound.
-    expect(svc.status.maeMonths).toBe(8.78);
-    expect(svc.status.accuracyWithin12Months).toBe(0.731);
+    // Both numbers, not just the mean: 76.8% within a year is what stops the UI implying
+    // that +/-8.12 months is a bound.
+    expect(svc.status.maeMonths).toBe(8.12);
+    expect(svc.status.accuracyWithin12Months).toBe(0.768);
   });
 
   it('treats calibration as provisional until explicitly confirmed', async () => {

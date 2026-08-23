@@ -1,61 +1,60 @@
 # Bone-age inference service (`growth-ai`)
 
-FastAPI wrapper around the trained EfficientNet-B0. One endpoint the NestJS backend calls; it
-holds no database and knows nothing about accounts or children.
+FastAPI wrapper around the trained model — a reference implementation and local dev tool.
+Holds no database and knows nothing about accounts or children.
+
+**Not what's deployed.** The live service runs the same ONNX export in-process inside the
+NestJS backend (`backend/src/bone-age/bone-age.inference.ts`) rather than as a second Render
+instance — see that file's docstring for why. This directory exists for local experimentation
+and for the one-off `.pth` → `.onnx` conversion (`convert_to_onnx.py`); its preprocessing
+(`main.py`) must be kept in step with the backend's by hand, there is no shared code between
+Python and TypeScript here.
 
 Contract, backend hook points and failure handling: **`../docs/ai-integration.md`**.
 
-**Status:** deployed on Render as a second service, serving, and **uncalibrated** — see
-[What is still missing](#what-is-still-missing). `/predict` returns 503 until two constants
-arrive from the ML team.
+**Status:** current model is **v2, `effnetb3-v5-rsna`** (EfficientNet-B3, refine5). Fully
+calibrated — see [Measured performance](#measured-performance). v1 (EfficientNet-B0) was
+uncalibrated pending `AGE_MEAN`/`AGE_STD`; that blocker does not apply to v2, whose target was
+never normalised. History in `../docs/model-updates.md`.
 
 ---
 
-## What the model turned out to be
+## What the model is
 
-The handover was a bare PyTorch `state_dict` with no architecture file. It was recovered from
-the tensor shapes and then verified — `load_state_dict(strict=True)` reports **0 missing and
-0 unexpected keys**, so `model.py` is the exact network the weights were trained in:
+Confirmed directly against `src/model.py` / `src/train.py` in the model repo (not
+reverse-engineered, as v1 originally was — see `../docs/model-updates.md` for that history):
 
 ```
-torchvision EfficientNet-B0, classifier = Identity     ->  1280 pooled features
-concat with the sex scalar                             ->  1281
-Linear(1281, 128) -> ReLU -> Linear(128, 1)            ->  1 scalar
+torchvision EfficientNet-B3, classifier[1] = Identity  ->  1536 pooled features
+concat with the sex scalar                             ->  1537
+Linear(1537, 128) -> ReLU -> Linear(128, 1)             ->  1 scalar
 ```
 
-The tell was `regressor.0.weight` at (128, **1281**): 1280 image features plus one for sex.
-That is why `forward` takes two arguments.
+`regressor.0.weight` is `(128, 1537)`: 1536 image features plus one for sex — up from v1's
+`(128, 1281)` (EfficientNet-B0's 1280 features). That is why `forward` takes two arguments.
 
-4.21 M parameters, ~16 MB.
+~11.0 M parameters, ~42 MB.
 
 ## Measured performance
 
-Reported by the ML team, 2026-08-18, on the held-out test set:
+Validation set (n=1,425, TTA on) — model repo's `MEMORY.md` §5, 2026-08-23:
 
 | Metric | Value |
 | --- | --- |
-| MAE | **8.78 months** |
-| MSE | 135.91 (RMSE 11.66 months) |
-| R² | 0.9219 |
-| Within ±12 months | **73.1%** |
-
-**Internally consistent.** RMSE/MAE = 1.33, about what a roughly Gaussian error distribution
-gives. And `Var(y) = MSE / (1 − R²)` puts the spread of the test set's true bone ages at
-**SD ≈ 41.7 months**, which matches the RSNA dataset's published ~41.2. Nothing here looks
-mis-reported.
-
-That derived 41.7 is also a free cross-check on the calibration constants: if the target was
-normalised by the dataset SD, `AGE_STD` should land near it. `/health` warns when it does not.
+| MAE | **8.12 months** |
+| MSE | 115.14 (RMSE 10.73 months) |
+| R² | 0.9338 |
+| Within ±12 months | **76.8%** |
 
 **Against the benchmark (TOR §6.3).** Leading RSNA Bone Age Challenge entries reach roughly
-4.2–4.5 months MAE. At 8.78 we are about **2× that** — reasonable for a student project on
-free compute, and TOR §13 anticipates exactly this outcome, asking for performance to be
-*"documented transparently rather than overstating accuracy"*.
+4.2–4.5 months MAE. At 8.12 we are still noticeably above that — reasonable for a student
+project on free compute, and TOR §13 anticipates exactly this outcome, asking for performance
+to be *"documented transparently rather than overstating accuracy"*.
 
-**What this means for the UI, and it matters.** 73.1% within ±12 months is the same as saying
-**about one estimate in four is wrong by more than a year**. Showing a parent "±8.78 months"
-implies a tightness the model does not have. FR-18 wording should carry both numbers — see
-`../docs/ai-integration.md` §8.
+**What this means for the UI, and it matters.** 76.8% within ±12 months is the same as saying
+**about one estimate in four is still wrong by more than a year**. Showing a parent
+"±8.12 months" implies a tightness the model does not have. FR-18 wording should carry both
+numbers — see `../docs/ai-integration.md` §8.
 
 ## Why the server runs ONNX and not PyTorch
 
@@ -73,7 +72,7 @@ Conversion happens locally, once per trained model:
 
 ```bash
 pip install -r requirements-convert.txt
-python convert_to_onnx.py models/best_model.pt models/bone_age.onnx
+python convert_to_onnx.py models/best_model_refine5.pth models/bone_age.onnx
 ```
 
 `convert_to_onnx.py` refuses to write the file if the ONNX output drifts from torch by more
@@ -87,16 +86,17 @@ A 16 MB binary in git is carried by every clone forever, cannot be delta-compres
 a full extra copy on each retrain. Releases are built for this and do not consume the
 account's Git LFS quota.
 
-Current release: **[`model-v1`](https://github.com/MONNNNNNNNNNN/project_stu5/releases/tag/model-v1)**
-— carries both `bone_age.onnx` (deployed) and `m.bin` (the original checkpoint, for the record).
+Current release: **[`model-v2`](https://github.com/MONNNNNNNNNNN/project_stu5/releases/tag/model-v2)**
+— carries both `bone_age.onnx` (deployed) and the original `.pth` checkpoint, for the record.
+`model-v1` (EfficientNet-B0) is still there, in case of a rollback.
 
 ```bash
 # fetching, if you are running locally
-gh release download model-v1 --pattern 'bone_age.onnx' --dir models
+gh release download model-v2 --pattern 'bone_age.onnx' --dir models
 
-# publishing a retrain
-python convert_to_onnx.py models/best_model_v2.pt models/bone_age.onnx
-gh release create model-v2 models/bone_age.onnx --notes "…MAE, split, constants…"
+# publishing a retrain — full walkthrough in ../docs/model-updates.md
+python convert_to_onnx.py models/best_model_v3.pth models/bone_age.onnx
+gh release create model-v3 models/bone_age.onnx --notes "…MAE, split, constants…"
 # then bump the URL in render.yaml and MODEL_VERSION
 ```
 
@@ -107,32 +107,23 @@ change.
 
 ## What is still missing
 
-The service **will not return a bone age yet**, on purpose.
+For v2 (refine5): nothing blocking. Confirmed against the model repo directly:
 
-The checkpoint emits values around **2.4**, not around 120. Its training target was
-normalised, so months are `raw * AGE_STD + AGE_MEAN` — and those two numbers did not come with
-the weights. Guessing them produces a confident, wrong bone age on a medical screen, which is
-worse than an outage. `/health` reports `uncalibrated` and `/predict` returns 503 until both
-env vars are set.
-
-Needed from the ML team, in order of how badly each breaks things:
-
-| # | Item | If wrong / missing |
+| # | Item | Status |
 | --- | --- | --- |
-| 1 | **`AGE_MEAN` / `AGE_STD`** from the training run | **blocking** — no prediction at all |
-| 2 | **Sex encoding** — which value meant male | quietly worse for one sex, no error |
-| 3 | ~~`MAE_MONTHS`~~ | ✅ supplied 2026-08-18 — 8.78 months |
-| 4 | Input resolution, if not 224 | silently degraded accuracy |
-| 5 | Normalisation mean/std, if not ImageNet | silently degraded accuracy |
-| 6 | 2–3 sample images with expected outputs | without these we can confirm it returns *a* number, not the *right* one |
+| 1 | Target normalisation | ✅ none — raw months, used directly |
+| 2 | Sex encoding | ✅ male = 1.0, female = 0.0 |
+| 3 | `MAE_MONTHS` / accuracy | ✅ 8.12 months / 76.8% within ±12 |
+| 4 | Input resolution | ✅ 320 × 320 |
+| 5 | Preprocessing | ✅ ImageNet normalise + CLAHE (clipLimit=2.0, 8×8 tiles) |
+| 6 | Labelled sample image | still worth getting, as an end-to-end sanity check |
 
-Item 6 matters more now than before. With MAE known, a single labelled sample would confirm
-items 1, 2, 4 and 5 all at once: if a known 120-month hand comes back near 120, the whole
-preprocessing and denormalisation chain is right. If it comes back at 2.4 or at 300, it is not.
-**One labelled image closes almost everything left.**
+Item 6 is the one thing left worth asking for on every new checkpoint: a known-120-month hand
+coming back near 120 confirms the whole preprocessing chain agrees with the model repo's, in
+one shot, independent of anything above.
 
-A bounds check rejects any result outside 0–300 months, so a wrong denormalisation fails loudly
-instead of reaching a parent. That is a backstop, not a substitute for item 1.
+A bounds check still rejects any result outside 0–300 months as a backstop, even though
+nothing here is currently a guess.
 
 ---
 
@@ -142,12 +133,8 @@ instead of reaching a parent. That is a backstop, not a substitute for item 1.
 cd ai-service
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-gh release download model-v1 --pattern 'bone_age.onnx' --dir models
-
-export MODEL_VERSION=effnetb0-v1-rsna
-export AGE_MEAN=...   # from the ML team
-export AGE_STD=...
-export MAE_MONTHS=...
+gh release download model-v2 --pattern 'bone_age.onnx' --dir models
+cp .env.example .env   # already set for v2 — edit if testing a different release
 
 uvicorn main:app --port 8000
 ```
@@ -157,16 +144,13 @@ curl http://127.0.0.1:8000/health
 curl -F "image=@hand.png" -F "sex=MALE" http://127.0.0.1:8000/predict
 ```
 
-Then point the backend at it in `backend/.env`:
-
-```bash
-BONE_AGE_SERVICE_URL="http://127.0.0.1:8000"
-BONE_AGE_TIMEOUT_MS=30000
-```
-
-With `BONE_AGE_SERVICE_URL` unset the backend behaves as it does today — uploads store and
-list, predictions stay `PENDING`, nothing errors. A teammate without the model can still run
-the whole stack.
+This FastAPI instance is not what the backend calls in dev or prod — `bone-age.inference.ts`
+loads the ONNX model directly. Use this only to sanity-check a conversion or a preprocessing
+change outside Node before touching the backend. To run the real path locally, put
+`models/bone_age.onnx` where `backend/.env`'s `BONE_AGE_MODEL_PATH` points and start the
+backend — with no model file present it behaves as it does today: uploads store and list,
+predictions stay `PENDING`, nothing errors. A teammate without the model can still run the
+whole stack.
 
 ---
 

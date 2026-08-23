@@ -7,3 +7,5 @@ python-multipart>=0.0.12
 pillow>=11.0
 numpy>=2.0
 onnxruntime>=1.20
+# CLAHE preprocessing (refine5) — headless build, no GUI deps, keeps this off torch's footprint.
+opencv-python-headless>=4.10

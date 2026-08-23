@@ -11,17 +11,55 @@ an OOM-killed service is worse than a slow one. The two runtimes agree to 3e-06 
 input, so nothing is given up by converting.
 
     pip install -r requirements-convert.txt
-    python convert_to_onnx.py models/best_model.pt models/bone_age.onnx
+    python convert_to_onnx.py models/best_model_refine5.pth models/bone_age.onnx
 """
 
 import sys
+from pathlib import Path
 
 import torch
+import torch.nn.functional as F
+from PIL import Image
 
 from model import BoneAgeModel
 
-IMG_SIZE = 224
+IMG_SIZE = 320  # refine5 (EfficientNet-B3) trains at 320x320, not the earlier B0's 224
 MAX_ACCEPTABLE_DRIFT = 1e-4
+
+# Matches src/train.py's IMAGENET_MEAN/STD.
+NORM_MEAN = [0.485, 0.456, 0.406]
+NORM_STD = [0.229, 0.224, 0.225]
+
+# Shared with backend/scripts/verify-model.mjs — same fixture, same reason: a real hand X-ray
+# keeps this check in the input distribution the model was actually trained on.
+SAMPLE_IMAGE = Path(__file__).resolve().parents[1] / "backend" / "test" / "fixtures" / "hand.png"
+
+
+def _sample_input() -> torch.Tensor:
+    """
+    Real image (grayscale, resized, ImageNet-normalised) if the shared fixture is available,
+    else spatially-correlated synthetic noise as a fallback for a standalone checkout.
+
+    Per-pixel white noise, even ImageNet-normalised, is spatially uncorrelated — nothing like
+    a real photo — and that alone is enough to send a deep BatchNorm stack (B3's 26 MBConv
+    blocks vs B0's 16) into activations in the millions on this checkpoint, which then makes
+    the *absolute* torch/onnx drift look huge even though the export itself is fine. Neither
+    path runs CLAHE (this only needs to be "image-like", not bit-exact to serving
+    preprocessing — that end-to-end check is `npm run verify:model` in the backend).
+    """
+    mean = torch.tensor(NORM_MEAN).view(1, 3, 1, 1)
+    std = torch.tensor(NORM_STD).view(1, 3, 1, 1)
+
+    if SAMPLE_IMAGE.exists():
+        img = Image.open(SAMPLE_IMAGE).convert("L").resize((IMG_SIZE, IMG_SIZE), Image.BILINEAR)
+        arr = torch.frombuffer(bytearray(img.tobytes()), dtype=torch.uint8)
+        gray = arr.view(1, 1, IMG_SIZE, IMG_SIZE).float() / 255.0
+        rgb = gray.repeat(1, 3, 1, 1)
+    else:
+        coarse = torch.rand(1, 3, IMG_SIZE // 16, IMG_SIZE // 16)
+        rgb = F.interpolate(coarse, size=(IMG_SIZE, IMG_SIZE), mode="bilinear", align_corners=False)
+
+    return (rgb - mean) / std
 
 
 def main(src: str, dst: str) -> None:
@@ -31,7 +69,7 @@ def main(src: str, dst: str) -> None:
     model.load_state_dict(torch.load(src, map_location="cpu"), strict=True)
     model.eval()
 
-    dummy_image = torch.rand(1, 3, IMG_SIZE, IMG_SIZE)
+    dummy_image = _sample_input()
     dummy_sex = torch.tensor([[1.0]])
 
     torch.onnx.export(
